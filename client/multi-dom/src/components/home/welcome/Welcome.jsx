@@ -11,7 +11,7 @@ export default function Welcome() {
           Перилни и почистващи препарати, козметика и още.
         </p>
         <Link
-          to="/products"
+          to="/catalog"
           className="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
         >
           Разгледай продукти

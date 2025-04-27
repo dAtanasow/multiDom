@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import MobileNav from "../../navigation/mobile/MobileNav";
 
 export default function MobileHeaderContent({
@@ -49,7 +50,9 @@ export default function MobileHeaderContent({
 
       {/* Center: Logo */}
       <div className="flex-shrink-0">
-        <img src="icons/мултиДом-logo.jpeg" alt="МултиДом" className="w-40" />
+        <Link to="/">
+          <img src="icons/мултиДом-logo.jpeg" alt="МултиДом" className="w-40" />
+        </Link>
       </div>
 
       {/* Right Side: Login & Cart */}

@@ -1,4 +1,3 @@
-import { Link } from "react-router";
 import Slider from "./img-slider/Slider";
 import Advantages from "./advantages/Advantages";
 import BestSellers from "./best-sellers/BestSellers";
