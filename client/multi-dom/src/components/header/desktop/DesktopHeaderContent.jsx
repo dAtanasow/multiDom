@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import DesktopNav from "../../navigation/desktop/Navigation";
 
 export default function DesktopHeaderContent({ setActivePanel }) {
@@ -5,11 +6,13 @@ export default function DesktopHeaderContent({ setActivePanel }) {
     <div className="hidden md:block bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex-shrink-0">
-          <img
-            src="icons/мултиДом-logo.jpeg"
-            alt="МултиДом"
-            className="w-40"
-          />
+          <Link to="/">
+            <img
+              src="icons/мултиДом-logo.jpeg"
+              alt="МултиДом"
+              className="w-40"
+            />
+          </Link>
         </div>
 
         <div className="flex flex-col items-center flex-grow px-4">
