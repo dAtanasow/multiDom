@@ -1,10 +1,21 @@
+import { useState } from "react";
 import navLinks from "../../../utils/navLinks";
-import { NavLink } from "react-router";
 
 export default function MobileNav({ onClose }) {
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const toggleDropdown = (label) => {
+    setOpenDropdown(openDropdown === label ? null : label);
+  };
+
+  const navigationHandler = (href) => {
+    onClose();
+    window.location.href = href;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex">
-      <div className="w-4/5 bg-white p-6 shadow-md h-full animate-slide-in-right overflow-y-auto">
+      <div className="w-3/4 bg-white p-6 shadow-md h-full animate-slide-in-right overflow-y-auto">
         <div className="flex justify-end">
           <button
             onClick={onClose}
@@ -28,21 +39,49 @@ export default function MobileNav({ onClose }) {
         </div>
         <nav className="flex flex-col space-y-4 mt-6 text-gray-800 font-medium">
           {navLinks.map((link) => (
-            <NavLink
-              className="hover:text-blue-600 transition"
-              onClick={onClose}
-              key={link.label}
-              href={link.href}
-            >
-              {link.label}
-            </NavLink>
+            <div key={link.label} className="flex flex-col">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => navigationHandler(link.href)}
+                  className="text-left hover:text-blue-600 transition w-full"
+                >
+                  {link.label}
+                </button>
+
+                {link.subLinks && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleDropdown(link.label);
+                    }}
+                    className="ml-2 text-gray-600 hover:text-blue-600 transition"
+                  >
+                    {openDropdown === link.label ? "▲" : "▼"}
+                  </button>
+                )}
+              </div>
+
+              {openDropdown === link.label && link.subLinks && (
+                <div className="ml-4 mt-2 flex flex-col space-y-2">
+                  {link.subLinks.map((subLink) => (
+                    <button
+                      key={subLink.label}
+                      onClick={() => navigationHandler(subLink.href)}
+                      className="text-sm hover:text-blue-500 transition text-left"
+                    >
+                      {subLink.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </nav>
       </div>
 
       <div
         onClick={onClose}
-        className="w-1/5 h-full"
+        className="w-1/4 h-full"
         style={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}
       ></div>
     </div>
