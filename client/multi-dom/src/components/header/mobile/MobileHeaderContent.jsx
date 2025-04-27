@@ -49,7 +49,7 @@ export default function MobileHeaderContent({
 
       {/* Center: Logo */}
       <div className="flex-shrink-0">
-        <img src="../мултиДом-logo.jpeg" alt="МултиДом" className="w-40" />
+        <img src="icons/мултиДом-logo.jpeg" alt="МултиДом" className="w-40" />
       </div>
 
       {/* Right Side: Login & Cart */}
