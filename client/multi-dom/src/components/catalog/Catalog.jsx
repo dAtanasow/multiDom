@@ -1,37 +1,32 @@
 import { useState } from "react";
-
-const products = [
-  {
-    id: 1,
-    name: "Омекотител Mexon",
-    price: 8.99,
-    image: "/products/mexon.jpg",
-  },
-  { id: 2, name: "Пелени Hayat", price: 12.5, image: "/products/hayat.jpg" },
-  {
-    id: 3,
-    name: "Кърпички HighGenic",
-    price: 5.99,
-    image: "/products/highgenic.jpg",
-  },
-  {
-    id: 4,
-    name: "Превръзки Johnson",
-    price: 7.5,
-    image: "/products/johnson.jpg",
-  },
-  {
-    id: 5,
-    name: "Фурна Bosch",
-    price: 499.99,
-    image: "/products/furnabosch.jpg",
-  },
-];
+import categories from "../../utils/categories";
+import products from "../../utils/catalogItems";
 
 export default function Catalog() {
   const [sortOption, setSortOption] = useState("newest");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  const sortedProducts = [...products].sort((a, b) => {
+  const toggleCategory = (category) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const clearFilters = () => {
+    setSelectedCategories([]);
+  };
+
+  const filteredProducts = products.filter((product) => {
+    if (selectedCategories.length === 0) return true;
+    return selectedCategories.some(
+      (category) => category.toLowerCase() === product.category.toLowerCase()
+    );
+  });
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortOption === "price-low") return a.price - b.price;
     if (sortOption === "price-high") return b.price - a.price;
     return b.id - a.id;
@@ -39,27 +34,59 @@ export default function Catalog() {
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8">
+      {/* Mobile Filters Button */}
+      <div className="md:hidden flex justify-end mb-4">
+        <button
+          onClick={() => setMobileFiltersOpen(true)}
+          className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
+        >
+          Филтрирай
+        </button>
+      </div>
+
       {/* Sidebar filters */}
-      <aside className="w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
+      <aside className="hidden md:block w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Филтри</h2>
-        <div className="space-y-3">
-          <label className="flex items-center">
-            <input type="checkbox" className="mr-2" /> Перилни препарати
-          </label>
-          <label className="flex items-center">
-            <input type="checkbox" className="mr-2" /> Почистващи препарати
-          </label>
-          <label className="flex items-center">
-            <input type="checkbox" className="mr-2" /> Козметика
-          </label>
+        <div className="space-y-4">
+          {categories.map((category) => (
+            <div key={category.label}>
+              <h3 className="font-semibold text-gray-700 mb-2">
+                {category.label}
+              </h3>
+              <div className="space-y-2 ml-2">
+                {category.subLinks.map((sub) => (
+                  <label key={sub} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={selectedCategories.includes(sub)}
+                      onChange={() => toggleCategory(sub)}
+                    />
+                    {sub}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
+        <button
+          onClick={clearFilters}
+          className="mt-6 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition"
+        >
+          Изчисти филтрите
+        </button>
       </aside>
 
       {/* Main content */}
       <main className="flex-1">
         {/* Sort options */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Каталог</h1>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Каталог</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Намерени продукти: {sortedProducts.length}
+            </p>
+          </div>
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
@@ -94,8 +121,63 @@ export default function Catalog() {
               </button>
             </div>
           ))}
+          {sortedProducts.length === 0 && (
+            <p className="col-span-full text-center text-gray-600">
+              Няма намерени продукти.
+            </p>
+          )}
         </div>
       </main>
+
+      {/* Mobile Filters SlideOver */}
+      <div
+        className={`fixed inset-0 z-50 flex justify-end transition-transform duration-300 ${
+          mobileFiltersOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="bg-white w-3/4 h-full p-6 overflow-y-auto shadow-lg">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">Филтри</h2>
+            <button
+              onClick={() => setMobileFiltersOpen(false)}
+              className="text-gray-700 hover:text-red-500 text-2xl"
+            >
+              &times;
+            </button>
+          </div>
+          <div className="space-y-4">
+            {categories.map((category) => (
+              <div key={category.label}>
+                <h3 className="font-semibold text-gray-700 mb-2">
+                  {category.label}
+                </h3>
+                <div className="space-y-2 ml-2">
+                  {category.subLinks.map((sub) => (
+                    <label key={sub} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={selectedCategories.includes(sub)}
+                        onChange={() => toggleCategory(sub)}
+                      />
+                      {sub}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => {
+              clearFilters();
+              setMobileFiltersOpen(false);
+            }}
+            className="mt-6 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition"
+          >
+            Изчисти филтрите
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
