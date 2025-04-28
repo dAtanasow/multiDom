@@ -8,6 +8,11 @@ export default function AuthProvider({ children }) {
   });
 
   const changeAuthState = (newState) => {
+    if (typeof newState !== 'object' || newState === null) {
+      console.error('changeAuthState expects an object!');
+      return;
+    }
+
     setAuthState((oldState) => ({
       ...oldState,
       ...newState,
@@ -16,6 +21,13 @@ export default function AuthProvider({ children }) {
 
   const logout = () => {
     setAuthState({ user: null, accessToken: null });
+
+    fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    }).catch((err) => console.error('Logout API error:', err));
+
+    window.location.href = '/login';
   };
 
   const contextData = {

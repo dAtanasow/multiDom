@@ -21,7 +21,7 @@ export async function requester(method, url, data) {
         options.body = JSON.stringify(data);
     }
 
-    const response = await fetch(url, options);
+    let response = await fetch(url, options);
 
     if (response.status === 401 || response.status === 403) {
         try {
@@ -32,13 +32,13 @@ export async function requester(method, url, data) {
 
             if (refreshResponse.ok) {
                 const refreshData = await refreshResponse.json();
-
                 const newAccessToken = refreshData.accessToken;
 
                 if (newAccessToken) {
-                    localStorage.setItem('auth', JSON.stringify({ accessToken: newAccessToken }));
+                    setAccessToken(newAccessToken);
 
-                    return requester(method, url, data);
+                    options.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                    response = await fetch(url, options);
                 }
             } else {
                 clearAuth();
