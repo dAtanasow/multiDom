@@ -1,10 +1,10 @@
-import bcrypt from 'bcryptjs';
-import User from '../models/User.js';
-import TokenBlacklist from '../models/tokenBlacklist.js';
-import CustomError from '../utils/CustomError.js';
-import { createAccessToken, createRefreshToken, verifyRefreshToken } from '../utils/jwt.js';
+const bcrypt = require('bcryptjs');
+const User = require('../models/User');
+const TokenBlacklist = require('../models/tokenBlacklist');
+const CustomError = require('../utils/CustomError');
+const { createAccessToken, createRefreshToken, verifyRefreshToken } = require('../utils/jwt');
 
-export const logout = async (req, res, next) => {
+const logout = async (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
     if (!token) {
@@ -20,10 +20,10 @@ export const logout = async (req, res, next) => {
 };
 
 
-export const register = async (req, res, next) => {
-    const { username, email, password } = req.body;
+const register = async (req, res, next) => {
+    const { firstName, lastName, phone, email, password, rePassword } = req.body;
 
-    if (!username || !email || !password) {
+    if (!firstName || !lastName || !phone || !email || !password, !rePassword) {
         return next(new CustomError('Моля, попълнете всички полета.', 400));
     }
 
@@ -37,7 +37,9 @@ export const register = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = new User({
-            username,
+            firstName,
+            lastName,
+            phone,
             email,
             password: hashedPassword,
         });
@@ -67,7 +69,9 @@ export const register = async (req, res, next) => {
             accessToken,
             user: {
                 id: newUser._id,
-                username: newUser.username,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                phone: newUser.phone,
                 email: newUser.email,
                 role: newUser.role || "user",
             },
@@ -78,7 +82,7 @@ export const register = async (req, res, next) => {
 };
 
 
-export const login = async (req, res, next) => {
+const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -121,7 +125,7 @@ export const login = async (req, res, next) => {
     }
 };
 
-export const refreshAccessToken = async (req, res, next) => {
+const refreshAccessToken = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
@@ -137,3 +141,10 @@ export const refreshAccessToken = async (req, res, next) => {
         return next(new CustomError('Невалиден или изтекъл refresh токен.', 401));
     }
 };
+
+module.exports = {
+    register,
+    login,
+    logout,
+    refreshAccessToken
+}

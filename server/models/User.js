@@ -1,12 +1,18 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    username: {
+    firstName: {
         type: String,
         required: true,
-        unique: true,
-        minlength: 5,
-        maxlength: 20,
+    },
+    lastName: {
+        type: String,
+        required: true,
+    },
+    phone: {
+        type: Number,
+        required: true,
+        unique: true
     },
     email: {
         type: String,
@@ -19,6 +25,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 5,
     },
+    role: {
+        type: String,
+        default: 'user'
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -26,4 +36,4 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
-export default User;
+module.exports = User;

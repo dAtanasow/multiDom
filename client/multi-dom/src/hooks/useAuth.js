@@ -1,7 +1,7 @@
 import { useState } from "react";
-import userApi from "../api/user";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../context/AuthContext";
+import userApi from "../api/auth";
 
 export function useRegister() {
     const [loading, setLoading] = useState(false);

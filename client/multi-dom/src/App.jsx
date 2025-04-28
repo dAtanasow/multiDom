@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router";
-import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import AuthProvider from "./context/AuthProvider";
 
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
@@ -17,7 +16,6 @@ function App() {
     <AuthProvider>
       <div>
         <Header />
-        <ToastContainer position="top-center" autoClose={3000} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/catalog" element={<Catalog />} />
@@ -28,6 +26,7 @@ function App() {
         </Routes>
         <Footer />
       </div>
+      <ToastContainer position="top-center" autoClose={3000} />
     </AuthProvider>
   );
 }

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { useForm } from "../hooks/useForm";
-import useRegister from "../hooks/useRegister";
-import useLogin from "../hooks/useLogin";
+import { useForm } from "../../hooks/useForm";
+import { useRegister } from "../../hooks/useAuth";
 
 const countries = [
   { name: "България", code: "+359" },
@@ -16,20 +15,21 @@ export default function Register({ onClose, onLoginClick }) {
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  const { register: registerApi, loading: registerLoading } = useRegister();
-  const { login, loading: loginLoading } = useLogin();
+  const { register, loading: registerLoading } = useRegister();
 
   const { values, changeHandler, submitHandler, pending } = useForm(
     {
       firstName: "",
       lastName: "",
+      phone: "",
       email: "",
       password: "",
+      rePassword: "",
     },
     async (formData) => {
       const fullPhone = selectedCountry.code + phoneNumber;
 
-      const result = await registerApi({
+      const result = await register({
         ...formData,
         phone: fullPhone,
       });
@@ -132,12 +132,21 @@ export default function Register({ onClose, onLoginClick }) {
             className="border p-2 rounded-lg"
             required
           />
+          <input
+            type="password"
+            name="rePassword"
+            value={values.rePassword}
+            onChange={changeHandler}
+            placeholder="Повторете паролата"
+            className="border p-2 rounded-lg"
+            required
+          />
           <button
             type="submit"
-            disabled={pending || registerLoading || loginLoading}
+            disabled={pending || registerLoading}
             className="bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
           >
-            {pending || registerLoading || loginLoading ? "Моля изчакайте..." : "Регистрация"}
+            {pending || registerLoading ? "Моля изчакайте..." : "Регистрация"}
           </button>
         </form>
         <p className="mt-6 text-sm text-gray-600">
