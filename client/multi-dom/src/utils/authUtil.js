@@ -6,3 +6,12 @@ export const getAccessToken = () => {
     }
     return null;
 };
+
+export function setAccessToken(accessToken) {
+    const authData = JSON.stringify({ accessToken });
+    localStorage.setItem('auth', authData);
+}
+
+export function clearAuth() {
+    localStorage.removeItem('auth');
+}

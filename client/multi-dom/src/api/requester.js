@@ -1,4 +1,4 @@
-import { getAccessToken } from "../utils/authUtil";
+import { clearAuth, getAccessToken, setAccessToken } from "../utils/authUtil";
 
 export async function requester(method, url, data) {
     const options = {
@@ -24,11 +24,34 @@ export async function requester(method, url, data) {
     const response = await fetch(url, options);
 
     if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem('auth');
-        window.location.href = '/login';
-        return;
-    }
+        try {
+            const refreshResponse = await fetch('/api/auth/refresh-token', {
+                method: 'POST',
+                credentials: 'include',
+            });
 
+            if (refreshResponse.ok) {
+                const refreshData = await refreshResponse.json();
+
+                const newAccessToken = refreshData.accessToken;
+
+                if (newAccessToken) {
+                    localStorage.setItem('auth', JSON.stringify({ accessToken: newAccessToken }));
+
+                    return requester(method, url, data);
+                }
+            } else {
+                clearAuth();
+                window.location.href = '/login';
+                return;
+            }
+        } catch (refreshError) {
+            console.error('Грешка при refresh:', refreshError);
+            clearAuth();
+            window.location.href = '/login';
+            return;
+        }
+    }
     const contentType = response.headers.get("Content-Type");
     const responseText = await response.text();
 
@@ -48,8 +71,7 @@ export async function requester(method, url, data) {
     if (response.status === 204) return {};
 
     if (result.accessToken) {
-        const authData = JSON.stringify({ accessToken: result.accessToken });
-        localStorage.setItem('auth', authData);
+        setAccessToken(result.accessToken);
     }
 
     return result;

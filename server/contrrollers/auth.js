@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import TokenBlacklist from '../models/tokenBlacklist.js';
 import CustomError from '../utils/CustomError.js';
+import { createAccessToken, createRefreshToken, verifyRefreshToken } from '../utils/jwt.js';
 
 export const logout = async (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
@@ -69,10 +69,19 @@ export const login = async (req, res, next) => {
             return next(new CustomError('Грешна парола.', 401));
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+        const accessToken = createAccessToken(user);
+        const refreshToken = createRefreshToken(user);
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дни
+        });
 
         res.status(200).json({
-            token,
+            accessToken,
             user: {
                 id: user._id,
                 username: user.username,
@@ -84,3 +93,19 @@ export const login = async (req, res, next) => {
     }
 };
 
+export const refreshAccessToken = async (req, res, next) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+        return next(new CustomError('Refresh токен липсва.', 401));
+    }
+
+    try {
+        const data = verifyRefreshToken(refreshToken);
+        const accessToken = createAccessToken({ _id: data._id });
+
+        res.status(200).json({ accessToken });
+    } catch (err) {
+        return next(new CustomError('Невалиден или изтекъл refresh токен.', 401));
+    }
+};

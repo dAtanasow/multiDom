@@ -1,23 +1,20 @@
-const jwt = require('jsonwebtoken');
-const secret = process.env.SECRET;
+import jwt from 'jsonwebtoken';
 
-function createToken(data) {
-    return jwt.sign({ _id: data._id }, secret, { expiresIn: '1d' });
+const accessSecret = process.env.JWT_ACCESS_SECRET || 'AccessSecret123';
+const refreshSecret = process.env.JWT_REFRESH_SECRET || 'RefreshSecret123';
+
+export function createAccessToken(data) {
+    return jwt.sign({ _id: data._id }, accessSecret, { expiresIn: '15m' }); // валиден 15 мин
 }
 
-function verifyToken(token) {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, secret, (err, data) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
+export function createRefreshToken(data) {
+    return jwt.sign({ _id: data._id }, refreshSecret, { expiresIn: '7d' }); // валиден 7 дни
 }
 
-module.exports = {
-    createToken,
-    verifyToken
+export function verifyAccessToken(token) {
+    return jwt.verify(token, accessSecret);
+}
+
+export function verifyRefreshToken(token) {
+    return jwt.verify(token, refreshSecret);
 }
