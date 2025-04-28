@@ -1,6 +1,23 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import TokenBlacklist from '../models/tokenBlacklist.js';
+
+export const logout = async (req, res) => {
+    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+        return res.status(400).json({ message: 'Няма предоставен токен за излизане.' });
+    }
+
+    try {
+        await TokenBlacklist.create({ token });
+        res.status(200).json({ message: 'Успешно излязохте от профила.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Грешка при излизане от профила.' });
+    }
+};
 
 export const register = async (req, res) => {
     const { username, email, password } = req.body;
