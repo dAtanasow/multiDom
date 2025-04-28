@@ -2,34 +2,35 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import TokenBlacklist from '../models/tokenBlacklist.js';
+import CustomError from '../utils/CustomError.js';
 
-export const logout = async (req, res) => {
+export const logout = async (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-        return res.status(400).json({ message: 'Няма предоставен токен за излизане.' });
+        return next(new CustomError('Няма предоставен токен за излизане.', 400));
     }
 
     try {
         await TokenBlacklist.create({ token });
         res.status(200).json({ message: 'Успешно излязохте от профила.' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Грешка при излизане от профила.' });
+        next(error);
     }
 };
 
-export const register = async (req, res) => {
+
+export const register = async (req, res, next) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-        return res.status(400).json({ message: 'Моля, попълнете всички полета.' });
+        return next(new CustomError('Моля, попълнете всички полета.', 400));
     }
 
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: 'Имейлът вече е регистриран.' });
+            return next(new CustomError('Имейлът вече е регистриран.', 400));
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -44,28 +45,28 @@ export const register = async (req, res) => {
         await newUser.save();
 
         res.status(201).json({ message: 'Успешна регистрация!' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Грешка при регистрация.' });
+    } catch (err) {
+        next(err);
     }
 };
 
-export const login = async (req, res) => {
+
+export const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        return res.status(400).json({ message: 'Моля, въведете имейл и парола.' });
+        return next(new CustomError('Моля, въведете имейл и парола.', 400));
     }
 
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: 'Невалиден имейл или парола.' });
+            return next(new CustomError('Имейлът не е регистриран.', 404));
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Невалиден имейл или парола.' });
+            return next(new CustomError('Грешна парола.', 401));
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -78,8 +79,8 @@ export const login = async (req, res) => {
                 email: user.email,
             },
         });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Грешка при вход.' });
+    } catch (err) {
+        next(err);
     }
 };
+
