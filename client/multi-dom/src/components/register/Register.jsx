@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useForm } from "../hooks/useForm";
+import useRegister from "../hooks/useRegister";
+import useLogin from "../hooks/useLogin";
 
 const countries = [
   { name: "България", code: "+359" },
@@ -13,6 +16,34 @@ export default function Register({ onClose, onLoginClick }) {
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  const { register: registerApi, loading: registerLoading } = useRegister();
+  const { login, loading: loginLoading } = useLogin();
+
+  const { values, changeHandler, submitHandler, pending } = useForm(
+    {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    },
+    async (formData) => {
+      const fullPhone = selectedCountry.code + phoneNumber;
+
+      const result = await registerApi({
+        ...formData,
+        phone: fullPhone,
+      });
+
+      changeAuthState({
+        user: result.user,
+        accessToken: result.accessToken,
+      });
+
+      setVisible(false);
+      setTimeout(onClose, 300);
+    }
+  );
+
   useEffect(() => {
     setTimeout(() => setVisible(true), 10);
   }, []);
@@ -20,9 +51,8 @@ export default function Register({ onClose, onLoginClick }) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div
-        className={`bg-white w-full md:w-1/2 h-screen p-8 shadow-lg transform transition-transform duration-300 ${
-          visible ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`bg-white w-full md:w-1/2 h-screen p-8 shadow-lg transform transition-transform duration-300 ${visible ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-700">Регистрация</h2>
@@ -36,16 +66,24 @@ export default function Register({ onClose, onLoginClick }) {
             &times;
           </button>
         </div>
-        <form className="flex flex-col space-y-4">
+        <form className="flex flex-col space-y-4" onSubmit={submitHandler}>
           <input
             type="text"
+            name="firstName"
+            value={values.firstName}
+            onChange={changeHandler}
             placeholder="Име"
             className="border p-2 rounded-lg"
+            required
           />
           <input
             type="text"
+            name="lastName"
+            value={values.lastName}
+            onChange={changeHandler}
             placeholder="Фамилия"
             className="border p-2 rounded-lg"
+            required
           />
           <div className="flex space-x-2">
             <select
@@ -69,24 +107,37 @@ export default function Register({ onClose, onLoginClick }) {
               <input
                 type="tel"
                 className="outline-none w-full"
-                placeholder="телефонен номер"
+                placeholder="Телефонен номер"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
+                required
               />
             </div>
           </div>
           <input
             type="email"
+            name="email"
+            value={values.email}
+            onChange={changeHandler}
             placeholder="Имейл"
             className="border p-2 rounded-lg"
+            required
           />
           <input
             type="password"
+            name="password"
+            value={values.password}
+            onChange={changeHandler}
             placeholder="Парола"
             className="border p-2 rounded-lg"
+            required
           />
-          <button className="bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
-            Регистрация
+          <button
+            type="submit"
+            disabled={pending || registerLoading || loginLoading}
+            className="bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+          >
+            {pending || registerLoading || loginLoading ? "Моля изчакайте..." : "Регистрация"}
           </button>
         </form>
         <p className="mt-6 text-sm text-gray-600">

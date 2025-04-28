@@ -1,5 +1,8 @@
 import { AuthContext } from "./AuthContext";
 import usePersistedState from "../hooks/usePersistedState";
+import { toast } from 'react-toastify';
+
+const baseUrl = import.meta.env.VITE_API_URL
 
 export default function AuthProvider({ children }) {
   const [authState, setAuthState] = usePersistedState("auth", {
@@ -19,15 +22,23 @@ export default function AuthProvider({ children }) {
     }));
   };
 
-  const logout = () => {
+  const logout = async () => {
     setAuthState({ user: null, accessToken: null });
 
-    fetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    }).catch((err) => console.error('Logout API error:', err));
-
-    window.location.href = '/login';
+    try {
+      await fetch(`${baseUrl}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      toast.success('Успешно излязохте.');
+    } catch (err) {
+      console.error('Logout API error:', err);
+      toast.error('Проблем при излизане.');
+    } finally {
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 100);
+    }
   };
 
   const contextData = {

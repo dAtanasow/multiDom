@@ -44,7 +44,34 @@ export const register = async (req, res, next) => {
 
         await newUser.save();
 
-        res.status(201).json({ message: 'Успешна регистрация!' });
+        const accessToken = jwt.sign(
+            { id: newUser._id },
+            process.env.JWT_ACCESS_SECRET,
+            { expiresIn: "1d" }
+        );
+
+        const refreshToken = jwt.sign(
+            { id: newUser._id },
+            process.env.JWT_REFRESH_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дни
+        });
+
+        res.status(201).json({
+            accessToken,
+            user: {
+                id: newUser._id,
+                username: newUser.username,
+                email: newUser.email,
+                role: newUser.role || "user",
+            },
+        });
     } catch (err) {
         next(err);
     }
