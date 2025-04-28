@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { clearAuth, getAccessToken, setAccessToken } from "../utils/authUtil";
 
 export async function requester(method, url, data) {
@@ -41,12 +42,14 @@ export async function requester(method, url, data) {
                     response = await fetch(url, options);
                 }
             } else {
+                toast.error('Сесията ви е изтекла. Моля, влезте отново.');
                 clearAuth();
                 window.location.href = '/login';
                 return;
             }
         } catch (refreshError) {
             console.error('Грешка при refresh:', refreshError);
+            toast.error('Неуспешен опит за удължаване на сесията.');
             clearAuth();
             window.location.href = '/login';
             return;
@@ -61,6 +64,7 @@ export async function requester(method, url, data) {
             result = JSON.parse(responseText);
         } catch (e) {
             console.error("Error parsing JSON:", e);
+            toast.error('Грешка при зареждане на данни.');
         }
     }
 

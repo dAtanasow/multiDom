@@ -1,4 +1,8 @@
 import { Route, Routes } from "react-router";
+import { AuthProvider } from "./context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
 import Catalog from "./components/catalog/Catalog";
@@ -7,13 +11,13 @@ import About from "./components/footer/about/About";
 import Contact from "./components/footer/contact/Contact";
 import Privacy from "./components/footer/privacy/Privacy";
 import Terms from "./components/footer/terms/Terms";
-import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
     <AuthProvider>
       <div>
         <Header />
+        <ToastContainer position="top-center" autoClose={3000} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/catalog" element={<Catalog />} />
