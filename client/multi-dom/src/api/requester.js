@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
 import { clearAuth, getAccessToken, setAccessToken } from "../utils/authUtil";
+const baseUrl = import.meta.env.VITE_API_URL;
 
 export async function requester(method, url, data) {
     const options = {
@@ -26,7 +27,7 @@ export async function requester(method, url, data) {
 
     if (response.status === 401 || response.status === 403) {
         try {
-            const refreshResponse = await fetch('/api/auth/refresh-token', {
+            const refreshResponse = await fetch(`${baseUrl}/auth/refresh-token`, {
                 method: 'POST',
                 credentials: 'include',
             });
