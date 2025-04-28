@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../context/AuthContext";
 import userApi from "../api/auth";
+import { useNavigate } from "react-router";
 
 export function useRegister() {
     const [loading, setLoading] = useState(false);
@@ -34,7 +35,18 @@ export function useLogin() {
             const result = await userApi.login(loginData);
             const { user, accessToken } = result;
 
-            changeAuthState({ user, accessToken });
+            changeAuthState({
+                user: {
+                    _id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    phone: user.phone,
+                    role: user.role,
+                },
+                accessToken: accessToken,
+            });
+
             toast.success("Успешен вход!");
             return result;
         } catch (error) {

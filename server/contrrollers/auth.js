@@ -46,17 +46,8 @@ const register = async (req, res, next) => {
 
         await newUser.save();
 
-        const accessToken = jwt.sign(
-            { id: newUser._id },
-            process.env.JWT_ACCESS_SECRET,
-            { expiresIn: "1d" }
-        );
-
-        const refreshToken = jwt.sign(
-            { id: newUser._id },
-            process.env.JWT_REFRESH_SECRET,
-            { expiresIn: "7d" }
-        );
+        const accessToken = createAccessToken(newUser);
+        const refreshToken = createRefreshToken(newUser);
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
@@ -100,7 +91,6 @@ const login = async (req, res, next) => {
             return next(new CustomError('Грешна парола.', 401));
         }
 
-
         const accessToken = createAccessToken(user);
         const refreshToken = createRefreshToken(user);
 
@@ -114,10 +104,12 @@ const login = async (req, res, next) => {
         res.status(200).json({
             accessToken,
             user: {
-                id: user._id,
-                username: user.username,
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
                 email: user.email,
-                role: user.role,
+                phone: user.phone || "",
+                role: user.role || "user",
             },
         });
     } catch (err) {

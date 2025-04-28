@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Login from "../login/Login";
-import Register from "../register/Register";
+
 import MobileHeaderContent from "./mobile/MobileHeaderContent";
 import DesktopHeaderContent from "./desktop/DesktopHeaderContent";
+import PanelSwitcher from "./PanelSwitcher";
 
 export default function Header() {
   const [activePanel, setActivePanel] = useState(null);
@@ -23,18 +23,8 @@ export default function Header() {
 
       <DesktopHeaderContent setActivePanel={setActivePanel} />
 
-      {activePanel === "login" && (
-        <Login
-          onClose={closePanel}
-          onRegisterClick={() => setActivePanel("register")}
-        />
-      )}
-      {activePanel === "register" && (
-        <Register
-          onClose={closePanel}
-          onLoginClick={() => setActivePanel("login")}
-        />
-      )}
+      <PanelSwitcher activePanel={activePanel} closePanel={closePanel} setActivePanel={setActivePanel} />
+
     </header>
   );
 }

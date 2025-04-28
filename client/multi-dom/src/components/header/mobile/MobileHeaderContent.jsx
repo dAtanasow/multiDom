@@ -1,4 +1,5 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../../context/AuthContext";
 import MobileNav from "../../navigation/mobile/MobileNav";
 
 export default function MobileHeaderContent({
@@ -8,14 +9,26 @@ export default function MobileHeaderContent({
   showSearch,
   mobileMenuOpen,
 }) {
+  const { accessToken } = useAuthContext();
+  const navigate = useNavigate();
+
+  const handleLoginButtonClick = () => {
+    if (accessToken) {
+      navigate("/profile");
+    } else {
+      setActivePanel((prev) => (prev === "login" ? null : "login"));
+    }
+  };
+
   const onClose = () => {
     setMobileMenuOpen(false);
   };
+
   return (
     <div className="md:hidden flex items-center justify-between p-4 relative">
       {/* Left Side: Menu & Search icons */}
       <div className="flex items-center gap-3">
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <button onClick={() => setShowSearch((prev) => !prev)}>
           <svg
             className="w-6 h-6 text-blue-600"
             fill="none"
@@ -55,16 +68,14 @@ export default function MobileHeaderContent({
         </Link>
       </div>
 
-      {/* Right Side: Login & Cart */}
+      {/* Right Side: Login/Profile & Cart */}
       <div className="flex items-center gap-3">
         <button
-          onClick={() =>
-            setActivePanel((prev) => (prev === "login" ? null : "login"))
-          }
+          onClick={handleLoginButtonClick}
           className="cursor-pointer px-3 py-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
         >
           <svg
-            className="w-6 h-6 text-blue-600 group-hover:text-white"
+            className="w-6 h-6 text-blue-600"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
@@ -77,6 +88,8 @@ export default function MobileHeaderContent({
             />
           </svg>
         </button>
+
+        {/* Cart button */}
         <button>
           <svg
             className="w-6 h-6 text-blue-600"

@@ -1,7 +1,9 @@
 import { Link } from "react-router";
 import DesktopNav from "../../navigation/desktop/Navigation";
+import { useAuthContext } from "../../../context/AuthContext";
 
 export default function DesktopHeaderContent({ setActivePanel }) {
+  const { isAuthenticate } = useAuthContext();
   return (
     <div className="hidden md:block bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -32,26 +34,44 @@ export default function DesktopHeaderContent({ setActivePanel }) {
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            onClick={() =>
-              setActivePanel((prev) => (prev === "login" ? null : "login"))
-            }
-            className="cursor-pointer px-3 py-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
-          >
-            <svg
-              className="w-6 h-6 text-blue-600 group-hover:text-white"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
+          {isAuthenticate ? (
+            <Link to="/profile" className="cursor-pointer px-3 py-2 rounded-xl hover:bg-blue-700 hover:text-white transition">
+              <svg
+                className="w-6 h-6 text-blue-600 group-hover:text-white"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-3A2.25 2.25 0 008.25 5.25V9m11.25 11.25v-1.5a2.25 2.25 0 00-2.25-2.25h-12a2.25 2.25 0 00-2.25 2.25v1.5M12 12a3 3 0 100-6 3 3 0 000 6z"
+                />
+              </svg>
+            </Link>
+          ) : (
+            <button
+              onClick={() =>
+                setActivePanel((prev) => (prev === "login" ? null : "login"))
+              }
+              className="cursor-pointer px-3 py-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-3A2.25 2.25 0 008.25 5.25V9m11.25 11.25v-1.5a2.25 2.25 0 00-2.25-2.25h-12a2.25 2.25 0 00-2.25 2.25v1.5M12 12a3 3 0 100-6 3 3 0 000 6z"
-              />
-            </svg>
-          </button>
+              <svg
+                className="w-6 h-6 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-3A2.25 2.25 0 008.25 5.25V9m11.25 11.25v-1.5a2.25 2.25 0 00-2.25-2.25h-12a2.25 2.25 0 00-2.25 2.25v1.5M12 12a3 3 0 100-6 3 3 0 000 6z"
+                />
+              </svg>
+            </button>
+          )}
 
           <button className="cursor-pointer px-3 py-2 rounded-xl hover:bg-blue-700 hover:text-white transition">
             <svg

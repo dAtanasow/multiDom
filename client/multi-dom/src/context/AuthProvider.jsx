@@ -1,4 +1,3 @@
-// client/src/context/AuthProvider.jsx
 import { AuthContext } from "./AuthContext";
 import usePersistedState from "../hooks/usePersistedState";
 import { toast } from 'react-toastify';
@@ -45,7 +44,8 @@ export default function AuthProvider({ children }) {
     const contextData = {
         userId: authState?.user?._id || null,
         email: authState?.user?.email || null,
-        username: authState?.user?.username || null,
+        firstName: authState?.user?.firstName || null,
+        lastName: authState?.user?.lastName || null,
         phone: authState?.user?.phone || null,
         accessToken: authState ? authState.accessToken : null,
         isAuthenticate: !!authState?.user,
