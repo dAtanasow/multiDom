@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-import AuthProvider from "./context/AuthProvider";
+import AuthProvider from "./context/AuthContext";
 
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
