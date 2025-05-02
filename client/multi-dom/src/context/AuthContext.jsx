@@ -1,5 +1,5 @@
 import usePersistedState from "../hooks/usePersistedState";
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext } from "react";
 
 const AuthContext = createContext();
 
@@ -23,15 +23,18 @@ function AuthProvider({ children }) {
     };
 
     const logout = () => {
+        const token = authState?.accessToken;
+
         setAuthState({ user: null, accessToken: null });
-    
-        fetch("/api/auth/logout", {
-          method: "POST",
-          credentials: "include",
+
+        fetch("http://localhost:3000/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Authorization": token ? `Bearer ${token}` : ""
+            }
         }).catch((err) => console.error("Logout API error:", err));
-    
-        window.location.href = "/";
-      };
+    };
 
     const contextData = {
         userId: authState?.user?._id || null,

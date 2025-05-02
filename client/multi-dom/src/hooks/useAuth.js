@@ -80,7 +80,7 @@ export function useLogout() {
             console.error("Logout API error:", err);
             toast.error("Проблем при излизане.");
         } finally {
-            clearAuth();
+            localLogout();
             navigate("/");
         }
     };
