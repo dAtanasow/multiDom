@@ -1,76 +1,60 @@
-import { toast } from 'react-toastify';
-import { clearAuth, getAccessToken, setAccessToken } from "../utils/authUtil";
+import { getAccessToken, setAccessToken, clearAuth } from "../utils/authUtil";
+import { toast } from "react-toastify";
+
 const baseUrl = import.meta.env.VITE_API_URL;
 
 export async function requester(method, url, data) {
     const options = {
         method,
         headers: {},
+        credentials: "include",
     };
-
-    const isAuthRequired = !url.includes("/auth/login") && !url.includes("/auth/register") && !url.includes("/check-availability");
 
     const accessToken = getAccessToken();
 
+    const isAuthRequired =
+        !url.includes("/auth/login") &&
+        !url.includes("/auth/register")
+
     if (accessToken && isAuthRequired) {
-        options.headers['Authorization'] = `Bearer ${accessToken}`;
+        options.headers["Authorization"] = `Bearer ${accessToken}`;
     } else if (!accessToken && isAuthRequired) {
-        throw new Error("No access token found. Please log in.");
+        return handleUnauthorized();
     }
 
     if (method !== "GET" && data) {
-        options.headers['Content-Type'] = 'application/json';
+        options.headers["Content-Type"] = "application/json";
         options.body = JSON.stringify(data);
     }
 
     let response = await fetch(url, options);
-
-    if (response.status === 401 || response.status === 403) {
-        try {
-            const refreshResponse = await fetch(`${baseUrl}/auth/refresh-token`, {
-                method: 'POST',
-                credentials: 'include',
-            });
-
-            if (refreshResponse.ok) {
-                const refreshData = await refreshResponse.json();
-                const newAccessToken = refreshData.accessToken;
-
-                if (newAccessToken) {
-                    setAccessToken(newAccessToken);
-
-                    options.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                    response = await fetch(url, options);
-                }
-            } else {
-                toast.error('Сесията ви е изтекла. Моля, влезте отново.');
-                clearAuth();
-                window.location.href = '/login';
-                return;
+    if ((response.status === 401 || response.status === 403)) {
+        const refreshSuccess = await tryRefreshToken();
+        if (refreshSuccess) {
+            const newToken = getAccessToken();
+            if (newToken) {
+                options.headers["Authorization"] = `Bearer ${newToken}`;
+                response = await fetch(url, options);
             }
-        } catch (refreshError) {
-            console.error('Грешка при refresh:', refreshError);
-            toast.error('Неуспешен опит за удължаване на сесията.');
-            clearAuth();
-            window.location.href = '/login';
-            return;
+        } else {
+            return handleUnauthorized();
         }
     }
+
     const contentType = response.headers.get("Content-Type");
     const responseText = await response.text();
 
     let result = {};
-    if (contentType && contentType.includes("application/json")) {
+    if (contentType?.includes("application/json")) {
         try {
             result = JSON.parse(responseText);
         } catch (e) {
-            console.error("Error parsing JSON:", e);
-            toast.error('Грешка при зареждане на данни.');
+            console.error("Грешка при парсване на JSON:", e);
         }
     }
 
     if (!response.ok) {
-        throw new Error(result.message || 'An error occurred');
+        throw new Error(result.message || "Възникна грешка");
     }
 
     if (response.status === 204) return {};
@@ -82,9 +66,37 @@ export async function requester(method, url, data) {
     return result;
 }
 
-export const get = requester.bind(null, 'GET');
-export const post = requester.bind(null, 'POST');
-export const put = requester.bind(null, 'PUT');
-export const del = requester.bind(null, 'DELETE');
+async function tryRefreshToken() {
+    try {
+        const response = await fetch(`${baseUrl}/auth/refresh-token`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) return false;
+
+        const data = await response.json();
+        if (data.accessToken) {
+            setAccessToken(data.accessToken);
+            return true;
+        }
+
+        return false;
+    } catch (err) {
+        console.error("Грешка при опит за refresh:", err);
+        return false;
+    }
+}
+
+function handleUnauthorized() {
+    clearAuth();
+    toast.error("Сесията ви е изтекла. Моля, влезте отново.");
+    window.location.href = "/";
+}
+
+export const get = requester.bind(null, "GET");
+export const post = requester.bind(null, "POST");
+export const put = requester.bind(null, "PUT");
+export const del = requester.bind(null, "DELETE");
 
 export default { get, post, put, del };
