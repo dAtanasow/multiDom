@@ -1,12 +1,54 @@
+import { useEffect, useState } from "react";
 import Login from "../login/Login";
 import Register from "../register/Register";
 
 export default function PanelSwitcher({ activePanel, closePanel, setActivePanel }) {
-    if (activePanel === "login") {
-        return <Login onClose={closePanel} onRegisterClick={() => setActivePanel("register")} />;
+    const [visible, setVisible] = useState(false);
+    const [currentPanel, setCurrentPanel] = useState(null);
+
+    useEffect(() => {
+        if (!activePanel) {
+            setVisible(false);
+            setTimeout(() => setCurrentPanel(null), 300);
+            return;
+        }
+
+        if (currentPanel === null) {
+            setCurrentPanel(activePanel);
+            setTimeout(() => setVisible(true), 10);
+            return;
+        }
+
+        if (currentPanel !== activePanel) {
+            setVisible(false);
+            setTimeout(() => {
+                setCurrentPanel(activePanel);
+                setTimeout(() => setVisible(true), 10);
+            }, 300);
+        }
+    }, [activePanel]);
+
+
+    if (!currentPanel) return null;
+
+    if (currentPanel === "login") {
+        return (
+            <Login
+                visible={visible}
+                onRegisterClick={() => setActivePanel("register")}
+            />
+        );
     }
-    if (activePanel === "register") {
-        return <Register onClose={closePanel} onLoginClick={() => setActivePanel("login")} />;
+
+    if (currentPanel === "register") {
+        return (
+            <Register
+                visible={visible}
+                onClose={closePanel}
+                onLoginClick={() => setActivePanel("login")}
+            />
+        );
     }
+
     return null;
 }
