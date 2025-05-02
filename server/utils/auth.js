@@ -1,64 +1,69 @@
-const tokenBlacklistModel = require("../models/tokenBlacklist");
-const userModel = require("../models/User");
-const { verifyToken } = require('../utils/jwt');
+const TokenBlacklist = require("../models/tokenBlacklist");
+const User = require("../models/User");
+const { verifyAccessToken } = require("../utils/jwt");
 
 function auth(redirectUnauthenticated = true) {
     return async function (req, res, next) {
+        try {
 
-        if (req.headers.upgrade === 'websocket') {
+            if (req.headers.upgrade === 'websocket') {
+                return next();
+            }
+            const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
+
+            if (!token) {
+                if (redirectUnauthenticated) {
+                    return res.status(401).send({ message: 'JWT token must be provided' });
+                } else {
+                    req.user = null;
+                    req.isLogged = false;
+                    return next();
+                }
+            }
+
+            const blacklisted = await TokenBlacklist.findOne({ token });
+            if (blacklisted) {
+                if (redirectUnauthenticated) {
+                    return res.status(401).json({ message: "This token has been blacklisted." });
+                } else {
+                    req.user = null;
+                    req.isLogged = false;
+                    return next();
+                }
+            }
+
+            const payload = await verifyAccessToken(token);
+
+            const user = await User.findById(payload._id);
+            if (!user) {
+                return res.status(401).json({ message: "User not found." });
+            }
+
+            req.user = user;
+            req.isLogged = true;
             return next();
-        }
-        const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
 
-        if (!token) {
+
+        } catch (err) {
+            console.error("AUTH ERROR:", err);
+
+            const tokenErrorMessages = {
+                TokenExpiredError: "Сесията е изтекла. Моля, влезте отново.",
+                JsonWebTokenError: "Невалиден токен. Моля, влезте отново.",
+            };
+
+            const message =
+                tokenErrorMessages[err.name] ||
+                err.message ||
+                "Проблем с удостоверяването.";
+
             if (redirectUnauthenticated) {
-                return res.status(401).send({ message: 'JWT token must be provided' });
+                return res.status(401).json({ message });
             } else {
                 req.user = null;
                 req.isLogged = false;
                 return next();
             }
-        }
-
-        try {
-            const data = await verifyToken(token);
-
-            const blacklistedToken = await tokenBlacklistModel.findOne({ token })
-
-            if (blacklistedToken) {
-                throw new Error('blacklisted token');
-            }
-            const user = await userModel.findById(data._id);;
-            if (!user) {
-                throw new Error('User not found');
-            }
-
-            req.user = user;
-            req.isLogged = true;
-            next();
-
-        } catch (err) {
-            if (!redirectUnauthenticated) {
-                return next();
-            }
-
-            let message = 'Invalid token!';
-
-            if (err.name === 'TokenExpiredError') {
-                message = 'Your session has expired. Please log in again.';
-            } else if (err.name === 'JsonWebTokenError') {
-                message = 'Invalid token. Please log in again.';
-            } else {
-                const errorMessages = {
-                    'blacklisted token': 'This token has been blacklisted.',
-                    'User not found': 'User does not exist.',
-                    'jwt must be provided': 'Authentication token is required.',
-                };
-                message = errorMessages[err.message] || message;
-            }
-
-            console.error(err);
-            return res.status(401).send({ message });
         }
     };
 }

@@ -33,7 +33,10 @@ export async function requester(method, url, data) {
         if (refreshSuccess) {
             const newToken = getAccessToken();
             if (newToken) {
-                options.headers["Authorization"] = `Bearer ${newToken}`;
+                options.headers = {
+                    ...options.headers,
+                    "Authorization": `Bearer ${newToken}`,
+                };
                 response = await fetch(url, options);
             }
         } else {

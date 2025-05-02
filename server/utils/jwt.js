@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 
 function createAccessToken(data) {
-    return jwt.sign({ id: data.id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
+    return jwt.sign({ _id: data._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
 }
 
 function createRefreshToken(data) {
-    return jwt.sign({ id: data.id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+    return jwt.sign({ _id: data._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 }
 
 function verifyAccessToken(token) {

@@ -9,11 +9,14 @@ const logout = async (req, res, next) => {
     const token = req.cookies.token || (authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null);
 
     if (!token) {
-        return next(new CustomError('Няма предоставен токен за излизане.', 400));
+        if (!token) return res.status(200).json({ message: "Вече сте излезли." });
     }
     try {
+        const exists = await TokenBlacklist.findOne({ token });
+        if (exists) {
+            return res.status(200).json({ message: "Вече сте излезли." });
+        }
         await TokenBlacklist.create({ token });
-
         if (req.cookies.token) {
             res.clearCookie('token', {
                 httpOnly: true,

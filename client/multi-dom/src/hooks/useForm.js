@@ -8,18 +8,16 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
     const [valuesState, setValuesState] = useState(initialValues);
 
     const setValues = (newValues) => {
-        valuesRef.current = newValues;
-        setValuesState((prev) => {
-            const changed = Object.keys(newValues).some(key => newValues[key] !== prev[key]);
-            return changed ? newValues : prev;
-        });
+        const cloned = { ...newValues };
+        valuesRef.current = cloned;
+        setValuesState(cloned);
     };
 
     useEffect(() => {
         if (options.reinitializeForm) {
             setValues(initialValues);
         }
-    }, [options.reinitializeForm]);
+    }, [options.reinitializeForm, initialValues]);
 
     const changeHandler = (e) => {
         const { name, value } = e.target;
