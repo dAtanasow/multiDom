@@ -1,5 +1,5 @@
-const tokenBlacklistModel = require("../models/tokenBlacklistModel");
-const userModel = require("../models/userModel");
+const tokenBlacklistModel = require("../models/tokenBlacklist");
+const userModel = require("../models/User");
 const { verifyToken } = require('../utils/jwt');
 
 function auth(redirectUnauthenticated = true) {
@@ -8,13 +8,14 @@ function auth(redirectUnauthenticated = true) {
         if (req.headers.upgrade === 'websocket') {
             return next();
         }
-
-        const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+        const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
 
         if (!token) {
             if (redirectUnauthenticated) {
                 return res.status(401).send({ message: 'JWT token must be provided' });
             } else {
+                req.user = null;
+                req.isLogged = false;
                 return next();
             }
         }
