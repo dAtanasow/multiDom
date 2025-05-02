@@ -1,41 +1,35 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
-import { useAuthContext } from "../../context/AuthContext";
+import { useState } from "react";
+import { useProfile } from "../../hooks/useProfile";
+import { ProfileFields } from "./ProfileFields";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import { useLogout } from "../../hooks/useAuth";
+
+const sections = [
+    { key: "details", label: "Детайли" },
+    { key: "shipping", label: "Адреси за доставка" },
+    { key: "billing", label: "Адреси за фактура" },
+    { key: "orders", label: "Поръчки" },
+    { key: "payments", label: "Плащания" },
+    { key: "files", label: "Файлове" },
+    { key: "favorites", label: "Любими стоки" },
+];
 
 export default function Profile() {
-    const { firstName, lastName, phone, email, logout } = useAuthContext();
-    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("details");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const isMobile = useIsMobile();
+    const logout = useLogout();
 
-    const sections = [
-        { key: "details", label: "Детайли" },
-        { key: "shipping", label: "Адреси за доставка" },
-        { key: "billing", label: "Адреси за фактура" },
-        { key: "orders", label: "Поръчки" },
-        { key: "payments", label: "Плащания" },
-        { key: "files", label: "Файлове" },
-        { key: "favorites", label: "Любими стоки" },
-    ];
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
-
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
-    };
-
-    const handleEditProfile = () => {
-        navigate("/profile/edit");
-    };
+    const {
+        editMode,
+        pending,
+        errors,
+        values,
+        changeHandler,
+        submitHandler,
+        handleEdit,
+        handleCancel,
+    } = useProfile();
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -47,7 +41,9 @@ export default function Profile() {
                             onClick={() => setIsSidebarOpen(true)}
                             className="text-2xl"
                         >
-                            ☰
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            </svg>
                         </button>
                     )}
                 </header>
@@ -60,129 +56,131 @@ export default function Profile() {
                             className="absolute top-0 left-0 right-0 bottom-0 bg-black/30 z-10"
                             onClick={() => setIsSidebarOpen(false)}
                         ></div>
-
-                        <aside
-                            className="absolute top-0 left-0 w-70 h-[100%] bg-white shadow-lg p-6 z-20 transition-transform duration-300"
-                        >
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-2xl font-bold">Навигация</h2>
-                                <button
-                                    onClick={() => setIsSidebarOpen(false)}
-                                    className="text-gray-500 text-2xl"
-                                >
-                                    ×
-                                </button>
-                            </div>
-
-                            <nav className="flex flex-col space-y-4">
-                                {sections.map((section) => (
-                                    <button
-                                        key={section.key}
-                                        onClick={() => {
-                                            setActiveTab(section.key);
-                                            setIsSidebarOpen(false);
-                                        }}
-                                        className={`text-left px-4 py-2 rounded-lg transition ${activeTab === section.key
-                                            ? "bg-blue-600 text-white"
-                                            : "hover:bg-blue-100"
-                                            }`}
-                                    >
-                                        {section.label}
-                                    </button>
-                                ))}
-                                <button
-                                    onClick={handleLogout}
-                                    className="text-left px-4 py-2 rounded-lg text-red-600 hover:bg-red-100 transition mt-4"
-                                >
-                                    Изход
-                                </button>
-                            </nav>
+                        <aside className="absolute top-0 left-0 w-64 h-full bg-white shadow-lg p-6 z-20 transition-transform duration-300">
+                            <SidebarContent />
                         </aside>
                     </>
                 )}
 
-                {/* Десктоп Сайдбар */}
                 {!isMobile && (
                     <aside className="w-64 bg-white border-r p-6">
-                        <h2 className="text-2xl font-bold mb-8">Навигация</h2>
-                        <nav className="flex flex-col space-y-4">
-                            {sections.map((section) => (
-                                <button
-                                    key={section.key}
-                                    onClick={() => setActiveTab(section.key)}
-                                    className={`text-left px-4 py-2 rounded-lg transition ${activeTab === section.key
-                                        ? "bg-blue-600 text-white"
-                                        : "hover:bg-blue-100"
-                                        }`}
-                                >
-                                    {section.label}
-                                </button>
-                            ))}
-                            <button
-                                onClick={handleLogout}
-                                className="text-left px-4 py-2 rounded-lg text-red-600 hover:bg-red-100 transition mt-4"
-                            >
-                                Изход
-                            </button>
-                        </nav>
+                        <SidebarContent />
                     </aside>
                 )}
 
                 <main className="flex-1 p-6 relative z-0">
                     <div className="p-6 relative">
-                        {activeTab === "details" && (
-                            <div>
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-semibold text-center w-full">
-                                        Детайли на профила
-                                    </h3>
-
-                                </div>
-
-                                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                                    <div className="bg-gray-100 rounded-xl p-4 shadow-sm flex flex-col items-start">
-                                        <span className="text-sm text-gray-500">Име</span>
-                                        <span className="text-lg font-semibold text-gray-800">
-                                            {firstName} {lastName}
-                                        </span>
-                                    </div>
-
-                                    <div className="bg-gray-100 rounded-xl p-4 shadow-sm flex flex-col items-start">
-                                        <span className="text-sm text-gray-500">Имейл</span>
-                                        <span className="text-lg font-semibold text-gray-800">
-                                            {email}
-                                        </span>
-                                    </div>
-
-                                    <div className="bg-gray-100 rounded-xl p-4 shadow-sm flex flex-col items-start">
-                                        <span className="text-sm text-gray-500">Телефон</span>
-                                        <span className="text-lg font-semibold text-gray-800">
-                                            +{phone}
-                                        </span>
-                                    </div>
-
-                                </div>
-                                <button
-                                    onClick={handleEditProfile}
-                                    className="absolute flex top-100 lg:top-70 xl:top-50 left-0 w-[40%] md:w-30
-                                    bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 left-3/10 md:left-7 justify-center">
-                                    Редактирай
-                                </button>
-                            </div>
+                        {activeTab === "details" ? (
+                            <>
+                                <h3 className="text-xl font-semibold text-center mb-6">Детайли на профила</h3>
+                                <form onSubmit={editMode ? submitHandler : undefined}>
+                                    <ProfileFields
+                                        values={values}
+                                        changeHandler={changeHandler}
+                                        editMode={editMode}
+                                    />
+                                    {editMode ? (
+                                        <EditButtons pending={pending} onCancel={handleCancel} />
+                                    ) : (
+                                        <ViewButton onEdit={handleEdit} />
+                                    )}
+                                </form>
+                            </>
+                        ) : (
+                            <OtherTabContent sections={sections} activeTab={activeTab} />
                         )}
-
-                        {/* Другите табове */}
-                        {activeTab !== "details" && (
-                            <div>
-                                <h3 className="text-xl font-semibold mb-4">
-                                    {sections.find((s) => s.key === activeTab)?.label}
-                                </h3>
-                                <p>Съдържание за {sections.find((s) => s.key === activeTab)?.label}.</p>
-                            </div>
-                        )}
-                    </div >
+                    </div>
                 </main>
-            </div >
-        </div >
+            </div>
+        </div>
+    );
+    function SidebarContent() {
+        return (
+            <>
+                <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-2xl font-bold">Категории</h2>
+                    {isMobile && (
+                        <button
+                            onClick={() => setIsSidebarOpen(false)}
+                            className="text-gray-500 text-2xl"
+                            aria-label="Затвори меню"
+                        >
+                            ×
+                        </button>
+                    )}
+                </div>
+
+                <nav className="flex flex-col space-y-4">
+                    {sections.map((section) => (
+                        <button
+                            key={section.key}
+                            onClick={() => {
+                                setActiveTab(section.key);
+                                setIsSidebarOpen(false);
+                            }}
+                            className={`text-left px-4 py-2 rounded-lg transition ${activeTab === section.key
+                                ? "bg-blue-600 text-white"
+                                : "hover:bg-blue-100"
+                                }`}
+                        >
+                            {section.label}
+                        </button>
+                    ))}
+
+                    <button
+                        onClick={logout}
+                        className="text-left px-4 py-2 rounded-lg text-red-600 hover:bg-red-100 transition mt-4"
+                    >
+                        Изход
+                    </button>
+                </nav>
+            </>
+        );
+    }
+}
+
+function EditButtons({ pending, onCancel }) {
+    return (
+        <div className="flex justify-center gap-4 mt-6">
+            <button
+                type="submit"
+                disabled={pending}
+                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+            >
+                {pending ? "Запазване..." : "Запази"}
+            </button>
+            <button
+                type="button"
+                onClick={onCancel}
+                className="bg-gray-400 text-white px-6 py-3 rounded-lg hover:bg-gray-500 transition"
+            >
+                Отказ
+            </button>
+        </div>
+    );
+}
+
+function ViewButton({ onEdit }) {
+    return (
+        <div className="flex justify-center mt-6">
+            <button
+                type="button"
+                onClick={onEdit}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+            >
+                Редактирай
+            </button>
+        </div>
+    );
+}
+
+function OtherTabContent({ sections, activeTab }) {
+    return (
+        <div>
+            <h3 className="text-xl font-semibold mb-4">
+                {sections.find((s) => s.key === activeTab)?.label}
+            </h3>
+            <p>Съдържание за {sections.find((s) => s.key === activeTab)?.label}.</p>
+        </div>
     );
 }
