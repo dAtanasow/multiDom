@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useAuthContext } from "../context/AuthContext";
 import userApi from "../api/auth";
+import { useAuthContext } from "../context/AuthContext";
+import { clearAuth } from "../utils/authUtil";
 import { useNavigate } from "react-router";
 
 export function useRegister() {
@@ -59,4 +60,30 @@ export function useLogin() {
     };
 
     return { login, loading };
+}
+
+export function useLogout() {
+    const navigate = useNavigate();
+
+    const { logout: localLogout, accessToken } = useAuthContext()
+    const logoutHandler = async () => {
+        if (!accessToken) {
+            console.log("No active session detected.");
+            localLogout();
+            navigate("/");
+            return;
+        }
+        try {
+            await userApi.logout();
+            toast.success("Успешно излязохте.");
+        } catch (err) {
+            console.error("Logout API error:", err);
+            toast.error("Проблем при излизане.");
+        } finally {
+            clearAuth();
+            navigate("/");
+        }
+    };
+
+    return logoutHandler;
 }
