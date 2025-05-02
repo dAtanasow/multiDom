@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
 import { useForm } from "../../hooks/useForm";
 import { useLogin } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { closePanelParam } from "../../utils/panel";
 
-export default function Login({ onClose, onRegisterClick }) {
-  const [visible, setVisible] = useState(false);
+export default function Login({ onRegisterClick, visible }) {
   const { login, loading } = useLogin();
   const navigate = useNavigate();
 
@@ -15,29 +14,21 @@ export default function Login({ onClose, onRegisterClick }) {
     },
     async (formData) => {
       await login(formData);
-      setVisible(false);
-      setTimeout(onClose, 300);
+      closePanelParam();
       navigate('/')
     }
   );
 
-  useEffect(() => {
-    setTimeout(() => setVisible(true), 10);
-  }, []);
-
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div
-        className={`bg-white w-full md:w-1/2 h-screen p-8 shadow-lg transform transition-transform duration-300 ${visible ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`bg-white w-full md:w-1/2 h-screen p-8 shadow-lg transform transition-all duration-300 
+          ${visible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}`}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-700">Вход</h2>
           <button
-            onClick={() => {
-              setVisible(false);
-              setTimeout(onClose, 300);
-            }}
+            onClick={() => closePanelParam()}
             className="text-gray-500 hover:text-red-500 text-2xl"
           >
             &times;
@@ -75,16 +66,13 @@ export default function Login({ onClose, onRegisterClick }) {
         <p className="mt-6 text-sm text-gray-600">
           Нямаш акаунт?{" "}
           <button
-            onClick={() => {
-              setVisible(false);
-              setTimeout(onRegisterClick, 300);
-            }}
+            onClick={onRegisterClick}
             className="text-blue-600 hover:underline"
           >
             Регистрация
           </button>
         </p>
       </div>
-    </div>
+    </div >
   );
 }
