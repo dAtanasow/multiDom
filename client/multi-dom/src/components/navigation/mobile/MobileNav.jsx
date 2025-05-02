@@ -15,8 +15,11 @@ export default function MobileNav({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      <div className="w-3/4 bg-white p-6 shadow-md h-full animate-slide-in-right overflow-y-auto">
-        <div className="flex justify-end">
+      <div className="w-[70%] bg-white p-6 shadow-md h-full animate-slide-in-right overflow-y-auto">
+        <div className="flex justify-between">
+          <div>
+            <p className="text-2xl font-bold">Категории</p>
+          </div>
           <button
             onClick={onClose}
             className="text-gray-700 hover:text-red-500"
@@ -37,7 +40,7 @@ export default function MobileNav({ onClose }) {
             </svg>
           </button>
         </div>
-        <nav className="flex flex-col space-y-4 mt-6 text-gray-800 font-medium">
+        <nav className="flex flex-col space-y-4 mt-6 leading-10 text-gray-800 font-medium text-xl">
           {navLinks.map((link) => (
             <div key={link.label} className="flex flex-col">
               <div className="flex items-center justify-between">
@@ -67,7 +70,7 @@ export default function MobileNav({ onClose }) {
                     <button
                       key={subLink.label}
                       onClick={() => navigationHandler(subLink.href)}
-                      className="text-sm hover:text-blue-500 transition text-left"
+                      className="text-lg leading-8 hover:text-blue-500 transition text-left"
                     >
                       {subLink.label}
                     </button>
@@ -81,7 +84,7 @@ export default function MobileNav({ onClose }) {
 
       <div
         onClick={onClose}
-        className="w-1/4 h-full"
+        className="w-[30%] h-full"
         style={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}
       ></div>
     </div>

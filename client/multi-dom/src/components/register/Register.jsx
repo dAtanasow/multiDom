@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "../../hooks/useForm";
 import { useRegister } from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthContext";
 
 const countries = [
   { name: "България", code: "+359" },
@@ -10,11 +11,11 @@ const countries = [
   { name: "Великобритания", code: "+44" },
 ];
 
-export default function Register({ onClose, onLoginClick }) {
-  const [visible, setVisible] = useState(false);
+export default function Register({ onClose, onLoginClick, visible }) {
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  const { changeAuthState } = useAuthContext();
   const { register, loading: registerLoading } = useRegister();
 
   const { values, changeHandler, submitHandler, pending } = useForm(
@@ -39,28 +40,20 @@ export default function Register({ onClose, onLoginClick }) {
         accessToken: result.accessToken,
       });
 
-      setVisible(false);
-      setTimeout(onClose, 300);
+      onClose();
     }
   );
-
-  useEffect(() => {
-    setTimeout(() => setVisible(true), 10);
-  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div
-        className={`bg-white w-full md:w-1/2 h-screen p-8 shadow-lg transform transition-transform duration-300 ${visible ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`bg-white w-full md:w-1/2 h-screen p-8 shadow-lg transform transition-all duration-300 
+          ${visible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}`}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-700">Регистрация</h2>
           <button
-            onClick={() => {
-              setVisible(false);
-              setTimeout(onClose, 300);
-            }}
+            onClick={onClose}
             className="text-gray-500 hover:text-red-500 text-2xl"
           >
             &times;
@@ -152,10 +145,7 @@ export default function Register({ onClose, onLoginClick }) {
         <p className="mt-6 text-sm text-gray-600">
           Вече имаш акаунт?{" "}
           <button
-            onClick={() => {
-              setVisible(false);
-              setTimeout(onLoginClick, 300);
-            }}
+            onClick={onLoginClick}
             className="text-blue-600 hover:underline"
           >
             Вход
