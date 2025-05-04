@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import DesktopNav from "../../navigation/desktop/Navigation";
 import CartButton from "../../buttons/CartButton";
 import ProfileButton from "../../buttons/ProfileButton";
+import AdminButton from "../../buttons/AdminButton";
 
 export default function DesktopHeaderContent() {
   return (
@@ -34,6 +35,7 @@ export default function DesktopHeaderContent() {
         </div>
 
         <div className="flex items-center gap-4">
+          <AdminButton />
           <ProfileButton />
           <CartButton />
         </div>

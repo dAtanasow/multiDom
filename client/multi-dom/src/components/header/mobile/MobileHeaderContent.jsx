@@ -4,6 +4,7 @@ import CartButton from "../../buttons/CartButton";
 import ProfileButton from "../../buttons/ProfileButton";
 import MenuButton from "../../buttons/MenuButton";
 import SearchButton from "../../buttons/SearchButton";
+import AdminButton from "../../buttons/AdminButton";
 
 export default function MobileHeaderContent({
   setMobileMenuOpen,
@@ -31,6 +32,8 @@ export default function MobileHeaderContent({
       </div>
 
       <div className="flex items-center gap-3">
+        <AdminButton />
+
         <ProfileButton />
 
         <CartButton />
