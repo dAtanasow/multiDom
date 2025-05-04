@@ -14,6 +14,9 @@ import Login from "./components/login/Login";
 import Register from "./components/register/Register";
 import Profile from "./components/profile/Profile";
 import PrivateRoute from "./components/private-router/PrivateRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
+import AdminRoute from "./components/private-router/AdminRoute";
+import AdminPanel from "./components/admin/AdminPanel";
 
 function App() {
   return (
@@ -24,7 +27,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/catalog" element={<Catalog />} />
+          <Route
+            path="/catalog"
+            element={
+              <ErrorBoundary>
+                <Catalog />
+              </ErrorBoundary>
+            }
+          />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
@@ -35,6 +45,14 @@ function App() {
               <PrivateRoute>
                 <Profile />
               </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminPanel />
+              </AdminRoute>
             }
           />
         </Routes>
