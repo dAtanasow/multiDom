@@ -1,36 +1,22 @@
-import { useState } from "react";
-import categories from "../../utils/categories";
-import products from "../../utils/catalogItems";
+import {
+  useCatalog,
+  useCatalogFilters,
+} from "../../hooks/useCatalog";
+import navLinks from "../../utils/navLinks";
 
 export default function Catalog() {
-  const [sortOption, setSortOption] = useState("newest");
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const { products, loading, category, subCategory } = useCatalog();
 
-  const toggleCategory = (category) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
-    );
-  };
-
-  const clearFilters = () => {
-    setSelectedCategories([]);
-  };
-
-  const filteredProducts = products.filter((product) => {
-    if (selectedCategories.length === 0) return true;
-    return selectedCategories.some(
-      (category) => category.toLowerCase() === product.category.toLowerCase()
-    );
-  });
-
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortOption === "price-low") return a.price - b.price;
-    if (sortOption === "price-high") return b.price - a.price;
-    return b.id - a.id;
-  });
+  const {
+    sortOption,
+    setSortOption,
+    selectedCategories,
+    toggleCategory,
+    clearFilters,
+    mobileFiltersOpen,
+    setMobileFiltersOpen,
+    sortedProducts,
+  } = useCatalogFilters(products);
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8">
@@ -48,26 +34,7 @@ export default function Catalog() {
       <aside className="hidden md:block w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Филтри</h2>
         <div className="space-y-4">
-          {categories.map((category) => (
-            <div key={category.label}>
-              <h3 className="font-semibold text-gray-700 mb-2">
-                {category.label}
-              </h3>
-              <div className="space-y-2 ml-2">
-                {category.subLinks.map((sub) => (
-                  <label key={sub} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="mr-2"
-                      checked={selectedCategories.includes(sub)}
-                      onChange={() => toggleCategory(sub)}
-                    />
-                    {sub}
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+
         </div>
         <button
           onClick={clearFilters}
@@ -102,7 +69,7 @@ export default function Catalog() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {sortedProducts.map((product) => (
             <div
-              key={product.id}
+              key={product._id}
               className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition flex flex-col"
             >
               <img
@@ -131,9 +98,8 @@ export default function Catalog() {
 
       {/* Mobile Filters SlideOver */}
       <div
-        className={`fixed inset-0 z-50 flex justify-end transition-transform duration-300 ${
-          mobileFiltersOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed inset-0 z-50 flex justify-end transition-transform duration-300 ${mobileFiltersOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="bg-white w-3/4 h-full p-6 overflow-y-auto shadow-lg">
           <div className="flex justify-between items-center mb-6">
@@ -146,23 +112,22 @@ export default function Catalog() {
             </button>
           </div>
           <div className="space-y-4">
-            {categories.map((category) => (
-              <div key={category.label}>
-                <h3 className="font-semibold text-gray-700 mb-2">
-                  {category.label}
-                </h3>
+            {navLinks.map((cat) => (
+              <div key={cat.label}>
+                <h3 className="font-semibold text-gray-700 mb-2">{cat.label}</h3>
                 <div className="space-y-2 ml-2">
-                  {category.subLinks.map((sub) => (
-                    <label key={sub} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="mr-2"
-                        checked={selectedCategories.includes(sub)}
-                        onChange={() => toggleCategory(sub)}
-                      />
-                      {sub}
-                    </label>
-                  ))}
+                  {Array.isArray(cat.subLinks) &&
+                    cat.subLinks.map((sub) => (
+                      <label key={sub.label} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="mr-2"
+                          checked={selectedCategories.includes(sub.label)}
+                          onChange={() => toggleCategory(sub.label)}
+                        />
+                        {sub.label}
+                      </label>
+                    ))}
                 </div>
               </div>
             ))}

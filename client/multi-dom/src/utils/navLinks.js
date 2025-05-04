@@ -1,86 +1,109 @@
+const encode = (str) => encodeURIComponent(str);
+
 const navLinks = [
     {
         label: "ПЕРИЛНИ ПРЕПАРАТИ",
-        href: "#",
+        href: `/catalog?category=${encode("ПЕРИЛНИ ПРЕПАРАТИ")}`,
         subLinks: [
-            { label: "ПРАХ ЗА ПРАНЕ", href: "#" },
-            { label: "ПРАХОВЕ ЗА БЕБЕТА", href: "#" },
-            { label: "КАПСУЛИ ЗА ПРАНЕ", href: "#" },
-            { label: "ОМЕКОТИТЕЛИ", href: "#" },
-            { label: "ЗА ПЕТНА", href: "#" },
-            { label: "ТЕЧНИ ПЕРИЛНИ ПРЕПАРАТИ", href: "#" },
-        ]
+            "ПРАХ ЗА ПРАНЕ",
+            "ПРАХОВЕ ЗА БЕБЕТА",
+            "КАПСУЛИ ЗА ПРАНЕ",
+            "ОМЕКОТИТЕЛИ",
+            "ЗА ПЕТНА",
+            "ТЕЧНИ ПЕРИЛНИ ПРЕПАРАТИ",
+        ].map((sublabel) => ({
+            label: sublabel,
+            href: `/catalog?category=${encode("ПЕРИЛНИ ПРЕПАРАТИ")}&subCategory=${encode(sublabel)}`,
+        })),
     },
     {
         label: "ПОЧИСТВАЩИ ПРЕПАРАТИ",
-        href: "#",
+        href: `/catalog?category=${encode("ПОЧИСТВАЩИ ПРЕПАРАТИ")}`,
         subLinks: [
-            { label: "ПРЕПАРАТИ ЗА БАНЯ", href: "#" },
-            { label: "ЗА СЪДОМИЯЛНА", href: "#" },
-            { label: "ПРЕПАРАТИ ЗА МЕБЕЛИ", href: "#" },
-            { label: "ПРЕПАРАТИ ЗА СЪДОВЕ", href: "#" },
-            { label: "ПРЕПАРАТИ ЗА ПОДОВИ ПОВЪРХНОСТИ", href: "#" },
-            { label: "ПРЕПАРАТИ ЗА СТЪКЛА", href: "#" },
-            { label: "ПРЕПАРАТИ ЗА ОБЩО ПОЧИСТВАНЕ", href: "#" },
-            { label: "ПРЕПАРАТИ ЗА КУХНЯ", href: "#" },
-        ]
+            "ПРЕПАРАТИ ЗА БАНЯ",
+            "ЗА СЪДОМИЯЛНА",
+            "ПРЕПАРАТИ ЗА МЕБЕЛИ",
+            "ПРЕПАРАТИ ЗА СЪДОВЕ",
+            "ПРЕПАРАТИ ЗА ПОДОВИ ПОВЪРХНОСТИ",
+            "ПРЕПАРАТИ ЗА СТЪКЛА",
+            "ПРЕПАРАТИ ЗА ОБЩО ПОЧИСТВАНЕ",
+            "ПРЕПАРАТИ ЗА КУХНЯ",
+        ].map((sublabel) => ({
+            label: sublabel,
+            href: `/catalog?category=${encode("ПОЧИСТВАЩИ ПРЕПАРАТИ")}&subCategory=${encode(sublabel)}`,
+        })),
     },
     {
         label: "ХИГИЕНА",
-        href: "#",
+        href: `/catalog?category=${encode("ХИГИЕНА")}`,
         subLinks: [
-            { label: "ГЪБИ И КЪРПИ", href: "#" },
-            { label: "АРОМАТИЗАТОРИ", href: "#" },
-            { label: "МОП-ПОДОЧИСТАЧКИ-КОФИ", href: "#" },
-            { label: "АРОМАТИЗАТОРИ ЗА ТОАЛЕТНА", href: "#" },
-        ]
+            "ГЪБИ И КЪРПИ",
+            "АРОМАТИЗАТОРИ",
+            "МОП-ПОДОЧИСТАЧКИ-КОФИ",
+            "АРОМАТИЗАТОРИ ЗА ТОАЛЕТНА",
+        ].map((sublabel) => ({
+            label: sublabel,
+            href: `/catalog?category=${encode("ХИГИЕНА")}&subCategory=${encode(sublabel)}`,
+        })),
     },
     {
         label: "КОЗМЕТИКА",
-        href: "#",
+        href: `/catalog?category=${encode("КОЗМЕТИКА")}`,
         subLinks: [
-            { label: "ЗА ЛИЦЕ И ТЯЛО", href: "#" },
-            { label: "ДУШ ГЕЛ", href: "#" },
-            { label: "ДЕЗОДОРАНТИ", href: "#" },
-            { label: "ЗА КОСАТА", href: "#" },
-            { label: "ЛАК И ПЯНА ЗА КОСА", href: "#" }, { label: "ПРАХ ЗА ПРАНЕ", href: "#" },
-            { label: "БОЯ И ТОНЕР ЗА КОСА", href: "#" },
-            { label: "ПРОДУКТИ ЗА БРЪСНЕНЕ", href: "#" },
-            { label: "ДАМСКИ ПРЕВРЪЗКИ", href: "#" },
-            { label: "ТОАЛЕТНИ САПУНИ", href: "#" },
-            { label: "ТЕЧНИ САПУНИ", href: "#" },
-        ]
+            "ЗА ЛИЦЕ И ТЯЛО",
+            "ДУШ ГЕЛ",
+            "ДЕЗОДОРАНТИ",
+            "ЗА КОСАТА",
+            "ЛАК И ПЯНА ЗА КОСА",
+            "БОЯ И ТОНЕР ЗА КОСА",
+            "ПРОДУКТИ ЗА БРЪСНЕНЕ",
+            "ДАМСКИ ПРЕВРЪЗКИ",
+            "ТОАЛЕТНИ САПУНИ",
+            "ТЕЧНИ САПУНИ",
+        ].map((sublabel) => ({
+            label: sublabel,
+            href: `/catalog?category=${encode("КОЗМЕТИКА")}&subCategory=${encode(sublabel)}`,
+        })),
     },
     {
         label: "БЕБЕТА И ДЕЦА",
-        href: "#",
+        href: `/catalog?category=${encode("БЕБЕТА И ДЕЦА")}`,
         subLinks: [
-            { label: "КОЗМЕТИКА", href: "#" },
-            { label: "ПЕЛЕНИ И ГАЩИ", href: "#" },
-        ]
+            "КОЗМЕТИКА",
+            "ПЕЛЕНИ И ГАЩИ",
+        ].map((sublabel) => ({
+            label: sublabel,
+            href: `/catalog?category=${encode("БЕБЕТА И ДЕЦА")}&subCategory=${encode(sublabel)}`,
+        })),
     },
     {
         label: "ХАРТИЯ",
-        href: "#",
+        href: `/catalog?category=${encode("ХАРТИЯ")}`,
         subLinks: [
-            { label: "ТОАЛЕТНА ХАРТИЯ", href: "#" },
-            { label: "КУХНЕНСКА РОЛКА", href: "#" },
-            { label: "САЛФЕТКИ", href: "#" },
-        ]
+            "ТОАЛЕТНА ХАРТИЯ",
+            "КУХНЕНСКА РОЛКА",
+            "САЛФЕТКИ",
+        ].map((sublabel) => ({
+            label: sublabel,
+            href: `/catalog?category=${encode("ХАРТИЯ")}&subCategory=${encode(sublabel)}`,
+        })),
     },
     {
         label: "УСТНА ХИГИЕНА",
-        href: "#",
+        href: `/catalog?category=${encode("УСТНА ХИГИЕНА")}`,
         subLinks: [
-            { label: "ПАСТИ ЗА ЗЪБИ", href: "#" },
-            { label: "ЧЕТКИ ЗА ЗЪБИ", href: "#" },
-            { label: "ВОДА ЗА УСТА", href: "#" },
-        ]
+            "ПАСТИ ЗА ЗЪБИ",
+            "ЧЕТКИ ЗА ЗЪБИ",
+            "ВОДА ЗА УСТА",
+        ].map((sublabel) => ({
+            label: sublabel,
+            href: `/catalog?category=${encode("УСТНА ХИГИЕНА")}&subCategory=${encode(sublabel)}`,
+        })),
     },
     {
         label: "ДРУГИ",
-        href: "#",
+        href: `/catalog?category=${encode("ДРУГИ")}`,
     },
-]
+];
 
 export default navLinks;

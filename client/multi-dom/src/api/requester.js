@@ -45,19 +45,23 @@ export async function requester(method, url, data) {
     }
 
     const contentType = response.headers.get("Content-Type");
-    const responseText = await response.text();
 
     let result = {};
     if (contentType?.includes("application/json")) {
         try {
-            result = JSON.parse(responseText);
+            result = await response.json();
         } catch (e) {
             console.error("Грешка при парсване на JSON:", e);
         }
     }
 
     if (!response.ok) {
-        throw new Error(result.message || "Възникна грешка");
+        if (response.status === 409) {
+            console.warn('Конфликт: ', result.message || 'Грешка 409');
+            return { status: 409, data: result };
+        }
+
+        throw new Error(result.message || 'Възникна грешка');
     }
 
     if (response.status === 204) return {};
