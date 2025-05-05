@@ -52,10 +52,42 @@ const clearCart = async (req, res, next) => {
     }
 };
 
+const addToCart = async (req, res, next) => {
+    try {
+        const { productId, quantity = 1 } = req.body;
+
+        let cart = await Cart.findOne({ user: req.user._id });
+
+        if (!cart) {
+            cart = new Cart({
+                user: req.user._id,
+                items: [{ product: productId, quantity }],
+            });
+        } else {
+            const existingItem = cart.items.find((item) =>
+                item.product.toString() === productId
+            );
+
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.items.push({ product: productId, quantity });
+            }
+        }
+
+        await cart.save();
+        await cart.populate("items.product");
+
+        res.status(200).json(cart);
+    } catch (err) {
+        next(err);
+    }
+};
 
 module.exports = {
     getCart,
     updateCart,
     deleteCartItem,
     clearCart,
+    addToCart,
 };
