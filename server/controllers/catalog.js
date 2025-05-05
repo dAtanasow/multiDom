@@ -67,12 +67,13 @@ const getProductById = async (req, res, next) => {
         const product = await Product.findById(req.params.id);
 
         if (!product) {
-            return res.status(404).json({ message: 'Продуктът не е намерен.' });
+            return res.status(404).json({ message: "Продуктът не е намерен." });
         }
 
         res.status(200).json(product);
     } catch (err) {
-        next(err);
+        console.error("Грешка при намиране на продукт по ID:", err);
+        res.status(500).json({ message: "Възникна грешка при зареждане на продукта." });
     }
 };
 

@@ -104,6 +104,10 @@ const navLinks = [
         label: "ДРУГИ",
         href: `/catalog?category=${encode("ДРУГИ")}`,
     },
+    {
+        label: "ВСИЧКИ",
+        href: `/catalog`,
+    },
 ];
 
 export default navLinks;

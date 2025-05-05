@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import {
   useCatalog,
   useCatalogFilters,
@@ -90,11 +91,13 @@ export default function Catalog() {
               key={product._id}
               className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition flex flex-col"
             >
-              <img
-                src={product.images[0] || '/images/placeholder.jpg'}
-                alt={product.name}
-                className="h-40 object-contain mb-4"
-              />
+              <Link to={`/catalog/${product._id}`}>
+                <img
+                  src={product.images[0] || '/images/placeholder.jpg'}
+                  alt={product.name}
+                  className="h-40 object-contain mb-4"
+                />
+              </Link>
               <h3 className="text-lg font-medium text-gray-800 mb-2">
                 {product.name}
               </h3>
@@ -105,19 +108,23 @@ export default function Catalog() {
                 Добави в количката
               </button>
             </div>
-          ))}
-          {sortedProducts.length === 0 && (
-            <p className="col-span-full text-center text-gray-600">
-              Няма намерени продукти.
-            </p>
-          )}
-        </div>
-      </main>
+          ))
+          }
+          {
+            sortedProducts.length === 0 && (
+              <p className="col-span-full text-center text-gray-600">
+                Няма намерени продукти.
+              </p>
+            )
+          }
+        </div >
+      </main >
 
       {/* Mobile Filters SlideOver */}
-      <div
+      < div
         className={`fixed inset-0 z-50 flex justify-end transition-transform duration-300 ${mobileFiltersOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+          }`
+        }
       >
         <div className="bg-white w-3/4 h-full p-6 overflow-y-auto shadow-lg">
           <div className="flex justify-between items-center mb-6">
@@ -160,7 +167,7 @@ export default function Catalog() {
             Изчисти филтрите
           </button>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }

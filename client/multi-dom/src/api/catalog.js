@@ -6,9 +6,9 @@ const getAll = (query = "") => requester.get(`${baseUrl}${query ? `?${query}` : 
 
 const getById = (id) => requester.get(`${baseUrl}/${id}`);
 
-const productApi = {
+const catalogApi = {
     getAll,
     getById,
 };
 
-export default productApi;
+export default catalogApi;

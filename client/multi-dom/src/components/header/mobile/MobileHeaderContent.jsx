@@ -27,7 +27,7 @@ export default function MobileHeaderContent({
 
       <div className="flex-shrink-0">
         <Link to="/">
-          <img src="icons/мултиДом-logo.jpeg" alt="МултиДом" className="w-40" />
+          <img src="/public/icons/мултиДом-logo.jpeg" alt="МултиДом" className="w-40" />
         </Link>
       </div>
 

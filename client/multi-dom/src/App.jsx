@@ -17,6 +17,7 @@ import PrivateRoute from "./components/private-router/PrivateRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import AdminRoute from "./components/private-router/AdminRoute";
 import AdminPanel from "./components/admin/AdminPanel";
+import ProductDetails from "./components/product-details/ProductDetails";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
               </ErrorBoundary>
             }
           />
+          <Route path="/catalog/:id" element={<ProductDetails />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
