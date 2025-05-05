@@ -34,7 +34,25 @@ export default function Catalog() {
       <aside className="hidden md:block w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Филтри</h2>
         <div className="space-y-4">
-
+          {navLinks.map((cat) => (
+            <div key={cat.label}>
+              <h3 className="font-semibold text-gray-700 mb-2">{cat.label}</h3>
+              <div className="space-y-2 ml-2">
+                {Array.isArray(cat.subLinks) &&
+                  cat.subLinks.map((sub) => (
+                    <label key={sub.label} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={selectedCategories.includes(sub.label)}
+                        onChange={() => toggleCategory(sub.label)}
+                      />
+                      {sub.label}
+                    </label>
+                  ))}
+              </div>
+            </div>
+          ))}
         </div>
         <button
           onClick={clearFilters}

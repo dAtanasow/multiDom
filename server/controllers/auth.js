@@ -37,8 +37,6 @@ const logout = async (req, res, next) => {
     }
 };
 
-
-
 const register = async (req, res, next) => {
     const { firstName, lastName, phone, email, password, rePassword } = req.body;
 
@@ -90,7 +88,6 @@ const register = async (req, res, next) => {
         next(err);
     }
 };
-
 
 const login = async (req, res, next) => {
     const { email, password } = req.body;
@@ -205,8 +202,6 @@ const editProfile = async (req, res, next) => {
         next(err);
     }
 };
-
-
 
 const refreshAccessToken = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
