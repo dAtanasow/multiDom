@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import productApi from "../api/catalog";
+import catalogApi from "../api/catalog";
 
 
 export function useCatalog() {
@@ -98,3 +98,35 @@ export function useCatalogFilters(products) {
     };
 }
 
+
+export function useProductDetails(productId) {
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [activeImage, setActiveImage] = useState(null);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                setLoading(true);
+                const data = await catalogApi.getById(productId);
+                setProduct(data);
+                setActiveImage(data.images?.[0] || null);
+            } catch (err) {
+                console.error("Грешка при зареждане на продукта:", err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (productId) {
+            fetchProduct();
+        }
+    }, [productId]);
+
+    return {
+        product,
+        loading,
+        activeImage,
+        setActiveImage
+    };
+}
