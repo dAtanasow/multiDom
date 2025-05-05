@@ -11,11 +11,15 @@ const deleteCartItem = (productId) =>
 
 const clearCart = () => requester.delete(baseUrl);
 
+const addToCart = (productId, quantity = 1) =>
+    requester.post(`${baseUrl}/add`, { productId, quantity });  
+
 const cartApi = {
     getCart,
     updateCart,
     deleteCartItem,
     clearCart,
+    addToCart,
 };
 
 export default cartApi;
