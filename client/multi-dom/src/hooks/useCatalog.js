@@ -20,7 +20,7 @@ export function useCatalog() {
                 if (category) query.append("category", category);
                 if (subCategory) query.append("subCategory", subCategory);
 
-                const data = await productApi.getAll(query.toString());
+                const data = await catalogApi.getAll(query.toString());
                 if (Array.isArray(data)) {
                     setProducts(data);
                 } else if (Array.isArray(data.products)) {
@@ -98,11 +98,11 @@ export function useCatalogFilters(products) {
     };
 }
 
-
 export function useProductDetails(productId) {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(null);
+    const [relatedProducts, setRelatedProducts] = useState([]);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -123,10 +123,29 @@ export function useProductDetails(productId) {
         }
     }, [productId]);
 
+    useEffect(() => {
+        const fetchRelated = async () => {
+            if (product?.subCategory) {
+                try {
+                    const query = new URLSearchParams({ subCategory: product.subCategory }).toString();
+                    const all = await catalogApi.getAll(query);
+                    const products = Array.isArray(all) ? all : all.products || [];
+                    const filtered = products.filter(p => p._id !== product._id).slice(0, 4);
+                    setRelatedProducts(filtered);
+                } catch (err) {
+                    console.error("Грешка при зареждане на свързани продукти:", err.message);
+                }
+            }
+        };
+
+        fetchRelated();
+    }, [product]);
+
     return {
         product,
         loading,
         activeImage,
-        setActiveImage
+        setActiveImage,
+        relatedProducts
     };
 }

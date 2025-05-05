@@ -5,7 +5,7 @@ import { useProductDetails } from "../../hooks/useCatalog";
 
 export default function ProductDetails() {
     const { id } = useParams();
-    const { product, loading, activeImage, setActiveImage } = useProductDetails(id);
+    const { product, loading, activeImage, setActiveImage, relatedProducts } = useProductDetails(id);
 
     if (loading) return <div className="p-10 text-center text-gray-500 text-lg animate-pulse">Зареждане...</div>;
     if (!product) return <div className="p-10 text-center text-red-500">Продуктът не е намерен.</div>;
@@ -99,18 +99,24 @@ export default function ProductDetails() {
                 </motion.div>
             </div>
 
-            <motion.div className="mt-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Свързани продукти</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-                    {[1, 2, 3, 4].map((item) => (
-                        <div key={item} className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
-                            <div className="h-32 bg-gray-100 rounded mb-3"></div>
-                            <p className="text-sm font-medium text-gray-700">Препарат №{item}</p>
-                            <p className="text-sm text-blue-600 font-semibold">12.99 лв.</p>
-                        </div>
-                    ))}
-                </div>
-            </motion.div>
+            {relatedProducts.length > 0 && (
+                <motion.div className="mt-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Свързани продукти</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                        {relatedProducts.map((item) => (
+                            <div key={item._id} className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
+                                <img
+                                    src={item.images?.[0] || "/placeholder.jpg"}
+                                    alt={item.name}
+                                    className="h-32 w-full object-contain mb-3"
+                                />
+                                <p className="text-sm font-medium text-gray-700 line-clamp-2">{item.name}</p>
+                                <p className="text-sm text-blue-600 font-semibold">{item.price.toFixed(2)} лв.</p>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+            )}
         </motion.section>
     );
 }
