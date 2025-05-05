@@ -73,7 +73,7 @@ export default function Catalog() {
               className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition flex flex-col"
             >
               <img
-                src={product.image}
+                src={product.images[0] || '/images/placeholder.jpg'}
                 alt={product.name}
                 className="h-40 object-contain mb-4"
               />
