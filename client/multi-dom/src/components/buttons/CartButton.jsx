@@ -1,7 +1,14 @@
+import { Link } from "react-router-dom";
+import { useCartContext } from "../../context/CartContext";
+
 export default function CartButton() {
+    const { cart } = useCartContext();
+    const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
     return (
-        <button
-            className="cursor-pointer px-3 py-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
+        <Link
+            to="/cart"
+            className="relative cursor-pointer px-3 py-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
             aria-label="Количка"
         >
             <svg
@@ -22,6 +29,12 @@ export default function CartButton() {
                     d="M16.5 16.5h.008v.008H16.5v-.008Zm-9 0h.008v.008H7.5v-.008Z"
                 />
             </svg>
-        </button>
+
+            {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {itemCount}
+                </span>
+            )}
+        </Link>
     );
 }
