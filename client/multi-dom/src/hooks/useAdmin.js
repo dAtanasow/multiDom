@@ -25,37 +25,58 @@ export function useProductsAdmin() {
 
     const {
         values,
+        pending,
         changeHandler,
         submitHandler,
         setValues,
         setError,
-        pending,
+        setPending,
+        appendImage
     } = useForm(
         {
             name: "",
             images: [],
             price: "",
+            discountPrice: "",
             category: "",
             subCategory: "",
             description: "",
             tags: "",
-            manufacturer: ""
-
+            manufacturer: "",
+            quantity: "",
+            unitCount: "",
+            unitType: "",
+            originCountry: "",
+            isFeatured: false,
         },
         async (values) => {
+            console.log("Submit values:", values);
             const { name, price, category, subCategory, manufacturer } = values;
             if (!name || !price || !category || !subCategory || !manufacturer) {
                 toast.error("Моля, попълнете всички задължителни полета.");
                 return;
             }
 
+            if (!values.images || !Array.isArray(values.images) || values.images.length === 0) {
+                toast.error("Моля, добавете поне една снимка.");
+                return;
+            }
+
+            if (values.price === "" || isNaN(parseFloat(values.price))) {
+                toast.error("Цената е невалидна.");
+                return;
+            }
+
             const processed = {
                 ...values,
+                price: values.price === "" ? undefined : parseFloat(values.price),
+                discountPrice: values.discountPrice ? parseFloat(values.discountPrice) : undefined,
+                quantity: values.quantity ? parseInt(values.quantity) : 0,
+                unitCount: values.unitCount ? parseInt(values.unitCount) : undefined,
+                isFeatured: Boolean(values.isFeatured),
                 tags: values.tags.split(",").map(tag => tag.trim()).filter(tag => tag !== ""),
                 images: values.images.filter(img => typeof img === "string" && img.startsWith("data:image")),
             };
-
-
             try {
                 if (editingProduct) {
                     await adminApi.updateProduct(editingProduct._id, processed);
@@ -71,11 +92,17 @@ export function useProductsAdmin() {
                     name: "",
                     images: [],
                     price: "",
+                    discountPrice: "",
                     category: "",
                     subCategory: "",
                     description: "",
                     tags: "",
                     manufacturer: "",
+                    quantity: "",
+                    unitCount: "",
+                    unitType: "",
+                    originCountry: "",
+                    isFeatured: false,
                 });
             } catch (err) {
                 toast.error("Възникна грешка при запазване.");
@@ -89,16 +116,21 @@ export function useProductsAdmin() {
         setEditingProduct(product);
         setValues({
             name: product.name || "",
-            images: product.images || [],
-            price: product.price || "",
+            images: Array.isArray(product.images) ? product.images : [],
+            price: product.price?.toString() ?? "",
+            discountPrice: product.discountPrice?.toString() ?? "",
             category: product.category || "",
             subCategory: product.subCategory || "",
             description: product.description || "",
             tags: (product.tags || []).join(", "),
             manufacturer: product.manufacturer || "",
+            quantity: product.quantity?.toString() ?? "",
+            unitCount: product.unitCount?.toString() ?? "",
+            unitType: product.unitType || "",
+            originCountry: product.originCountry || "",
+            isFeatured: !!product.isFeatured,
         });
     };
-
 
     const handleDelete = (id) => {
         confirmAlert({
@@ -126,7 +158,6 @@ export function useProductsAdmin() {
         });
     };
 
-
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
         if (!files.length) return;
@@ -135,17 +166,13 @@ export function useProductsAdmin() {
             const reader = new FileReader();
             reader.onloadend = () => {
                 if (reader.result) {
-                    setValues((prev) => ({
-                        ...prev,
-                        images: [...(prev.images || []), reader.result],
-                    }));
+                    appendImage(reader.result)
                 }
             };
+
             reader.readAsDataURL(file);
         });
     };
-
-
 
     const removeImage = (indexToRemove) => {
         setValues((prev) => ({

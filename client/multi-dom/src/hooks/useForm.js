@@ -20,13 +20,15 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
     }, [options.reinitializeForm, initialValues]);
 
     const changeHandler = (e) => {
-        const { name, value } = e.target;
+        const { name, type, value, checked } = e.target;
 
-        valuesRef.current[name] = value;
+        const newValue = type === "checkbox" ? checked : value;
 
-        setValuesState(prev => ({
+        valuesRef.current[name] = newValue;
+
+        setValuesState((prev) => ({
             ...prev,
-            [name]: value
+            [name]: newValue,
         }));
 
         if (errors[name]) {
@@ -54,6 +56,19 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
         }
     };
 
+    const appendImage = (base64) => {
+        const updatedImages = Array.isArray(valuesRef.current.images)
+            ? [...valuesRef.current.images, base64]
+            : [base64];
+
+        valuesRef.current.images = updatedImages;
+        setValuesState((prev) => ({
+            ...prev,
+            images: updatedImages,
+        }));
+    };
+
+
     return {
         values: valuesState,
         errors,
@@ -63,5 +78,6 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
         setError,
         changeHandler,
         submitHandler,
+        appendImage
     };
 }
