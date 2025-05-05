@@ -2,16 +2,17 @@ import requester from "./requester";
 
 const baseUrl = import.meta.env.VITE_API_URL + '/admin';
 
-const create = (data) => requester.post(baseUrl, data);
+const createProduct = (data) => requester.post(`${baseUrl}/create`, data);
 
-const update = (id, data) => requester.put(`${baseUrl}/${id}`, data);
+const deleteProduct = (id) => requester.del(`${baseUrl}/delete/${id}`);
 
-const remove = (id) => requester.del(`${baseUrl}/${id}`);
+const updateProduct = (id, data) => requester.put(`${baseUrl}/update/${id}`, data);
+
 
 const adminApi = {
-    create,
-    update,
-    remove,
+    createProduct,
+    updateProduct,
+    deleteProduct,
 }
 
 export default adminApi;

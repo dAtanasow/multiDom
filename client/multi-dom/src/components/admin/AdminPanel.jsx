@@ -41,12 +41,13 @@ export default function AdminPanel() {
                                 <img
                                     src={img}
                                     alt={`Снимка ${index + 1}`}
-                                    className="h-24 object-contain border rounded"
+                                    className="h-24 w-24 object-contain border rounded"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => removeImage(index)}
-                                    className="absolute top-0 right-0 bg-red-600 text-white px-1 rounded-bl"
+                                    className="absolute top-0 right-0 bg-red-600 text-white px-1 rounded-bl text-xs"
+                                    title="Премахни снимката"
                                 >
                                     ×
                                 </button>
@@ -54,8 +55,6 @@ export default function AdminPanel() {
                         ))}
                     </div>
                 )}
-
-
 
                 <input
                     name="price"
@@ -112,6 +111,7 @@ export default function AdminPanel() {
             <table className="w-full border text-sm">
                 <thead>
                     <tr className="bg-gray-100">
+                        <th className="border px-2   py-1">Снимка</th>
                         <th className="border px-2 py-1">Име</th>
                         <th className="border px-2 py-1">Цена</th>
                         <th className="border px-2 py-1">Категория</th>
@@ -122,6 +122,13 @@ export default function AdminPanel() {
                 <tbody>
                     {products.map((product) => (
                         <tr key={product._id}>
+                            <td className="border px-2 py-1">
+                                <img
+                                    src={product.images[0]}
+                                    alt={product.name}
+                                    className="h-12 w-12 object-contain"
+                                />
+                            </td>
                             <td className="border px-2 py-1">{product.name}</td>
                             <td className="border px-2 py-1">{product.price.toFixed(2)} лв.</td>
                             <td className="border px-2 py-1">{product.category}</td>
