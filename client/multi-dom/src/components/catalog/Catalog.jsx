@@ -4,9 +4,13 @@ import {
   useCatalogFilters,
 } from "../../hooks/useCatalog";
 import navLinks from "../../utils/navLinks";
+import { useCartContext } from "../../context/CartContext";
+import { toast } from "react-toastify";
 
 export default function Catalog() {
   const { products, loading, category, subCategory } = useCatalog();
+
+  const { addToCart } = useCartContext();
 
   const {
     sortOption,
@@ -104,7 +108,12 @@ export default function Catalog() {
               <p className="text-blue-600 font-semibold">
                 {product.price.toFixed(2)} лв.
               </p>
-              <button className="mt-auto bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition mt-4">
+              <button
+                onClick={() => {
+                  addToCart(product)
+                  toast.success("Продуктът беше добавен в количката.");
+                }}
+                className="mt-auto bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition mt-4">
                 Добави в количката
               </button>
             </div>
