@@ -1,13 +1,27 @@
+const { default: mongoose } = require("mongoose");
 const Cart = require("../models/Cart");
+const Product = require("../models/Product");
 
 const getCart = async (req, res, next) => {
     try {
         const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
-        res.status(200).json(cart || { user: req.user._id, items: [] });
+
+        if (!cart) {
+            return res.status(200).json({ user: req.user._id, items: [] });
+        }
+
+        const cleanedItems = cart.items.filter(item => item.product !== null);
+        if (cleanedItems.length !== cart.items.length) {
+            cart.items = cleanedItems;
+            await cart.save();
+        }
+
+        res.status(200).json(cart);
     } catch (err) {
         next(err);
     }
 };
+
 
 const updateCart = async (req, res, next) => {
     try {
@@ -54,13 +68,23 @@ const clearCart = async (req, res, next) => {
 
 const addToCart = async (req, res, next) => {
     try {
+        const userId = req.user._id;
         const { productId, quantity = 1 } = req.body;
 
-        let cart = await Cart.findOne({ user: req.user._id });
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return next(new CustomError("Невалидно ID на продукт", 400));
+        }
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return next(new CustomError("Продуктът не съществува", 404));
+        }
+
+        let cart = await Cart.findOne({ user: userId });
 
         if (!cart) {
             cart = new Cart({
-                user: req.user._id,
+                user: userId,
                 items: [{ product: productId, quantity }],
             });
         } else {
@@ -69,12 +93,13 @@ const addToCart = async (req, res, next) => {
             );
 
             if (existingItem) {
-                existingItem.quantity += quantity;
+                existingItem.quantity = Math.max(existingItem.quantity, quantity); // ✅ избягва дубли
             } else {
                 cart.items.push({ product: productId, quantity });
             }
         }
 
+        cart.items = cart.items.filter(item => item.product !== null);
         await cart.save();
         await cart.populate("items.product");
 
@@ -83,6 +108,7 @@ const addToCart = async (req, res, next) => {
         next(err);
     }
 };
+
 
 module.exports = {
     getCart,

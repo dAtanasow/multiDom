@@ -29,20 +29,24 @@ function AuthProvider({ children }) {
             console.warn("Missing access token during logout");
             return;
         }
+    
         try {
             await fetch("http://localhost:3000/api/auth/logout", {
                 method: "POST",
                 credentials: "include",
                 headers: {
-                    "Authorization": token ? `Bearer ${token}` : ""
+                    "Authorization": `Bearer ${token}`
                 }
-            }).catch((err) => console.error("Logout API error:", err));
-
+            });
+    
+            localStorage.removeItem("cart");
+    
             setAuthState({ user: null, accessToken: null });
         } catch (err) {
             console.error("Logout API error:", err);
         }
-    }
+    };
+    
 
     const contextData = {
         userId: authState?.user?._id || null,
@@ -56,7 +60,7 @@ function AuthProvider({ children }) {
         changeAuthState,
         logout,
     };
-    
+
     return (
         <AuthContext.Provider value={contextData}>
             {children}

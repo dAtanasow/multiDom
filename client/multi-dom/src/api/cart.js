@@ -7,12 +7,12 @@ const getCart = () => requester.get(baseUrl);
 const updateCart = (data) => requester.put(baseUrl, data);
 
 const deleteCartItem = (productId) =>
-    requester.delete(`${baseUrl}/${productId}`);
+    requester.del(`${baseUrl}/${productId}`);
 
-const clearCart = () => requester.delete(baseUrl);
+const clearCart = () => requester.del(baseUrl);
 
 const addToCart = (productId, quantity = 1) =>
-    requester.post(`${baseUrl}/add`, { productId, quantity });  
+    requester.post(`${baseUrl}/add`, { productId, quantity });
 
 const cartApi = {
     getCart,
