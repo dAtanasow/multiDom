@@ -7,12 +7,12 @@ import navLinks from "../../utils/navLinks";
 import { useCartContext } from "../../context/CartContext";
 import { toast } from "react-toastify";
 
-
 export default function Catalog() {
-  const { products, loading, category, subCategory } = useCatalog();
+  const { products, loading } = useCatalog();
   const { addToCart } = useCartContext();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
   const {
     sortOption,
     setSortOption,
@@ -26,7 +26,6 @@ export default function Catalog() {
 
   const handleSubCategoryToggle = (label) => {
     const newParams = new URLSearchParams(searchParams);
-
     const isSelected = selectedCategories.includes(label);
     const newSelected = isSelected
       ? selectedCategories.filter((l) => l !== label)
@@ -43,19 +42,10 @@ export default function Catalog() {
     navigate(`/catalog?${newParams.toString()}`);
     toggleCategory(label);
     setMobileFiltersOpen(false);
-  }
-  
+  };
+
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8">
-      {/* Mobile Filters Button */}
-      <div className="md:hidden flex justify-end mb-4">
-        <button
-          onClick={() => setMobileFiltersOpen(true)}
-          className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
-        >
-          Филтрирай
-        </button>
-      </div>
+    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8 overflow-x-hidden">
 
       {/* Sidebar filters */}
       <aside className="hidden md:block w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
@@ -65,18 +55,17 @@ export default function Catalog() {
             <div key={cat.label}>
               <h3 className="font-semibold text-gray-700 mb-2">{cat.label}</h3>
               <div className="space-y-2 ml-2">
-                {Array.isArray(cat.subLinks) &&
-                  cat.subLinks.map((sub) => (
-                    <label key={sub.label} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="mr-2"
-                        checked={selectedCategories.includes(sub.label)}
-                        onChange={() => handleSubCategoryToggle(sub.label)}
-                      />
-                      {sub.label}
-                    </label>
-                  ))}
+                {cat.subLinks?.map((sub) => (
+                  <label key={sub.label} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={selectedCategories.includes(sub.label)}
+                      onChange={() => handleSubCategoryToggle(sub.label)}
+                    />
+                    {sub.label}
+                  </label>
+                ))}
               </div>
             </div>
           ))}
@@ -91,64 +80,77 @@ export default function Catalog() {
 
       {/* Main content */}
       <main className="flex-1">
-        {/* Sort options */}
+        {/* Top bar: title + filters + sort */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-          <div>
+
+          {/* Title and filter button */}
+          <div className="flex items-center justify-between w-full">
             <h1 className="text-2xl font-bold text-gray-800">Каталог</h1>
+            <button
+              onClick={() => setMobileFiltersOpen(true)}
+              className="md:hidden bg-blue-600 text-white py-1.5 px-3 rounded-md text-sm hover:bg-blue-700 transition"
+            >
+              Филтрирай
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
             <p className="text-sm text-gray-500 mt-1">
               Намерени продукти: {sortedProducts.length}
             </p>
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="border border-gray-300 rounded-lg p-2 text-sm"
+            >
+              <option value="newest">Най-нови</option>
+              <option value="price-low">Цена: Ниска към висока</option>
+              <option value="price-high">Цена: Висока към ниска</option>
+            </select>
           </div>
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            className="border border-gray-300 rounded-lg p-2"
-          >
-            <option value="newest">Най-нови</option>
-            <option value="price-low">Цена: Ниска към висока</option>
-            <option value="price-high">Цена: Висока към ниска</option>
-          </select>
         </div>
 
         {/* Products grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 overflow-x-hidden max-w-full">
           {sortedProducts.map((product) => (
             <div
               key={product._id}
-              className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition flex flex-col"
+              className="bg-white p-2 rounded-md shadow-sm hover:shadow-md transition flex flex-col min-h-[240px] w-full max-w-full min-w-0"
             >
               <Link to={`/catalog/${product._id}`}>
                 <img
                   src={product.images[0] || '/images/placeholder.jpg'}
                   alt={product.name}
-                  className="h-40 object-contain mb-4"
+                  className="h-32 w-full object-contain mb-2"
                 />
               </Link>
-              <h3 className="text-lg font-medium text-gray-800 mb-2">
-                {product.name}
-              </h3>
-              <p className="text-blue-600 font-semibold">
-                {product.price.toFixed(2)} лв.
-              </p>
-              <button
-                onClick={() => {
-                  addToCart(product)
-                  toast.success("Продуктът беше добавен в количката.");
-                }}
-                className="mt-auto bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition mt-4">
-                Добави в количката
-              </button>
+
+              <div className="flex-1 flex flex-col">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1 line-clamp-2 leading-tight">
+                  {product.name}
+                </h3>
+                <p className="text-blue-600 text-sm font-bold">
+                  {product.price.toFixed(2)} лв.
+                </p>
+
+                <button
+                  onClick={() => {
+                    addToCart(product);
+                    toast.success("Продуктът беше добавен в количката.");
+                  }}
+                  className="mt-auto text-xs py-1 px-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                >
+                  Добави
+                </button>
+              </div>
             </div>
-          ))
-          }
-          {
-            sortedProducts.length === 0 && (
-              <p className="col-span-full text-center text-gray-600">
-                Няма намерени продукти.
-              </p>
-            )
-          }
-        </div >
+          ))}
+          {sortedProducts.length === 0 && (
+            <p className="col-span-full text-center text-gray-600">
+              Няма намерени продукти.
+            </p>
+          )}
+        </div>
       </main >
 
       {/* Mobile Filters SlideOver */}
@@ -172,18 +174,17 @@ export default function Catalog() {
               <div key={cat.label}>
                 <h3 className="font-semibold text-gray-700 mb-2">{cat.label}</h3>
                 <div className="space-y-2 ml-2">
-                  {Array.isArray(cat.subLinks) &&
-                    cat.subLinks.map((sub) => (
-                      <label key={sub.label} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="mr-2"
-                          checked={selectedCategories.includes(sub.label)}
-                          onChange={() => handleSubCategoryToggle(sub.label)}
-                        />
-                        {sub.label}
-                      </label>
-                    ))}
+                  {cat.subLinks?.map((sub) => (
+                    <label key={sub.label} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={selectedCategories.includes(sub.label)}
+                        onChange={() => handleSubCategoryToggle(sub.label)}
+                      />
+                      {sub.label}
+                    </label>
+                  ))}
                 </div>
               </div>
             ))}
