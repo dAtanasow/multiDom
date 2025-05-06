@@ -16,6 +16,7 @@ export function useCatalog() {
             try {
                 setLoading(true);
                 const query = new URLSearchParams();
+<<<<<<< HEAD
 
                 if (subCategory) {
                     query.append("subCategory", subCategory);
@@ -25,6 +26,14 @@ export function useCatalog() {
 
                 const data = await catalogApi.getAll(query.toString());
 
+=======
+
+                if (category) query.set("category", category);
+                if (subCategory) query.set("subCategory", subCategory);
+
+                const data = await catalogApi.getAll(query.toString());
+
+>>>>>>> 54ae910df94b8acb42d1289b45b40089f9162e8b
                 const resolved = Array.isArray(data)
                     ? data
                     : Array.isArray(data?.products)
@@ -62,6 +71,7 @@ export function useCatalogFilters(products = []) {
     const clearFilters = () => setSelectedCategories([]);
 
     const sortedProducts = useMemo(() => {
+<<<<<<< HEAD
         let filtered = [...products];
 
         if (selectedCategories.length > 0) {
@@ -69,6 +79,11 @@ export function useCatalogFilters(products = []) {
                 selectedCategories.includes(p.subCategory)
             );
         }
+=======
+        let filtered = selectedCategories.length
+            ? products.filter((p) => selectedCategories.includes(p.subCategory))
+            : [...products];
+>>>>>>> 54ae910df94b8acb42d1289b45b40089f9162e8b
 
         switch (sortOption) {
             case "price-low":
