@@ -2,10 +2,24 @@ import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Star, Truck, ShieldCheck } from "lucide-react";
 import { useProductDetails } from "../../hooks/useCatalog";
+import { useCartContext } from "../../context/CartContext";
+import cartApi from "../../api/cart";
+import { toast } from "react-toastify";
 
 export default function ProductDetails() {
     const { id } = useParams();
     const { product, loading, activeImage, setActiveImage, relatedProducts } = useProductDetails(id);
+    const { addToCart: addToCartContext } = useCartContext();
+
+    const handleAddToCart = async () => {
+        try {
+            await addToCartContext(product);
+            await cartApi.addToCart(product._id, 1);
+            toast.success("Продуктът е добавен в количката!");
+        } catch (err) {
+            toast.error("Грешка при добавяне в количката.");
+        }
+    };
 
     if (loading) return <div className="p-10 text-center text-gray-500 text-lg animate-pulse">Зареждане...</div>;
     if (!product) return <div className="p-10 text-center text-red-500">Продуктът не е намерен.</div>;
@@ -81,6 +95,7 @@ export default function ProductDetails() {
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.97 }}
+                        onClick={handleAddToCart}
                         className="bg-blue-600 hover:bg-blue-700 text-white text-base py-3 px-8 rounded-xl shadow-md transition self-start"
                     >
                         Добави в количката
