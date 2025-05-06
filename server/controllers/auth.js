@@ -3,6 +3,7 @@ const User = require('../models/User');
 const TokenBlacklist = require('../models/tokenBlacklist');
 const CustomError = require('../utils/CustomError');
 const { createAccessToken, createRefreshToken, verifyRefreshToken } = require('../utils/jwt');
+const Cart = require('../models/Cart');
 
 const logout = async (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -62,6 +63,7 @@ const register = async (req, res, next) => {
         });
 
         await newUser.save();
+        await Cart.create({ user: newUser._id, items: [] });
 
         const accessToken = createAccessToken(newUser);
         const refreshToken = createRefreshToken(newUser);
@@ -205,6 +207,7 @@ const editProfile = async (req, res, next) => {
 
 const refreshAccessToken = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
+    console.log("cookies получени от клиента:", req.cookies);
 
     if (!refreshToken) {
         return next(new CustomError('Refresh токен липсва.', 401));
