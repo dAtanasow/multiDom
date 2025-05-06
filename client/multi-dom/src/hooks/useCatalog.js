@@ -8,29 +8,30 @@ export function useCatalog() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const category = searchParams.get("category");
-    const subCategory = searchParams.get("subCategory");
+    const category = searchParams.get("category") || null;
+    const subCategory = searchParams.get("subCategory") || null;
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
-
                 const query = new URLSearchParams();
-                if (category) query.append("category", category);
-                if (subCategory) query.append("subCategory", subCategory);
+
+                if (category) query.set("category", category);
+                if (subCategory) query.set("subCategory", subCategory);
 
                 const data = await catalogApi.getAll(query.toString());
-                if (Array.isArray(data)) {
-                    setProducts(data);
-                } else if (Array.isArray(data.products)) {
-                    setProducts(data.products);
-                } else {
-                    setProducts([]);
-                }
 
+                const resolved = Array.isArray(data)
+                    ? data
+                    : Array.isArray(data?.products)
+                        ? data.products
+                        : [];
+
+                setProducts(resolved);
             } catch (err) {
                 console.error("Грешка при зареждане на продукти:", err.message);
+                setProducts([]);
             } finally {
                 setLoading(false);
             }
@@ -39,15 +40,10 @@ export function useCatalog() {
         fetchProducts();
     }, [category, subCategory]);
 
-    return {
-        products,
-        loading,
-        category,
-        subCategory,
-    };
+    return { products, loading, category, subCategory };
 }
 
-export function useCatalogFilters(products) {
+export function useCatalogFilters(products = []) {
     const [sortOption, setSortOption] = useState("newest");
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -63,27 +59,21 @@ export function useCatalogFilters(products) {
     const clearFilters = () => setSelectedCategories([]);
 
     const sortedProducts = useMemo(() => {
-        let filtered = [...products];
-
-        if (selectedCategories.length > 0) {
-            filtered = filtered.filter((p) => selectedCategories.includes(p.subCategory));
-        }
+        let filtered = selectedCategories.length
+            ? products.filter((p) => selectedCategories.includes(p.subCategory))
+            : [...products];
 
         switch (sortOption) {
             case "price-low":
-                filtered.sort((a, b) => a.price - b.price);
-                break;
+                return filtered.sort((a, b) => a.price - b.price);
             case "price-high":
-                filtered.sort((a, b) => b.price - a.price);
-                break;
+                return filtered.sort((a, b) => b.price - a.price);
             case "newest":
-                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                break;
             default:
-                break;
+                return filtered.sort(
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                );
         }
-
-        return filtered;
     }, [products, selectedCategories, sortOption]);
 
     return {
