@@ -48,7 +48,7 @@ export function useCreateProduct(editingProduct, setEditingProduct, setProductVi
             const processed = {
                 ...values,
                 price: parseFloat(values.price),
-                discountPrice: values.discountPrice ? parseFloat(values.discountPrice) : undefined,
+                discountPrice: values.discountPrice === "" ? null : parseFloat(values.discountPrice),
                 quantity: values.quantity ? parseInt(values.quantity) : 0,
                 unitCount: values.unitCount ? parseInt(values.unitCount) : undefined,
                 isFeatured: Boolean(values.isFeatured),
@@ -67,10 +67,10 @@ export function useCreateProduct(editingProduct, setEditingProduct, setProductVi
                     toast.success("Продуктът е създаден успешно.");
                 }
 
-                fetchProducts?.();
                 resetForm();
             } catch (err) {
                 toast.error("Възникна грешка при запазване.");
+            } finally {
                 setPending(false);
             }
         },
