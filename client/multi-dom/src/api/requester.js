@@ -26,9 +26,14 @@ export async function requester(method, url, data) {
         options.headers["Content-Type"] = "application/json";
         options.body = JSON.stringify(data);
     }
+    if (!url.startsWith("http")) {
+        url = baseUrl + url;
+    }
+
 
     let response = await fetch(url, options);
     if ((response.status === 401 || response.status === 403)) {
+
         const refreshSuccess = await tryRefreshToken();
         if (refreshSuccess) {
             const newToken = getAccessToken();
