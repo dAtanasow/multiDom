@@ -1,35 +1,18 @@
 import { useEffect, useState } from "react";
 import { useForm } from "./useForm";
 import productApi from "../api/catalog";
-import navLinks from "../utils/navLinks";
 import adminApi from "../api/admin";
 import { toast } from "react-toastify";
 import { confirmAlert } from 'react-confirm-alert';
+import navLinks from "../utils/navLinks";
 
-export function useProductsAdmin() {
-    const [products, setProducts] = useState([]);
-    const [editingProduct, setEditingProduct] = useState(null);
-
-    const fetchProducts = async () => {
-        try {
-            const res = await productApi.getAll();
-            setProducts(res.products || []);
-        } catch (err) {
-            toast.error("Грешка при зареждане на продуктите.");
-        }
-    };
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
+export function useCreateProduct(editingProduct, setEditingProduct, setProductView) {
     const {
         values,
         pending,
         changeHandler,
         submitHandler,
         setValues,
-        setError,
         setPending,
         appendImage
     } = useForm(
@@ -50,60 +33,42 @@ export function useProductsAdmin() {
             isFeatured: false,
         },
         async (values) => {
-            console.log("Submit values:", values);
             const { name, price, category, subCategory, manufacturer } = values;
+
             if (!name || !price || !category || !subCategory || !manufacturer) {
                 toast.error("Моля, попълнете всички задължителни полета.");
                 return;
             }
 
-            if (!values.images || !Array.isArray(values.images) || values.images.length === 0) {
+            if (!values.images?.length) {
                 toast.error("Моля, добавете поне една снимка.");
-                return;
-            }
-
-            if (values.price === "" || isNaN(parseFloat(values.price))) {
-                toast.error("Цената е невалидна.");
                 return;
             }
 
             const processed = {
                 ...values,
-                price: values.price === "" ? undefined : parseFloat(values.price),
+                price: parseFloat(values.price),
                 discountPrice: values.discountPrice ? parseFloat(values.discountPrice) : undefined,
                 quantity: values.quantity ? parseInt(values.quantity) : 0,
                 unitCount: values.unitCount ? parseInt(values.unitCount) : undefined,
                 isFeatured: Boolean(values.isFeatured),
-                tags: values.tags.split(",").map(tag => tag.trim()).filter(tag => tag !== ""),
+                tags: values.tags.split(",").map(tag => tag.trim()).filter(Boolean),
                 images: values.images.filter(img => typeof img === "string" && img.startsWith("data:image")),
             };
+
             try {
                 if (editingProduct) {
                     await adminApi.updateProduct(editingProduct._id, processed);
                     toast.success("Продуктът е обновен успешно.");
                     setEditingProduct(null);
+                    setProductView?.("list");
                 } else {
                     await adminApi.createProduct(processed);
                     toast.success("Продуктът е създаден успешно.");
                 }
 
-                fetchProducts();
-                setValues({
-                    name: "",
-                    images: [],
-                    price: "",
-                    discountPrice: "",
-                    category: "",
-                    subCategory: "",
-                    description: "",
-                    tags: "",
-                    manufacturer: "",
-                    quantity: "",
-                    unitCount: "",
-                    unitType: "",
-                    originCountry: "",
-                    isFeatured: false,
-                });
+                fetchProducts?.();
+                resetForm();
             } catch (err) {
                 toast.error("Възникна грешка при запазване.");
                 setPending(false);
@@ -112,86 +77,127 @@ export function useProductsAdmin() {
         { reinitializeForm: false }
     );
 
-    const handleEdit = (product) => {
-        setEditingProduct(product);
+    const resetForm = () => {
         setValues({
-            name: product.name || "",
-            images: Array.isArray(product.images) ? product.images : [],
-            price: product.price?.toString() ?? "",
-            discountPrice: product.discountPrice?.toString() ?? "",
-            category: product.category || "",
-            subCategory: product.subCategory || "",
-            description: product.description || "",
-            tags: (product.tags || []).join(", "),
-            manufacturer: product.manufacturer || "",
-            quantity: product.quantity?.toString() ?? "",
-            unitCount: product.unitCount?.toString() ?? "",
-            unitType: product.unitType || "",
-            originCountry: product.originCountry || "",
-            isFeatured: !!product.isFeatured,
-        });
-    };
-
-    const handleDelete = (id) => {
-        confirmAlert({
-            message: 'Сигурни ли сте, че искате да изтриете този продукт?',
-            buttons: [
-                {
-                    label: 'Да',
-                    onClick: async () => {
-                        try {
-                            await adminApi.deleteProduct(id);
-                            toast.success('Продуктът беше изтрит успешно.');
-                            fetchProducts();
-                        } catch (err) {
-                            toast.error('Възникна грешка при изтриване.');
-                        }
-                    },
-                },
-                {
-                    label: 'Не',
-                    onClick: () => {
-                        toast.info('Изтриването беше отменено.');
-                    },
-                },
-            ],
+            name: "",
+            images: [],
+            price: "",
+            discountPrice: "",
+            category: "",
+            subCategory: "",
+            description: "",
+            tags: "",
+            manufacturer: "",
+            quantity: "",
+            unitCount: "",
+            unitType: "",
+            originCountry: "",
+            isFeatured: false,
         });
     };
 
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
-        if (!files.length) return;
-
         files.forEach((file) => {
             const reader = new FileReader();
             reader.onloadend = () => {
-                if (reader.result) {
-                    appendImage(reader.result)
-                }
+                if (reader.result) appendImage(reader.result);
             };
-
             reader.readAsDataURL(file);
         });
     };
 
-    const removeImage = (indexToRemove) => {
+    const removeImage = (index) => {
         setValues((prev) => ({
             ...prev,
-            images: prev.images.filter((_, i) => i !== indexToRemove),
+            images: prev.images.filter((_, i) => i !== index),
         }));
+    };
+
+    useEffect(() => {
+        if (editingProduct) {
+            setValues({
+                name: editingProduct.name || "",
+                images: Array.isArray(editingProduct.images) ? editingProduct.images : [],
+                price: editingProduct.price?.toString() ?? "",
+                discountPrice: editingProduct.discountPrice?.toString() ?? "",
+                category: editingProduct.category || "",
+                subCategory: editingProduct.subCategory || "",
+                description: editingProduct.description || "",
+                tags: (editingProduct.tags || []).join(", "),
+                manufacturer: editingProduct.manufacturer || "",
+                quantity: editingProduct.quantity?.toString() ?? "",
+                unitCount: editingProduct.unitCount?.toString() ?? "",
+                unitType: editingProduct.unitType || "",
+                originCountry: editingProduct.originCountry || "",
+                isFeatured: !!editingProduct.isFeatured,
+            });
+        }
+    }, [editingProduct]);
+
+    return {
+        values,
+        pending,
+        navLinks,
+        editingProduct,
+        changeHandler,
+        submitHandler,
+        handleImageUpload,
+        removeImage,
+    };
+}
+
+export function useProductsTable() {
+    const [products, setProducts] = useState([]);
+    const [editingProduct, setEditingProduct] = useState(null);
+
+    const fetchProducts = async () => {
+        try {
+            const res = await productApi.getAll();
+            setProducts(res.products || []);
+        } catch (err) {
+            toast.error("Грешка при зареждане на продуктите.");
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const handleEdit = (product) => {
+        setEditingProduct(product);
+    };
+
+    const handleDelete = (id) => {
+        confirmAlert({
+            message: "Сигурни ли сте, че искате да изтриете този продукт?",
+            buttons: [
+                {
+                    label: "Да",
+                    onClick: async () => {
+                        try {
+                            await adminApi.deleteProduct(id);
+                            toast.success("Продуктът беше изтрит успешно.");
+                            fetchProducts();
+                        } catch (err) {
+                            toast.error("Възникна грешка при изтриване.");
+                        }
+                    },
+                },
+                {
+                    label: "Не",
+                    onClick: () => toast.info("Изтриването беше отменено."),
+                },
+            ],
+        });
     };
 
     return {
         products,
-        values,
-        pending,
         editingProduct,
-        navLinks,
-        changeHandler,
-        submitHandler,
+        setEditingProduct,
+        fetchProducts,
         handleEdit,
         handleDelete,
-        handleImageUpload,
-        removeImage,
     };
 }
