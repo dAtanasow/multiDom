@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import {
   useCatalog,
   useCatalogFilters,
@@ -7,11 +7,12 @@ import navLinks from "../../utils/navLinks";
 import { useCartContext } from "../../context/CartContext";
 import { toast } from "react-toastify";
 
+
 export default function Catalog() {
   const { products, loading, category, subCategory } = useCatalog();
-
   const { addToCart } = useCartContext();
-
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const {
     sortOption,
     setSortOption,
@@ -23,6 +24,27 @@ export default function Catalog() {
     sortedProducts,
   } = useCatalogFilters(products);
 
+  const handleSubCategoryToggle = (label) => {
+    const newParams = new URLSearchParams(searchParams);
+
+    const isSelected = selectedCategories.includes(label);
+    const newSelected = isSelected
+      ? selectedCategories.filter((l) => l !== label)
+      : [...selectedCategories, label];
+
+    newParams.delete("category");
+
+    if (newSelected.length === 1) {
+      newParams.set("subCategory", newSelected[0]);
+    } else {
+      newParams.delete("subCategory");
+    }
+
+    navigate(`/catalog?${newParams.toString()}`);
+    toggleCategory(label);
+    setMobileFiltersOpen(false);
+  }
+  
   return (
     <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8">
       {/* Mobile Filters Button */}
@@ -50,7 +72,7 @@ export default function Catalog() {
                         type="checkbox"
                         className="mr-2"
                         checked={selectedCategories.includes(sub.label)}
-                        onChange={() => toggleCategory(sub.label)}
+                        onChange={() => handleSubCategoryToggle(sub.label)}
                       />
                       {sub.label}
                     </label>
@@ -157,7 +179,7 @@ export default function Catalog() {
                           type="checkbox"
                           className="mr-2"
                           checked={selectedCategories.includes(sub.label)}
-                          onChange={() => toggleCategory(sub.label)}
+                          onChange={() => handleSubCategoryToggle(sub.label)}
                         />
                         {sub.label}
                       </label>

@@ -69,7 +69,7 @@ export default function ProductDetails() {
                         <li><strong>Категория:</strong> {product.category}</li>
                         <li><strong>Подкатегория:</strong> {product.subCategory}</li>
                         <li><strong>Производител:</strong> {product.manufacturer}</li>
-                        <li><strong>Количество:</strong> {product.quantity} {product.unitCount} {product.unitType}</li>
+                        <li><strong>Количество:</strong> {product.unitCount} {product.unitType}</li>
                         <li><strong>Произход:</strong> {product.originCountry}</li>
                         <li><strong>Наличност:</strong> <span className="text-green-600 font-medium">В наличност</span></li>
                     </ul>
