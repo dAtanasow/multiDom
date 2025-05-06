@@ -42,6 +42,10 @@ const productSchema = new mongoose.Schema({
     originCountry: {
         type: String,
     },
+    tags: {
+        type: [String],
+        default: [],
+    },
     isFeatured: {
         type: Boolean,
         default: false,
