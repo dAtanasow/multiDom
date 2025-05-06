@@ -65,6 +65,7 @@ export function useCreateProduct(editingProduct, setEditingProduct, setProductVi
                 } else {
                     await adminApi.createProduct(processed);
                     toast.success("Продуктът е създаден успешно.");
+                    setProductView?.("list");
                 }
 
                 resetForm();
