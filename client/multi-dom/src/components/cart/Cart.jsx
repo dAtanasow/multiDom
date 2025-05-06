@@ -20,47 +20,70 @@ export default function Cart() {
     }
 
     return (
-        <div className="max-w-5xl mx-auto py-12 px-4">
-            <h1 className="text-3xl font-bold mb-6">Моята количка</h1>
+        <div className="max-w-3xl mx-auto py-10 px-4">
+            <h1 className="text-2xl font-bold mb-6">Моята количка</h1>
 
             <div className="space-y-6">
-                {cart
-                    .filter((item) => item && typeof item.price === 'number' && item.name)
-                    .map((item) => (
-                        <div key={item._id} className="flex items-center gap-4 border-b pb-4">
-                            <img src={item.images?.[0] || "/placeholder.jpg"} alt={item.name || 'Продукт'} className="h-20 w-20 object-contain rounded" />
-                            <div className="flex-1">
-                                <p className="font-medium text-gray-800">{item.name || 'Непознат продукт'}</p>
-                                <p className="text-sm text-gray-500">Цена: {item.price?.toFixed(2) || 'н.д.'}</p>
-                                <div className="flex items-center mt-2 gap-2">
-                                    <button onClick={() => updateQuantity(item._id, item.quantity - 1)} className="px-2 py-1 bg-gray-200 rounded">-</button>
-                                    <span className="px-2 text-sm">{item.quantity}</span>
-                                    <button onClick={() => updateQuantity(item._id, item.quantity + 1)} className="px-2 py-1 bg-gray-200 rounded">+</button>
-                                    <button onClick={() => removeFromCart(item._id)} className="ml-4 text-red-500 text-sm hover:underline">Премахни</button>
-                                </div>
+                {cart.map((item) => (
+                    <div key={item._id} className="flex items-start gap-4 border-b pb-4">
+                        <img
+                            src={item.images?.[0] || "/placeholder.jpg"}
+                            alt={item.name}
+                            className="w-20 h-20 object-contain rounded"
+                        />
+                        <div className="flex-1">
+                            <p className="font-medium text-gray-800">{item.name}</p>
+                            <p className="text-sm text-gray-500">Цена: {item.price.toFixed(2)} лв.</p>
+
+                            <div className="flex items-center gap-2 mt-2">
+                                <button
+                                    className="w-7 h-7 bg-gray-200 rounded hover:bg-gray-300"
+                                    onClick={() => updateQuantity(item._id, item.quantity - 1)}
+                                >
+                                    -
+                                </button>
+                                <span className="px-2 text-sm">{item.quantity}</span>
+                                <button
+                                    className="w-7 h-7 bg-gray-200 rounded hover:bg-gray-300"
+                                    onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                                >
+                                    +
+                                </button>
                             </div>
-                            <div className="text-right font-semibold text-gray-700">
-                                {(item.price * item.quantity).toFixed(2)} лв.
+
+                            <div className="flex justify-between items-center mt-2">
+                                <button
+                                    onClick={() => removeFromCart(item._id)}
+                                    className="text-red-600 text-sm hover:underline"
+                                >
+                                    Премахни
+                                </button>
+                                <span className="font-semibold text-sm">
+                                    {(item.price * item.quantity).toFixed(2)} лв.
+                                </span>
                             </div>
                         </div>
-                    ))}
-
+                    </div>
+                ))}
             </div>
 
-            <div className="mt-10 flex justify-between items-center border-t pt-6">
-                <button
-                    className="text-red-600 hover:underline text-sm"
-                    onClick={clearCart}
-                >
-                    Изчисти количката
-                </button>
-                <div className="text-lg font-semibold">
-                    Общо: <span className="text-blue-600">{total.toFixed(2)} лв.</span>
+            {/* Общо и действия */}
+            <div className="mt-10 space-y-4 pt-4">
+                <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Общо:</span>
+                    <span className="text-blue-600 font-semibold text-base">{total.toFixed(2)} лв.</span>
                 </div>
-            </div>
 
-            <div className="mt-6 text-right">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow">
+                <div className="flex justify-between items-center">
+                    <button
+                        onClick={clearCart}
+                        className="text-red-600 text-sm hover:underline"
+                    >
+                        Изчисти количката
+                    </button>
+                </div>
+
+                <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm">
                     Премини към поръчка
                 </button>
             </div>

@@ -116,7 +116,6 @@ function CartProvider({ children }) {
     }, [cart, isAuthenticate]);
 
     const addToCart = async (product) => {
-        console.log("[addToCart] Called with:", product);
         if (!product || !product._id || typeof product.price !== "number") return;
 
         setCart((prev) => {
@@ -154,29 +153,27 @@ function CartProvider({ children }) {
 
 
     const updateQuantity = (productId, quantity) => {
-        setCart((prev) => {
-            const updated = prev.map((item) =>
-                item._id === productId
-                    ? { ...item, quantity: Math.max(1, quantity) }
-                    : item
-            );
+        const updated = cart.map((item) =>
+            item._id === productId
+                ? { ...item, quantity: Math.max(1, quantity) }
+                : item
+        );
+        setCart(updated);
 
-            if (isAuthenticate) {
-                cartApi.updateCart({
-                    items: updated.map(({ _id, quantity }) => ({
-                        product: _id,
-                        quantity,
-                    })),
-                }).catch((err) => {
-                    console.error("[updateQuantity] Server update failed:", err);
-                });
-            } else {
-                localStorage.setItem("cart", JSON.stringify(updated));
-            }
-
-            return updated;
-        });
+        if (isAuthenticate) {
+            cartApi.updateCart({
+                items: updated.map(({ _id, quantity }) => ({
+                    product: _id,
+                    quantity,
+                })),
+            }).catch((err) => {
+                console.error("[updateQuantity] Server update failed:", err);
+            });
+        } else {
+            localStorage.setItem("cart", JSON.stringify(updated));
+        }
     };
+
 
 
 
