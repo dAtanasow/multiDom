@@ -8,7 +8,7 @@ export default function CartButton() {
     return (
         <Link
             to="/cart"
-            className="relative cursor-pointer px-3 py-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
+            className="relative cursor-pointer p-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
             aria-label="Количка"
         >
             <svg

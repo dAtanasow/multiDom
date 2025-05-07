@@ -17,7 +17,7 @@ export default function ProfileButton() {
     return (
         <button
             onClick={handleClick}
-            className="cursor-pointer px-3 py-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
+            className="cursor-pointer p-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
         >
             <svg
                 className="w-6 h-6 text-blue-600"
