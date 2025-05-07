@@ -6,6 +6,7 @@ import {
 import navLinks from "../../utils/navLinks";
 import { useCartContext } from "../../context/CartContext";
 import { toast } from "react-toastify";
+import ProductCard from "../product-card/ProductCard";
 
 export default function Catalog() {
   const { products, loading } = useCatalog();
@@ -113,37 +114,7 @@ export default function Catalog() {
         {/* Products grid */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 overflow-x-hidden max-w-full">
           {sortedProducts.map((product) => (
-            <div
-              key={product._id}
-              className="bg-white p-2 rounded-md shadow-sm hover:shadow-md transition flex flex-col min-h-[240px] w-full max-w-full min-w-0"
-            >
-              <Link to={`/catalog/${product._id}`}>
-                <img
-                  src={product.images[0] || '/images/placeholder.jpg'}
-                  alt={product.name}
-                  className="h-32 w-full object-contain mb-2"
-                />
-              </Link>
-
-              <div className="flex-1 flex flex-col">
-                <h3 className="text-sm font-semibold text-gray-800 mb-1 line-clamp-2 leading-tight">
-                  {product.name}
-                </h3>
-                <p className="text-blue-600 text-sm font-bold">
-                  {product.price.toFixed(2)} лв.
-                </p>
-
-                <button
-                  onClick={() => {
-                    addToCart(product);
-                    toast.success("Продуктът беше добавен в количката.");
-                  }}
-                  className="mt-auto text-xs py-1 px-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                >
-                  Добави
-                </button>
-              </div>
-            </div>
+            <ProductCard key={product._id} product={product} />
           ))}
           {sortedProducts.length === 0 && (
             <p className="col-span-full text-center text-gray-600">
