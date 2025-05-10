@@ -3,7 +3,7 @@ import { useState } from "react";
 import MobileHeaderContent from "./mobile/MobileHeaderContent";
 import DesktopHeaderContent from "./desktop/DesktopHeaderContent";
 import PanelSwitcher from "./PanelSwitcher";
-import { useIsMobile } from "../../hooks/useResponive";
+import { useIsMobile } from "../../hooks/useResponsive";
 import { usePanel } from "../../hooks/usePanel";
 
 export default function Header() {

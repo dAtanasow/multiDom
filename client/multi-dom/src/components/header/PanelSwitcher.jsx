@@ -35,6 +35,7 @@ export default function PanelSwitcher({ activePanel, closePanel, setActivePanel 
         return (
             <Login
                 visible={visible}
+                onClose={closePanel}
                 onRegisterClick={() => setActivePanel("register")}
             />
         );

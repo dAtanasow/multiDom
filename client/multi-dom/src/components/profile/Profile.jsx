@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useProfile } from "../../hooks/useProfile";
 import { ProfileFields } from "./ProfileFields";
-import { useIsMobile } from "../../hooks/useResponive";
+import { useIsMobile } from "../../hooks/useResponsive";
 import { useLogout } from "../../hooks/useAuth";
 import {
     FiUser,
@@ -38,15 +38,10 @@ export default function Profile() {
     return (
         <div className="flex flex-col min-h-screen pb-20">
             {/* Header за мобилни */}
-            {isMobile && (
-                <header className="h-16 bg-white flex items-center justify-center px-4 shadow-md relative z-10">
-                    <h1 className="text-xl font-bold">Профил</h1>
-                </header>
-            )}
             <div className="flex flex-1">
 
                 {!isMobile && (
-                    <aside className="w-64 bg-white border-r p-6 hidden md:block">
+                    <aside className="w-64 text-center bg-white border-r pt-20 p-6 hidden md:block">
                         <div className="mb-6">
                             <h2 className="text-xl font-bold mb-4">Профил</h2>
                         </div>
@@ -76,8 +71,8 @@ export default function Profile() {
                 )}
 
                 {/* Основна част */}
-                <main className="flex-1 p-6 relative z-0">
-                    <div className="p-6 relative">
+                <main className="flex-1 md:pt-20 p-6 relative z-0">
+                    <div className="pl-10 pr-10 relative">
 
                         <h3 className="text-xl font-semibold text-center mb-6">
                             Детайли на профила

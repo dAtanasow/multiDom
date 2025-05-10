@@ -1,9 +1,8 @@
 import { useForm } from "../../hooks/useForm";
 import { useLogin } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { closePanelParam } from "../../utils/panel";
 
-export default function Login({ onRegisterClick, visible }) {
+export default function Login({ onClose, onRegisterClick, visible }) {
   const { login, loading } = useLogin();
   const navigate = useNavigate();
 
@@ -14,7 +13,7 @@ export default function Login({ onRegisterClick, visible }) {
     },
     async (formData) => {
       await login(formData);
-      closePanelParam();
+      onClose()
       navigate('/')
     }
   );
@@ -28,7 +27,7 @@ export default function Login({ onRegisterClick, visible }) {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-700">Вход</h2>
           <button
-            onClick={() => closePanelParam()}
+            onClick={() => onClose()}
             className="text-gray-500 hover:text-red-500 text-2xl"
           >
             &times;
