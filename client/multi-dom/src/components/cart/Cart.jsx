@@ -83,9 +83,11 @@ export default function Cart() {
                     </button>
                 </div>
 
-                <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm">
-                    Премини към поръчка
-                </button>
+                <Link to="/checkout" className="block w-full">
+                    <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm">
+                        Премини към поръчка
+                    </button>
+                </Link>
             </div>
         </div>
     );

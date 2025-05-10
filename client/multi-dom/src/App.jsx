@@ -18,6 +18,7 @@ import AdminRoute from "./components/private-router/AdminRoute";
 import AdminPanel from "./components/admin/AdminPanel";
 import ProductDetails from "./components/product-details/ProductDetails";
 import Cart from "./components/cart/Cart";
+import Checkout from "./components/checkout/Checkоut";
 
 
 function App() {
@@ -35,8 +36,9 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-          <Route path="/cart" element={<PrivateRoute><Cart /></PrivateRoute>} />
           <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
         </Routes>
       </ErrorBoundary>
