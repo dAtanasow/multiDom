@@ -8,10 +8,15 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
     const [valuesState, setValuesState] = useState(initialValues);
 
     const setValues = (newValues) => {
-        const cloned = { ...newValues };
-        valuesRef.current = cloned;
-        setValuesState(cloned);
+        const updated =
+            typeof newValues === "function"
+                ? newValues(valuesRef.current)
+                : newValues;
+
+        valuesRef.current = { ...updated };
+        setValuesState({ ...updated });
     };
+
 
     useEffect(() => {
         if (options.reinitializeForm) {
