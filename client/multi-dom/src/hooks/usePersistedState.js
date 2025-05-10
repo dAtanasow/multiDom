@@ -14,12 +14,7 @@ export default function usePersistedState(key, initialState) {
     const updateState = (value) => {
         const newState = typeof value === "function" ? value(state) : value;
 
-        const isEmpty =
-            newState === null ||
-            newState === undefined ||
-            (typeof newState === "object" &&
-                newState.user == null &&
-                newState.accessToken == null);
+        const isEmpty = newState === null || newState === undefined;
 
         if (isEmpty) {
             localStorage.removeItem(key);
@@ -29,7 +24,6 @@ export default function usePersistedState(key, initialState) {
 
         localStorage.setItem(key, JSON.stringify(newState));
         setState(newState);
-
     };
 
     return [state, updateState];
