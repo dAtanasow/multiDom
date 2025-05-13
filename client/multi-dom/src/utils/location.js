@@ -23,11 +23,13 @@ export const normalizeOffices = (arr, provider, cityFull = "") => {
 };
 
 export const normalizeCity = (str) => {
-    return String(str || "")
-        .toLowerCase()
-        .replace(/гр\.?/gi, "")
+    const cleaned = String(str || "")
+        .replace(/^гр\.?\s*/i, "")
         .replace(/[\(\[].*?[\)\]]/g, "")
-        .replace(/[^\w\s]/gi, "")
+        .replace(/[^\p{L}\d\s]/gu, "")
         .replace(/\s+/g, " ")
+        .toLowerCase()
         .trim();
+    return cleaned;
 };
+

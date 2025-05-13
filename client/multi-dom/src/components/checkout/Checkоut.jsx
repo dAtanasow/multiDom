@@ -10,6 +10,7 @@ import { useDelivery } from "../../hooks/useDelivery";
 import { useTotals } from "../../hooks/useTotals";
 import DeliveryMethod from "./DeliveryMethod";
 import { deliveryPrices } from "../../constants/deliveryPrices";
+import orderApi from "../../api/order";
 
 export default function Checkout() {
     const { cart, clearCart } = useCartContext();
@@ -38,12 +39,29 @@ export default function Checkout() {
             mol: "",
             useInvoice: false,
         },
+
         async (formData) => {
-            console.log("Поръчка изпратена:", formData, cart);
-            clearCart();
-            navigate("/thank-you");
-        }
-    );
+            const payload = {
+                ...formData,
+                deliveryCompany,
+                deliveryTotal,
+                items: cart.map(item => ({
+                    productId: item._id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                })),
+            };
+
+            try {
+                const response = await orderApi.createOrder(payload);
+                console.log("✅ Поръчка приета:", response);
+                clearCart();
+                navigate("/thank-you");
+            } catch (err) {
+                console.error("❌ Грешка при изпращане на поръчка:", err);
+            }
+        });
 
     const {
         deliveryCompany,

@@ -15,40 +15,54 @@ export function useDelivery(form, setValues) {
 
     useEffect(() => {
         if (!hasSyncedOffice.current && selectedOfficeId) {
-            setValues((prev) => ({ ...prev, office: selectedOfficeId }));
-            hasSyncedOffice.current = true;
+            const selectedOffice = offices.find(o => o._id === selectedOfficeId);
+            if (selectedOffice) {
+                setValues((prev) => ({
+                    ...prev,
+                    office: {
+                        name: selectedOffice.name,
+                        address: selectedOffice.address,
+                        city: selectedCity.city || form.city,
+                        courierName: deliveryCompany
+                    }
+                }));
+                hasSyncedOffice.current = true;
+            }
         }
     }, [selectedOfficeId]);
 
     useEffect(() => {
         hasSyncedOffice.current = false;
-    }, [deliveryCompany, deliveryMethod, form.city]);
+    }, [deliveryCompany, deliveryMethod, selectedCity]);
 
     useEffect(() => {
         const fetchOffices = async () => {
-            if (!selectedCity || deliveryMethod !== "office") return;
+            const city = form.city?.trim();
+
+            if (!city || deliveryMethod !== "office") return;
+
+
+            const cityNormalized = normalizeCity(city);
             setLoadingOffices(true);
             try {
                 let raw = [];
                 let matched = null;
-                const cityNormalized = normalizeCity(selectedCity);
 
                 if (deliveryCompany === "Еконт") {
-                    const result = await econtApi.getByCity(selectedCity);
+                    const result = await econtApi.getByCity(city);
                     matched = Array.isArray(result)
-                        ? result.find((r) => normalizeCity(r.city) === cityNormalized)
+                        ? result.find(r => normalizeCity(r.city) === cityNormalized)
                         : null;
-                    raw = matched?.offices?.map((o) => o.toObject ? o.toObject() : o) || [];
-
+                    raw = matched?.offices?.map(o => o.toObject ? o.toObject() : o) || [];
                 } else if (deliveryCompany === "Спиди") {
-                    const result = await speedyApi.getByCity(selectedCity);
+                    const result = await speedyApi.getByCity(city);
                     matched = Array.isArray(result)
-                        ? result.find((r) => normalizeCity(r.city) === cityNormalized)
+                        ? result.find(r => normalizeCity(r.city).includes(cityNormalized))
                         : null;
-                    raw = matched?.offices?.map((o) => o.toObject ? o.toObject() : o) || [];
+                    raw = matched?.offices?.map(o => o.toObject ? o.toObject() : o) || [];
                 }
 
-                const plainOffices = Array.from(raw || []).map((o) => o.toObject?.() || o._doc || o);
+                const plainOffices = Array.from(raw).map(o => o.toObject?.() || o._doc || o);
                 const cityFull = matched?.city || "";
                 const response = normalizeOffices(plainOffices, deliveryCompany, cityFull);
                 setOffices(response);
@@ -59,13 +73,19 @@ export function useDelivery(form, setValues) {
                 setLoadingOffices(false);
             }
         };
+
         fetchOffices();
-    }, [selectedCity, deliveryCompany, deliveryMethod]);
+    }, [form.city, deliveryCompany, deliveryMethod]);
+
 
     const handleSelectCity = (city) => {
         setSelectedCity(city);
-        setValues((prev) => ({ ...prev, city }));
+        setValues((prev) => ({
+            ...prev,
+            city,
+        }));
     };
+
 
     return {
         deliveryCompany,
