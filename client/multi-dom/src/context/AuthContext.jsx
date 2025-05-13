@@ -1,16 +1,20 @@
 import usePersistedState from "../hooks/usePersistedState";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { getAccessToken } from "../utils/authUtil";
+import { useNavigate } from "react-router";
 
 const AuthContext = createContext();
 
 export const useAuthContext = () => useContext(AuthContext);
 
 function AuthProvider({ children }) {
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [authState, setAuthState] = usePersistedState("auth", {
         user: null,
         accessToken: null,
     });
+
+    const navigate = useNavigate();
 
     const changeAuthState = (newState) => {
         if (newState === null) {
@@ -30,6 +34,8 @@ function AuthProvider({ children }) {
             return;
         }
     
+        if (isLoggingOut) return;
+        setIsLoggingOut(true);
         try {
             await fetch("http://localhost:3000/api/auth/logout", {
                 method: "POST",
@@ -38,15 +44,18 @@ function AuthProvider({ children }) {
                     "Authorization": `Bearer ${token}`
                 }
             });
-    
+
             localStorage.removeItem("cart");
-    
+
             setAuthState({ user: null, accessToken: null });
+            navigate("/login");
         } catch (err) {
             console.error("Logout API error:", err);
+        } finally {
+            setIsLoggingOut(false);
         }
     };
-    
+
 
     const contextData = {
         userId: authState?.user?._id || null,
@@ -59,6 +68,7 @@ function AuthProvider({ children }) {
         role: authState?.user?.role || 'user',
         changeAuthState,
         logout,
+        isLoggingOut,
     };
 
     return (

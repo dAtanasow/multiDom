@@ -18,8 +18,6 @@ export async function requester(method, url, data) {
 
     if (accessToken && isAuthRequired) {
         options.headers["Authorization"] = `Bearer ${accessToken}`;
-    } else if (!accessToken && isAuthRequired) {
-        return handleUnauthorized();
     }
 
     if (method !== "GET" && data) {

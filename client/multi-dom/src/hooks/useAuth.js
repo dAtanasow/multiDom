@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import userApi from "../api/auth";
 import { useAuthContext } from "../context/AuthContext";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 
 export function useRegister() {
     const [loading, setLoading] = useState(false);
@@ -64,27 +64,20 @@ export function useLogin() {
 
 export function useLogout() {
     const navigate = useNavigate();
-    const { logout: localLogout, accessToken } = useAuthContext();
+    const { logout, isLoggingOut } = useAuthContext();
 
     const logoutHandler = async () => {
-        if (accessToken) {
-            try {
-                await userApi.logout();
-                toast.info("Успешно излязохте.");
-            } catch (err) {
-                console.error("Logout API error:", err);
-                toast.error("Проблем при излизане.");
-            }
+        if (isLoggingOut) return;
+
+        try {
+            await logout();
+            toast.success("Успешно излязохте от профила.");
+            navigate("/", { replace: true });
+        } catch (err) {
+            console.error("Logout error:", err);
+            toast.error("Грешка при излизане.");
         }
-
-        navigate("/", { replace: true });
-
-        navigate("/", { replace: true });
-        setTimeout(() => {
-          localLogout();
-        }, 10);
-        
     };
 
-    return logoutHandler;
+    return { logout: logoutHandler, isLoggingOut };
 }

@@ -23,7 +23,7 @@ const sections = [
 export default function Profile() {
     const [activeTab, setActiveTab] = useState("details");
     const isMobile = useIsMobile();
-    const logout = useLogout();
+    const { logout, isLoggingOut } = useLogout();
 
     const {
         editMode,
@@ -61,11 +61,13 @@ export default function Profile() {
                             })}
                             <button
                                 onClick={logout}
-                                className="flex items-center gap-2 w-full px-4 py-2 mt-6 rounded-lg text-sm text-red-600 hover:bg-red-100"
+                                disabled={isLoggingOut}
+                                className={`bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition ${isLoggingOut ? "opacity-50 cursor-not-allowed" : ""
+                                    }`}
                             >
-                                <FiLogOut className="text-lg" />
-                                <span>Изход</span>
+                                {isLoggingOut ? "Излизане..." : "Изход"}
                             </button>
+
                         </nav>
                     </aside>
                 )}
