@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const Review = require('../models/Review');
 
 const getAllProducts = async (req, res, next) => {
     try {
@@ -64,18 +65,20 @@ const getAllProducts = async (req, res, next) => {
     }
 };
 
-const getProductById = async (req, res, next) => {
+
+
+const getProductById = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ message: "Продуктът не е намерен" });
 
-        if (!product) {
-            return res.status(404).json({ message: "Продуктът не е намерен." });
-        }
+        const reviews = await Review.find({ productId: product._id });
+        const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+        const avgRating = reviews.length ? sum / reviews.length : 0;
 
-        res.status(200).json(product);
+        res.json({ ...product.toObject(), averageRating: avgRating });
     } catch (err) {
-        console.error("Грешка при намиране на продукт по ID:", err);
-        res.status(500).json({ message: "Възникна грешка при зареждане на продукта." });
+        res.status(500).json({ message: "Грешка при зареждане на продукта" });
     }
 };
 

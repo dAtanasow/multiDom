@@ -100,6 +100,7 @@ export function useProductDetails(productId) {
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
+    const [averageRating, setAverageRating] = useState(0);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -107,6 +108,7 @@ export function useProductDetails(productId) {
                 setLoading(true);
                 const data = await catalogApi.getById(productId);
                 setProduct(data);
+                setAverageRating(data.averageRating || 0);
                 setActiveImage(data.images?.[0] || null);
             } catch (err) {
                 console.error("Грешка при зареждане на продукта:", err.message);
@@ -142,6 +144,7 @@ export function useProductDetails(productId) {
         product,
         loading,
         activeImage,
+        averageRating,
         setActiveImage,
         relatedProducts
     };

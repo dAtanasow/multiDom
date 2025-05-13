@@ -5,10 +5,11 @@ import { useProductDetails } from "../../hooks/useCatalog";
 import { useCartContext } from "../../context/CartContext";
 import cartApi from "../../api/cart";
 import { toast } from "react-toastify";
+import ReviewList from "../reviews/ReviewList";
 
 export default function ProductDetails() {
     const { id } = useParams();
-    const { product, loading, activeImage, setActiveImage, relatedProducts } = useProductDetails(id);
+    const { product, loading, activeImage, averageRating, setActiveImage, relatedProducts } = useProductDetails(id);
     const { addToCart: addToCartContext } = useCartContext();
 
     const handleAddToCart = async () => {
@@ -60,10 +61,11 @@ export default function ProductDetails() {
 
                     <div className="flex items-center gap-1">
                         {[...Array(5)].map((_, i) => (
-                            <Star key={i} size={18} className={i < 4 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"} />
+                            <Star key={i} size={18} className={i < Math.round(averageRating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"} />
                         ))}
-                        <span className="text-xs text-gray-500 ml-2">(14 отзива)</span>
+                        <span className="text-xs text-gray-500 ml-2">({averageRating.toFixed(1)} от 5)</span>
                     </div>
+
 
                     <ul className="text-sm text-gray-700 space-y-2">
                         <li><strong>Категория:</strong> {product.category}</li>
@@ -113,6 +115,8 @@ export default function ProductDetails() {
                     </div>
                 </motion.div>
             </div>
+
+            <ReviewList productId={id} />
 
             {relatedProducts.length > 0 && (
                 <motion.div className="mt-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
