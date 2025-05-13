@@ -6,6 +6,8 @@ const admin = require('./admin');
 const cart = require('./cart');
 const econt = require("./econt");
 const speedy = require("./speedy");
+const order = require("./order");
+
 
 router.use('/auth', auth)
 router.use('/catalog', catalog);
@@ -13,6 +15,7 @@ router.use('/admin', admin);
 router.use('/cart', cart);
 router.use("/econt", econt);
 router.use("/speedy", speedy);
+router.use("/thank-you", order)
 
 
 module.exports = router;
