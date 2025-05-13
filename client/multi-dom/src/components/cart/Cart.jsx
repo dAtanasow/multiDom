@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCartContext } from "../../context/CartContext";
+import { ShoppingCart } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Cart() {
     const { cart, updateQuantity, removeFromCart, clearCart } = useCartContext();
@@ -12,9 +14,23 @@ export default function Cart() {
 
     if (!cart || cart.length === 0) {
         return (
-            <div className="max-w-4xl mx-auto py-16 px-4 text-center">
-                <h1 className="text-2xl font-semibold text-gray-800 mb-4">Количката е празна</h1>
-                <Link to="/catalog" className="text-blue-600 hover:underline">Разгледай продукти</Link>
+            <div className="max-w-xl mx-auto py-20 px-6 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="flex flex-col items-center justify-center space-y-4"
+                >
+                    <ShoppingCart size={48} className="text-gray-400" />
+                    <h1 className="text-2xl font-bold text-gray-700">Твоята количка е празна</h1>
+                    <p className="text-sm text-gray-500">Изглежда, че все още не си добавил нищо. Разгледай нашите продукти и започни пазаруването.</p>
+                    <Link
+                        to="/catalog"
+                        className="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm px-6 py-2 rounded-full shadow transition"
+                    >
+                        Разгледай продукти
+                    </Link>
+                </motion.div>
             </div>
         );
     }
