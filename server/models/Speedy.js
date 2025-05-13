@@ -11,4 +11,4 @@ const citySchema = new mongoose.Schema({
     offices: [officeSchema]
 });
 
-module.exports = mongoose.model("Office", citySchema);
+module.exports = mongoose.model("Speedy", citySchema, "speedy");

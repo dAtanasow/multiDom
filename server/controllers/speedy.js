@@ -1,7 +1,12 @@
-const Office = require("../models/Office");
+const Speedy = require("../models/Speedy");
 
 const normalizeCity = (cityStr) => {
-    return cityStr.split("(")[0].trim().toLowerCase();
+    return String(cityStr || "")
+        .split("(")[0]
+        .replace(/\[\d{4}\]/, "")
+        .replace(/гр\.?/gi, "")
+        .trim()
+        .toLowerCase();
 };
 
 const getOfficesByCity = async (req, res) => {
@@ -11,12 +16,10 @@ const getOfficesByCity = async (req, res) => {
     }
 
     try {
-        const all = await Office.find({});
-        const normalizedQuery = city.trim().toLowerCase();
+        const all = await Speedy.find({});
+        const normalizedQuery = normalizeCity(city);
 
-        const matching = all.filter(entry => {
-            return normalizeCity(entry.city) === normalizedQuery;
-        });
+        const matching = all.filter(entry => normalizeCity(entry.city) === normalizedQuery);
 
         res.status(200).json(
             matching.map(o => ({
@@ -25,12 +28,11 @@ const getOfficesByCity = async (req, res) => {
                 offices: Array.isArray(o.offices)
                     ? o.offices.map(of => ({
                         ...of,
-                        _id: of._id?.toString?.() || undefined
+                        _id: of._id?.toString?.() || undefined,
                     }))
                     : [],
             }))
         );
-
     } catch (err) {
         console.error("Грешка при търсене на офиси на Спиди:", err);
         res.status(500).json({ message: "Грешка при зареждане на офисите на Спиди." });
@@ -39,7 +41,7 @@ const getOfficesByCity = async (req, res) => {
 
 const getOfficeById = async (req, res) => {
     try {
-        const office = await Office.findById(req.params.id);
+        const office = await Speedy.findById(req.params.id);
         if (!office) {
             return res.status(404).json({ message: "Офисът на Спиди не е намерен." });
         }
