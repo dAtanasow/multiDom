@@ -6,12 +6,16 @@ export default function NewProducts() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    catalogApi
-      .getNewest("limit=4")
-      .then((res) => setProducts(res.products || []))
-      .catch((err) => {
-        console.error("Грешка при зареждане на новите продукти:", err);
-      });
+    const fetchProducts = async () => {
+      try {
+        const data = await catalogApi.getNewest(4);
+        setProducts(data.products);
+      } catch (err) {
+        console.error("Грешка при зареждане на нови продукти:", err);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   return (
