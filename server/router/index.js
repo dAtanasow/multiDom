@@ -7,6 +7,7 @@ const cart = require('./cart');
 const econt = require("./econt");
 const speedy = require("./speedy");
 const order = require("./order");
+const review = require("./review");
 
 
 router.use('/auth', auth)
@@ -16,6 +17,6 @@ router.use('/cart', cart);
 router.use("/econt", econt);
 router.use("/speedy", speedy);
 router.use("/thank-you", order)
-
+router.use("/review", review)
 
 module.exports = router;
