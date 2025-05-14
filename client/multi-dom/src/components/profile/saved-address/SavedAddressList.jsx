@@ -8,7 +8,7 @@ export default function SavedAddressList({ addresses = [], onDelete }) {
             {addresses.map((addr, i) => (
                 <li
                     key={i}
-                    className="border border-gray-200 rounded-xl p-4 bg-gray-50 flex justify-between items-center"
+                    className="border border-gray-200 rounded-xl p-4 bg-white flex justify-between items-center"
                 >
                     <div className="text-sm text-gray-700">
                         <p>

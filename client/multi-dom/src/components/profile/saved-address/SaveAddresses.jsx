@@ -76,7 +76,6 @@ export default function SavedAddresses({ addresses = [], onAdd, onDelete }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("🔍 Проверка на newAddress:", newAddress);
         if (!newAddress.label || !newAddress.deliveryMethod || !newAddress.city ||
             (newAddress.deliveryMethod === "address" && !newAddress.address) ||
             (newAddress.deliveryMethod === "office" &&
@@ -120,13 +119,13 @@ export default function SavedAddresses({ addresses = [], onAdd, onDelete }) {
     }, [newAddress.deliveryMethod]);
 
     return (
-        <><div className="bg-white rounded-2xl p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">📍 Запазени адреси</h3>
-            <SavedAddressList addresses={addresses} onDelete={onDelete} />
-        </div>
-            <div className="sticky top-0 z-10 bg-gradient-to-t from-gray-100 to-white h-6 mb-4"></div>
-            <div className="rounded-2xl p-6">
-                <h4 className="text-xl font-bold text-gray-800 mb-4">➕ Добави нов адрес</h4>
+        <div className="bg-gray-50 flex flex-col lg:flex-row gap-5">
+            <div className="rounded-2xl p-6 w-full lg:w-1/2">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">📍 Запазени адреси</h3>
+                <SavedAddressList addresses={addresses} onDelete={onDelete} />
+            </div>
+            <div className="bg-white rounded-2xl m-auto p-6 w-full h-full lg:w-1/2">
+                <h4 className="text-xlfont-bold text-gray-800 mb-4">➕ Добави нов адрес</h4>
                 <AddressForm
                     newAddress={newAddress}
                     deliveryCompany={deliveryCompany}
@@ -144,8 +143,8 @@ export default function SavedAddresses({ addresses = [], onAdd, onDelete }) {
                     onCompanyChange={handleChange}
                     onSubmit={handleSubmit}
                 />
-
             </div>
-        </>
+        </div>
+
     );
 }

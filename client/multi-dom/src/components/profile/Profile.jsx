@@ -52,7 +52,7 @@ export default function Profile() {
         <div className="flex flex-col min-h-screen pb-20 bg-gray-50">
             <div className="flex flex-1">
                 {!isMobile && (
-                    <aside className="w-64 bg-white border-r pt-20 px-6 shadow-sm">
+                    <aside className="w-64 min-h-screen bg-white border-r pt-20 px-6 shadow-sm">
                         <h2 className="text-2xl font-bold mb-6 text-center">Профил</h2>
                         <nav className="space-y-2">
                             {sections.map((s) => {
@@ -79,8 +79,8 @@ export default function Profile() {
                     </aside>
                 )}
 
-                <main className="flex-1 pt-20 px-4 md:px-10 relative">
-                    <div className="max-w-2xl flex flex-col gap-5 mx-auto bg-white shadow-md rounded-2xl">
+                <main className="flex-1 bg-gray-50 sm:pt-15 px-4 md:px-10 relative">
+                    <div className="max-w-5xl flex flex-col gap-5 p-5 mx-auto bg-gray-50">
                         {activeTab === "details" && (
                             <>
                                 <h3 className="text-2xl font-bold text-center mb-6">Детайли на профила</h3>
