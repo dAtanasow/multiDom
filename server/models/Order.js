@@ -13,11 +13,13 @@ const orderSchema = new mongoose.Schema({
         city: { type: String },
         courierName: { type: String }
     },
-    companyName: { type: String },
-    bulstat: { type: String },
-    vatNumber: { type: String },
-    mol: { type: String },
-    useInvoice: { type: Boolean, default: false },
+    invoice: {
+        useInvoice: { type: Boolean, default: false },
+        companyName: { type: String },
+        bulstat: { type: String },
+        vatNumber: { type: String },
+        mol: { type: String }
+    },
     items: [
         {
             productId: { type: String, required: true },
@@ -28,7 +30,7 @@ const orderSchema = new mongoose.Schema({
     ],
     status: {
         type: String,
-        enum: ['new', 'pending', 'completed'],
+        enum: ['new', 'pending', 'completed', "canceled"],
         default: 'new'
     },
     createdAt: {
