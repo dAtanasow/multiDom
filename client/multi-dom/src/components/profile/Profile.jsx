@@ -36,15 +36,11 @@ export default function Profile() {
     } = useProfile();
 
     return (
-        <div className="flex flex-col min-h-screen pb-20">
-            {/* Header за мобилни */}
+        <div className="flex flex-col min-h-screen pb-20 bg-gray-50">
             <div className="flex flex-1">
-
                 {!isMobile && (
-                    <aside className="w-64 text-center bg-white border-r pt-20 p-6 hidden md:block">
-                        <div className="mb-6">
-                            <h2 className="text-xl font-bold mb-4">Профил</h2>
-                        </div>
+                    <aside className="w-64 bg-white border-r pt-20 px-6 shadow-sm">
+                        <h2 className="text-2xl font-bold mb-6 text-center">Профил</h2>
                         <nav className="space-y-2">
                             {sections.map((s) => {
                                 const isActive = activeTab === s.key;
@@ -52,7 +48,7 @@ export default function Profile() {
                                     <button
                                         key={s.key}
                                         onClick={() => setActiveTab(s.key)}
-                                        className={`flex items-center gap-2 w-full px-4 py-2 rounded-lg text-sm transition ${isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"}`}
+                                        className={`flex items-center gap-2 w-full px-4 py-2 rounded-lg text-sm transition-all duration-200 ${isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"}`}
                                     >
                                         <span className="text-lg">{s.icon}</span>
                                         <span>{s.label}</span>
@@ -62,57 +58,50 @@ export default function Profile() {
                             <button
                                 onClick={logout}
                                 disabled={isLoggingOut}
-                                className={`bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition ${isLoggingOut ? "opacity-50 cursor-not-allowed" : ""
-                                    }`}
+                                className={`bg-red-500 hover:bg-red-600 text-white w-full py-2 rounded-lg mt-4 transition-all ${isLoggingOut ? "opacity-50 cursor-not-allowed" : ""}`}
                             >
                                 {isLoggingOut ? "Излизане..." : "Изход"}
                             </button>
-
                         </nav>
                     </aside>
                 )}
 
-                {/* Основна част */}
-                <main className="flex-1 md:pt-20 p-6 relative z-0">
-                    <div className="pl-10 pr-10 relative">
-
-                        <h3 className="text-xl font-semibold text-center mb-6">
-                            Детайли на профила
-                        </h3>
+                <main className="flex-1 pt-20 px-4 md:px-10 relative">
+                    <div className="max-w-2xl mx-auto bg-white shadow-md rounded-2xl p-6">
+                        <h3 className="text-2xl font-bold text-center mb-6">Детайли на профила</h3>
                         <form onSubmit={editMode ? submitHandler : undefined}>
                             <ProfileFields
                                 values={values}
                                 changeHandler={changeHandler}
                                 editMode={editMode}
                             />
-                            {editMode ? (
-                                <SaveButton pending={pending} onCancel={handleCancel} />
-                            ) : (
-                                <EditButton onEdit={handleEdit} />
-                            )}
+                            <div className="mt-6">
+                                {editMode ? (
+                                    <SaveButton pending={pending} onCancel={handleCancel} />
+                                ) : (
+                                    <EditButton onEdit={handleEdit} />
+                                )}
+                            </div>
                         </form>
                     </div>
                 </main>
             </div>
 
-            {/* Долна мобилна навигация */}
             {isMobile && (
-                <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow z-50 flex justify-around items-center h-16 transition-all duration-300">
+                <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow z-50 flex justify-around items-center h-16">
                     {sections.map((s) => {
                         const isActive = activeTab === s.key;
                         return (
                             <button
                                 key={s.key}
                                 onClick={() => setActiveTab(s.key)}
-                                className={`flex flex-col items-center text-xs px-2 py-1 rounded-md transition-all duration-200 ${isActive ? "bg-blue-100 text-blue-600" : "text-gray-500"
-                                    }`}
+                                className={`flex flex-col items-center text-xs px-2 py-1 transition-all ${isActive ? "text-blue-600" : "text-gray-500"}`}
                             >
                                 <span className="text-lg">{s.icon}</span>
                                 <span className="text-[10px]">{s.label}</span>
                             </button>
                         );
                     })}
-
                     <button
                         onClick={logout}
                         className="flex flex-col items-center text-xs text-red-600"
