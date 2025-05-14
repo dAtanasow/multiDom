@@ -1,5 +1,5 @@
 import { useState } from "react";
-import OrdersAdmin from "./orders-admin/OrdersAdmin";
+import OrdersAdmin from "./orders-admin/Orders";
 import CreateProduct from "./products-admin/CreateProduct";
 import ProductsTable from "./products-admin/ProductsTable";
 
@@ -12,26 +12,52 @@ export default function AdminPanel() {
     return (
         <div className="p-4">
             <h2 className="text-2xl font-bold mb-4">Админ панел</h2>
-            {/* Основна навигация */}
             <div className="flex gap-4 mb-4">
-                <button onClick={() => setSection("products")} className={`px-4 py-2 ${section === "products" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>
-                    Продукти
+                <button
+                    onClick={() => setSection("products")}
+                    className={`p-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${section === "products"
+                        ? "bg-blue-500 text-white shadow"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                >
+                    🛒 Продукти
                 </button>
-                <button onClick={() => setSection("orders")} className={`px-4 py-2 ${section === "orders" ? "bg-blue-600 text-white" : "bg-gray-200"}`}>
-                    Поръчки
+
+                <button
+                    onClick={() => setSection("orders")}
+                    className={`p-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${section === "orders"
+                        ? "bg-blue-500 text-white shadow"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                >
+                    📦 Поръчки
                 </button>
+
             </div>
 
-            {/* Подменю за продукти */}
             {section === "products" && (
                 <>
                     <div className="flex gap-2 mb-4">
-                        <button onClick={() => setProductView("create")} className={`px-3 py-1 ${productView === "create" ? "bg-green-600 text-white" : "bg-gray-100"}`}>
-                            Създай продукт
+                        <button
+                            onClick={() => setProductView("create")}
+                            className={`p-2 rounded-lg text-sm font-medium transition-colors duration-200 ${productView === "create"
+                                ? "bg-green-500 text-white shadow"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}
+                        >
+                            ➕ Създай продукт
                         </button>
-                        <button onClick={() => setProductView("list")} className={`px-3 py-1 ${productView === "list" ? "bg-green-600 text-white" : "bg-gray-100"}`}>
-                            Списък с продукти
+
+                        <button
+                            onClick={() => setProductView("list")}
+                            className={`p-2 rounded-lg text-sm font-medium transition-colors duration-200 ${productView === "list"
+                                ? "bg-green-500 text-white shadow"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}
+                        >
+                            📃 Списък с продукти
                         </button>
+
                     </div>
                     {productView === "create" ? (
                         <CreateProduct
@@ -52,14 +78,34 @@ export default function AdminPanel() {
             {section === "orders" && (
                 <>
                     <div className="flex gap-2 mb-4">
-                        <button onClick={() => setOrderStatus("new")} className={`px-3 py-1 ${orderStatus === "new" ? "bg-yellow-600 text-white" : "bg-gray-100"}`}>
-                            Нови
+                        <button
+                            onClick={() => setOrderStatus("new")}
+                            className={`p-2 rounded-lg text-sm font-medium transition-colors duration-200 ${orderStatus === "new"
+                                ? "bg-green-500 text-white shadow"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}
+                        >
+                            🆕 Нови
                         </button>
-                        <button onClick={() => setOrderStatus("pending")} className={`px-3 py-1 ${orderStatus === "pending" ? "bg-yellow-600 text-white" : "bg-gray-100"}`}>
-                            Чакащи
+
+                        <button
+                            onClick={() => setOrderStatus("pending")}
+                            className={`p-2 rounded-lg text-sm font-medium transition-colors duration-200 ${orderStatus === "pending"
+                                ? "bg-yellow-400 text-white shadow"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}
+                        >
+                            ⏳ Чакащи
                         </button>
-                        <button onClick={() => setOrderStatus("completed")} className={`px-3 py-1 ${orderStatus === "completed" ? "bg-yellow-600 text-white" : "bg-gray-100"}`}>
-                            Изпълнени
+
+                        <button
+                            onClick={() => setOrderStatus("completed")}
+                            className={`p-2 rounded-lg text-sm font-medium transition-colors duration-200 ${orderStatus === "completed"
+                                ? "bg-orange-400 text-white shadow"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}
+                        >
+                            ✅ Приключени
                         </button>
                     </div>
                     <OrdersAdmin status={orderStatus} />
