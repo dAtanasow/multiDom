@@ -16,7 +16,7 @@ router.use('/admin', admin);
 router.use('/cart', cart);
 router.use("/econt", econt);
 router.use("/speedy", speedy);
-router.use("/thank-you", order)
+router.use("/order", order)
 router.use("/review", review)
 
 module.exports = router;
