@@ -11,12 +11,25 @@ import { useTotals } from "../../hooks/useTotals";
 import DeliveryMethod from "./DeliveryMethod";
 import { deliveryPrices } from "../../constants/deliveryPrices";
 import orderApi from "../../api/order";
+import { useAuthContext } from "../../context/AuthContext";
+import { useEffect } from "react";
 
 export default function Checkout() {
     const { cart, clearCart } = useCartContext();
     const navigate = useNavigate();
     const isMobile = useIsMobile();
+    const { firstName, lastName, email, phone } = useAuthContext();
 
+    useEffect(() => {
+        if (firstName, lastName, email, phone) {
+            setValues(prev => ({
+                ...prev,
+                name: `${firstName} ${lastName}`,
+                email: email || "",
+                phone: phone || "",
+            }));
+        }
+    }, [firstName, lastName, email, phone]);
     const {
         values: form,
         changeHandler,
@@ -98,7 +111,8 @@ export default function Checkout() {
                 <div className={`grid ${isMobile ? "grid-cols-1" : "grid-cols-2"} gap-4`}>
                     <input name="name" placeholder="Име и фамилия" value={form.name} onChange={changeHandler} required className="border p-2 rounded" />
                     <input name="email" type="email" placeholder="Имейл" value={form.email} onChange={changeHandler} required className="border p-2 rounded" />
-                    <input name="phone" placeholder="Телефон" value={form.phone} onChange={changeHandler} required className="border p-2 rounded" />
+                    <input name="phone" placeholder="Телефон" value={form.phone ? "+" + form.phone : ""}
+                        onChange={changeHandler} required className="border p-2 rounded" />
                     <CitySelect
                         cities={cities}
                         selectedCity={selectedCity}
