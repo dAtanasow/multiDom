@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+const Product = require("../models/Product")
 const { sendOrderConfirmationEmail } = require("../utils/email");
 
 const createOrder = async (req, res) => {
@@ -73,26 +74,44 @@ const updateOrderStatus = async (req, res) => {
         const { id } = req.params;
         const { status } = req.body;
 
-        if (!["new", "pending", "completed", "canceled"].includes(status)) {
-            return res.status(400).json({ message: "Невалиден статус." });
+        const order = await Order.findById(id);
+        if (!order) return res.status(404).json({ message: "Поръчката не е намерена" });
+
+        const previousStatus = order.status;
+
+        if (status === "pending" && previousStatus === "new") {
+            for (const item of order.items) {
+                const product = await Product.findById(item.productId);
+                if (product) {
+                    product.quantity = Math.max(0, product.quantity - item.quantity);
+                    await product.save();
+                }
+            }
         }
 
-        const updatedOrder = await Order.findByIdAndUpdate(
-            id,
-            { status },
-            { new: true }
-        );
-
-        if (!updatedOrder) {
-            return res.status(404).json({ message: "Поръчката не е намерена." });
+        if (
+            status === "canceled" &&
+            (previousStatus === "pending" || previousStatus === "completed")
+        ) {
+            for (const item of order.items) {
+                const product = await Product.findById(item.productId);
+                if (product) {
+                    product.quantity += item.quantity;
+                    await product.save();
+                }
+            }
         }
 
-        res.json({ message: "Статусът е обновен.", order: updatedOrder });
-    } catch (error) {
-        console.error("Грешка при обновяване на статуса:", error);
+        order.status = status;
+        await order.save();
 
+        res.json({ message: "Статусът е обновен", order });
+    } catch (err) {
+        console.error("Грешка при обновяване на статуса:", err);
+        res.status(500).json({ message: "Вътрешна грешка при обновяване" });
     }
 };
+
 
 module.exports = {
     createOrder,

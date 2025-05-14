@@ -67,33 +67,32 @@ export default function OrderCard({ order, isOpen, onToggle, onStatusChange }) {
                                 ref={menuRef}
                                 className="absolute right-0 top-8 w-40 bg-white border rounded-xl shadow-lg z-50 animate-fade-in overflow-hidden"
                             >
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleStatusChange("new");
-                                    }}
-                                    className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
-                                >
-                                    🆕 Нова
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleStatusChange("pending");
-                                    }}
-                                    className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
-                                >
-                                    ⏳ Чакаща
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleStatusChange("completed");
-                                    }}
-                                    className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
-                                >
-                                    ✅ Приключена
-                                </button>
+                                {order.status === "pending" ? (
+                                    <>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleStatusChange("completed");
+                                            }}
+                                            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
+                                        >
+                                            ✅ Приключена
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleStatusChange("pending");
+                                            }}
+                                            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
+                                        >
+                                            ⏳ Чакаща
+                                        </button>
+                                    </>
+                                )}
+
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -103,6 +102,7 @@ export default function OrderCard({ order, isOpen, onToggle, onStatusChange }) {
                                 >
                                     ❌ Откажи
                                 </button>
+
                                 {confirmCancelOpen && (
                                     <ConfirmModal
                                         title="Потвърждение"
@@ -116,6 +116,7 @@ export default function OrderCard({ order, isOpen, onToggle, onStatusChange }) {
                                 )}
                             </div>
                         )}
+
                     </div>
                 </div>
             </div>
