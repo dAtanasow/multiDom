@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useForm } from "./useForm";
-import userApi from "../api/auth";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../context/AuthContext";
+import profileApi from "../api/profile";
 
 export function useProfile() {
     const { firstName, lastName, phone, email, changeAuthState } = useAuthContext();
@@ -53,7 +53,7 @@ export function useProfile() {
         }
 
         try {
-            const result = await userApi.update(formData);
+            const result = await profileApi.updateUser(formData);
             changeAuthState({ user: result.user });
             const updatedValues = {
                 firstName: result.user.firstName,

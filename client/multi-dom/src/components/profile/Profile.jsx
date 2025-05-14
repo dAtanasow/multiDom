@@ -12,6 +12,9 @@ import {
 } from "react-icons/fi";
 import SaveButton from "../buttons/SaveButton";
 import EditButton from "../buttons/EditButton";
+import { useUserAddresses } from "../../hooks/useUserAddresses";
+import { useDelivery } from "../../hooks/useDelivery";
+import SavedAddresses from "./saved-address/SaveAddresses";
 
 const sections = [
     { key: "details", label: "Детайли", icon: <FiUser /> },
@@ -34,6 +37,16 @@ export default function Profile() {
         handleEdit,
         handleCancel,
     } = useProfile();
+
+    const {
+        addresses,
+        newAddress,
+        handleAddressChange,
+        handleAddAddress,
+        handleDeleteAddress
+    } = useUserAddresses();
+
+    const deliveryHook = useDelivery(newAddress, handleAddressChange);
 
     return (
         <div className="flex flex-col min-h-screen pb-20 bg-gray-50">
@@ -67,22 +80,35 @@ export default function Profile() {
                 )}
 
                 <main className="flex-1 pt-20 px-4 md:px-10 relative">
-                    <div className="max-w-2xl mx-auto bg-white shadow-md rounded-2xl p-6">
-                        <h3 className="text-2xl font-bold text-center mb-6">Детайли на профила</h3>
-                        <form onSubmit={editMode ? submitHandler : undefined}>
-                            <ProfileFields
-                                values={values}
-                                changeHandler={changeHandler}
-                                editMode={editMode}
+                    <div className="max-w-2xl flex flex-col gap-5 mx-auto bg-white shadow-md rounded-2xl">
+                        {activeTab === "details" && (
+                            <>
+                                <h3 className="text-2xl font-bold text-center mb-6">Детайли на профила</h3>
+                                <form onSubmit={editMode ? submitHandler : undefined}>
+                                    <ProfileFields
+                                        values={values}
+                                        changeHandler={changeHandler}
+                                        editMode={editMode}
+                                    />
+                                    <div className="mt-6">
+                                        {editMode ? (
+                                            <SaveButton pending={pending} onCancel={handleCancel} />
+                                        ) : (
+                                            <EditButton onEdit={handleEdit} />
+                                        )}
+                                    </div>
+                                </form>
+                            </>
+                        )}
+
+                        {activeTab === "addresses" && (
+                            <SavedAddresses
+                                addresses={addresses}
+                                onAdd={handleAddAddress}
+                                onDelete={handleDeleteAddress}
+                                deliveryHook={deliveryHook}
                             />
-                            <div className="mt-6">
-                                {editMode ? (
-                                    <SaveButton pending={pending} onCancel={handleCancel} />
-                                ) : (
-                                    <EditButton onEdit={handleEdit} />
-                                )}
-                            </div>
-                        </form>
+                        )}
                     </div>
                 </main>
             </div>
