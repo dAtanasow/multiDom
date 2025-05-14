@@ -5,7 +5,12 @@ import { normalizeOffices, normalizeCity } from "../utils/location";
 
 export function useDelivery(form, setValues) {
     const [deliveryCompany, setDeliveryCompany] = useState("");
-    const [deliveryMethod, setDeliveryMethod] = useState("");
+    const [internalDeliveryMethod, setInternalDeliveryMethod] = useState("");
+    const deliveryMethod = form.deliveryMethod ?? internalDeliveryMethod;
+    const setDeliveryMethod = form.deliveryMethod !== undefined
+        ? (val) => setValues((prev) => ({ ...prev, deliveryMethod: val }))
+        : setInternalDeliveryMethod;
+
     const [selectedOfficeId, setSelectedOfficeId] = useState(null);
     const [offices, setOffices] = useState([]);
     const [loadingOffices, setLoadingOffices] = useState(false);
@@ -40,7 +45,6 @@ export function useDelivery(form, setValues) {
             const city = form.city?.trim();
 
             if (!city || deliveryMethod !== "office") return;
-
 
             const cityNormalized = normalizeCity(city);
             setLoadingOffices(true);
@@ -77,7 +81,6 @@ export function useDelivery(form, setValues) {
         fetchOffices();
     }, [form.city, deliveryCompany, deliveryMethod]);
 
-
     const handleSelectCity = (city) => {
         setSelectedCity(city);
         setValues((prev) => ({
@@ -85,7 +88,6 @@ export function useDelivery(form, setValues) {
             city,
         }));
     };
-
 
     return {
         deliveryCompany,
