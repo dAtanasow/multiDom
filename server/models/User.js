@@ -29,6 +29,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'user'
     },
+    addresses: [
+        {
+            label: { type: String },
+            deliveryMethod: { type: String, enum: ["address", "office"], required: true },
+            city: { type: String, required: true },
+            address: { type: String },
+            office: {
+                name: { type: String },
+                address: { type: String },
+                courierName: { type: String }
+            }
+        }
+    ],
     createdAt: {
         type: Date,
         default: Date.now,

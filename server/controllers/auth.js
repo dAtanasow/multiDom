@@ -135,75 +135,7 @@ const login = async (req, res, next) => {
     }
 };
 
-const editProfile = async (req, res, next) => {
-    const userId = req.user?._id;
-    const { firstName, lastName, phone, email } = req.body;
 
-    if (!userId) {
-        return next(new CustomError("Неавторизиран достъп.", 401));
-    }
-
-    if (!firstName || !lastName || !phone || !email) {
-        return next(new CustomError("Моля, попълнете всички полета.", 400));
-    }
-
-    const normalizedEmail = email.trim().toLowerCase();
-
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return next(new CustomError("Потребителят не е намерен.", 404));
-        }
-
-        const isSame =
-            user.firstName === firstName &&
-            user.lastName === lastName &&
-            user.phone === phone &&
-            user.email === normalizedEmail;
-
-        if (isSame) {
-            return res.status(200).json({
-                message: "Няма направени промени.",
-                user: {
-                    _id: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    phone: user.phone,
-                    role: user.role || "user",
-                },
-            });
-        }
-
-        if (normalizedEmail !== user.email) {
-            const emailExists = await User.findOne({ email: normalizedEmail });
-            if (emailExists && emailExists._id.toString() !== userId.toString()) {
-                return next(new CustomError("Имейлът вече се използва от друг потребител.", 400));
-            }
-        }
-
-        user.firstName = firstName;
-        user.lastName = lastName;
-        user.phone = phone;
-        user.email = normalizedEmail;
-
-        await user.save();
-
-        res.status(200).json({
-            message: "Профилът е обновен успешно.",
-            user: {
-                _id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                phone: user.phone,
-                role: user.role || "user",
-            },
-        });
-    } catch (err) {
-        next(err);
-    }
-};
 
 const refreshAccessToken = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
@@ -227,6 +159,5 @@ module.exports = {
     register,
     login,
     logout,
-    editProfile,
     refreshAccessToken
 }
