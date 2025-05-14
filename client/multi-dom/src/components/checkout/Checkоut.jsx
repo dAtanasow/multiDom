@@ -28,19 +28,27 @@ export default function Checkout() {
             email: "",
             phone: "",
             city: "",
-            region: "",
-            zip: "",
             address: "",
             comment: "",
             office: null,
-            companyName: "",
-            bulstat: "",
-            vatNumber: "",
-            mol: "",
-            useInvoice: false,
+            invoice: {
+                useInvoice: false,
+                companyName: "",
+                bulstat: "",
+                vatNumber: "",
+                mol: "",
+            },
         },
 
         async (formData) => {
+            if (formData.invoice.useInvoice) {
+                const { companyName, bulstat, vatNumber, mol } = formData.invoice;
+                if (!companyName || !bulstat || !mol) {
+                    alert("Моля, попълнете всички полета за фактура.");
+                    return;
+                }
+            }
+
             const payload = {
                 ...formData,
                 deliveryCompany,
@@ -54,8 +62,7 @@ export default function Checkout() {
             };
 
             try {
-                const response = await orderApi.createOrder(payload);
-                console.log("✅ Поръчка приета:", response);
+                await orderApi.createOrder(payload);
                 clearCart();
                 navigate("/thank-you");
             } catch (err) {
@@ -155,11 +162,14 @@ export default function Checkout() {
                     <input
                         type="checkbox"
                         id="invoice"
-                        checked={form.useInvoice}
+                        checked={form.invoice.useInvoice}
                         onChange={() =>
                             setValues((prev) => ({
                                 ...prev,
-                                useInvoice: !prev.useInvoice,
+                                invoice: {
+                                    ...prev.invoice,
+                                    useInvoice: !prev.invoice.useInvoice,
+                                }
                             }))
                         }
                     />
@@ -167,8 +177,16 @@ export default function Checkout() {
                     <label htmlFor="invoice" className="text-sm">Искам фактура</label>
                 </div>
 
-                {form.useInvoice && (
-                    <InvoiceFields form={form} changeHandler={changeHandler} isMobile={isMobile} />
+                {form.invoice.useInvoice && (
+                    <InvoiceFields form={form.invoice} changeHandler={(e) =>
+                        setValues(prev => ({
+                            ...prev,
+                            invoice: {
+                                ...prev.invoice,
+                                [e.target.name]: e.target.value,
+                            }
+                        }))
+                    } />
                 )}
 
                 <div className="border-t pt-4 text-right text-base font-semibold text-blue-600">
