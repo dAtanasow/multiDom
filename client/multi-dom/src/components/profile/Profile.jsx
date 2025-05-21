@@ -13,6 +13,7 @@ import {
 import SaveButton from "../buttons/SaveButton";
 import EditButton from "../buttons/EditButton";
 import SavedAddresses from "./saved-address/SaveAddresses";
+import FavoritesList from "./favorites/FavoritesList";
 
 const sections = [
     { key: "details", label: "Детайли", icon: <FiUser /> },
@@ -91,6 +92,9 @@ export default function Profile() {
 
                         {activeTab === "addresses" && (
                             <SavedAddresses />
+                        )}
+                        {activeTab === "favorites" && (
+                            <FavoritesList />
                         )}
                     </div>
                 </main>
