@@ -6,7 +6,7 @@ import {
 import navLinks from "../../utils/navLinks";
 import { useCartContext } from "../../context/CartContext";
 import { toast } from "react-toastify";
-import ProductCard from "../product-card/ProductCard";
+import ProductCard from "./product-card/ProductCard";
 
 export default function Catalog() {
   const { products, loading } = useCatalog();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import catalogApi from "../../../api/catalog";
-import ProductCard from "../../product-card/ProductCard";
+import ProductCard from "../../catalog/product-card/ProductCard";
 
 export default function SelectedProducts() {
   const [products, setProducts] = useState([]);
