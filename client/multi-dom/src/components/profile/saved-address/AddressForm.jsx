@@ -1,5 +1,5 @@
 import CitySelect from "../../checkout/CitySelect";
-import OfficeListbox from "../../checkout/OfficeListbox";
+import OfficeListbox from "../../checkout/delivery-options/OfficeListbox";
 import { cities } from "../../mock-data/office-places";
 
 export default function AddressForm({
