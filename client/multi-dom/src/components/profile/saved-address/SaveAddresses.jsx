@@ -13,7 +13,7 @@ export default function SavedAddresses() {
         office: {
             name: "",
             address: "",
-            courierName: ""
+            courierName: "",
         },
     });
     const [error, setError] = useState("");
@@ -34,58 +34,59 @@ export default function SavedAddresses() {
         selectedOfficeId,
         setSelectedOfficeId,
         selectedCity,
-        handleSelectCity
-    } = useDelivery({
-        ...newAddress,
-        deliveryMethod: newAddress.deliveryMethod,
-        city: newAddress.city
-    }, setNewAddress);
+        handleSelectCity,
+    } = useDelivery(
+        {
+            ...newAddress,
+            deliveryMethod: newAddress.deliveryMethod,
+            city: newAddress.city,
+        },
+        setNewAddress
+    );
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name.startsWith("office.")) {
             const key = name.split(".")[1];
-            setNewAddress(prev => ({
+            setNewAddress((prev) => ({
                 ...prev,
                 office: {
                     ...prev.office,
-                    [key]: value
-                }
+                    [key]: value,
+                },
             }));
         } else if (name === "deliveryCompany") {
             setDeliveryCompany(value);
         } else if (name === "deliveryMethod") {
             setDeliveryMethod(value);
-            setNewAddress(prev => ({
+            setNewAddress((prev) => ({
                 ...prev,
-                deliveryMethod: value
+                deliveryMethod: value,
             }));
         } else {
-            setNewAddress(prev => ({ ...prev, [name]: value }));
+            setNewAddress((prev) => ({ ...prev, [name]: value }));
         }
     };
 
     useEffect(() => {
         if (!selectedOfficeId) return;
-
-        const selectedOffice = offices.find(o => String(o._id) === String(selectedOfficeId));
+        const selectedOffice = offices.find(
+            (o) => String(o._id) === String(selectedOfficeId)
+        );
         if (selectedOffice) {
-            setNewAddress(prev => ({
+            setNewAddress((prev) => ({
                 ...prev,
                 office: {
                     name: selectedOffice.name,
                     address: selectedOffice.address,
-                    courierName: deliveryCompany
-                }
+                    courierName: deliveryCompany,
+                },
             }));
         }
     }, [selectedOfficeId, offices, deliveryCompany]);
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const isValid =
             newAddress.label &&
             newAddress.deliveryMethod &&
@@ -103,16 +104,18 @@ export default function SavedAddresses() {
 
         const payload = {
             ...newAddress,
-            office: newAddress.deliveryMethod === "office"
-                ? {
-                    name: newAddress.office.name,
-                    address: newAddress.office.address,
-                    courierName: deliveryCompany
-                }
-                : undefined,
-            address: newAddress.deliveryMethod === "address"
-                ? newAddress.address
-                : undefined
+            office:
+                newAddress.deliveryMethod === "office"
+                    ? {
+                        name: newAddress.office.name,
+                        address: newAddress.office.address,
+                        courierName: deliveryCompany,
+                    }
+                    : undefined,
+            address:
+                newAddress.deliveryMethod === "address"
+                    ? newAddress.address
+                    : undefined,
         };
 
         try {
@@ -126,8 +129,8 @@ export default function SavedAddresses() {
                 office: {
                     name: "",
                     address: "",
-                    courierName: ""
-                }
+                    courierName: "",
+                },
             });
             setError("");
             await refreshAddresses();
@@ -136,19 +139,23 @@ export default function SavedAddresses() {
         }
     };
 
-
     useEffect(() => {
         setDeliveryMethod(newAddress.deliveryMethod);
     }, [newAddress.deliveryMethod]);
 
     return (
-        <div className="bg-gray-50 flex flex-col lg:flex-row gap-5">
-            <div className="rounded-2xl p-6 w-full lg:w-1/2">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">📍 Запазени адреси</h3>
+        <div className="flex flex-col lg:flex-row gap-8">
+            <div className="bg-white rounded-2xl shadow-md p-6 w-full lg:w-1/2 border border-gray-200">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2 flex items-center gap-2">
+                    <span className="text-pink-600 text-xl">📍</span> Запазени адреси
+                </h3>
                 <SavedAddressList addresses={addresses} onDelete={handleDeleteAddress} />
             </div>
-            <div className="bg-white rounded-2xl m-auto p-6 w-full h-full lg:w-1/2">
-                <h4 className="text-xlfont-bold text-gray-800 mb-4">➕ Добави нов адрес</h4>
+
+            <div className="bg-white rounded-2xl shadow-md p-6 w-full lg:w-1/2 border border-gray-200">
+                <h4 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2 flex items-center gap-2">
+                    <span className="text-purple-600 text-xl">➕</span> Добави нов адрес
+                </h4>
                 <AddressForm
                     newAddress={newAddress}
                     deliveryCompany={deliveryCompany}
@@ -160,7 +167,7 @@ export default function SavedAddresses() {
                     onChange={handleChange}
                     onCitySelect={(city) => {
                         handleSelectCity(city);
-                        setNewAddress(prev => ({ ...prev, city }));
+                        setNewAddress((prev) => ({ ...prev, city }));
                     }}
                     onOfficeSelect={setSelectedOfficeId}
                     onCompanyChange={handleChange}
@@ -168,6 +175,5 @@ export default function SavedAddresses() {
                 />
             </div>
         </div>
-
     );
 }

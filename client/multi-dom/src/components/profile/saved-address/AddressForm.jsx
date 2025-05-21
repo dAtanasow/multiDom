@@ -17,35 +17,39 @@ export default function AddressForm({
     onSubmit
 }) {
     return (
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={onSubmit}
+            className="bg-white space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                     name="label"
                     type="text"
-                    placeholder="Етикет (напр. 'дом', 'офис')"
+                    placeholder="Етикет ('дом', 'офис')"
                     value={newAddress.label}
                     onChange={onChange}
-                    className="input-style p-2"
+                    className="block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <select
-                    name="deliveryMethod"
-                    value={newAddress.deliveryMethod}
-                    onChange={onChange}
-                    className="input-style p-2"
-                >
-                    <option value="address">Личен адрес</option>
-                    <option value="office">Офис</option>
-                </select>
 
                 <select
                     name="deliveryCompany"
                     value={deliveryCompany}
                     onChange={onCompanyChange}
-                    className="input-style p-2"
+                    className="block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+
                 >
                     <option value="">Избери куриер</option>
                     <option value="Еконт">Еконт</option>
                     <option value="Спиди">Спиди</option>
+                </select>
+
+                <select
+                    name="deliveryMethod"
+                    value={newAddress.deliveryMethod}
+                    onChange={onChange}
+                    className="block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+
+                >
+                    <option value="address">Личен адрес</option>
+                    <option value="office">Офис</option>
                 </select>
 
                 {newAddress.deliveryMethod === "office" && (
@@ -68,6 +72,7 @@ export default function AddressForm({
                         </div>
                     </>
                 )}
+    
 
                 {newAddress.deliveryMethod === "address" && (
                     <>
@@ -83,17 +88,20 @@ export default function AddressForm({
                             placeholder="Адрес"
                             value={newAddress.address}
                             onChange={onChange}
-                            className="input-style p-2 md:col-span-2"
+                            className="block w-full md:col-span-2 border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                             rows={2}
                         />
                     </>
                 )}
             </div>
 
+
+
             {error && <p className="text-sm text-red-500">{error}</p>}
 
-            <button type="submit" className="btn-primary w-full">
-                💾 Запази адреса
+            <button type="submit"
+                className="w-full bg-blue-600 text-white mt-3 py-2 px-4 rounded-md hover:bg-blue-700">
+                Запази адреса
             </button>
         </form>
     );

@@ -8,7 +8,7 @@ export default function SavedAddressList({ addresses = [], onDelete }) {
             {addresses.map((addr, i) => (
                 <li
                     key={i}
-                    className="border border-gray-200 rounded-xl p-4 bg-white flex justify-between items-center"
+                    className="relative border border-gray-200 rounded-xl p-4 bg-white flex justify-between items-center"
                 >
                     <div className="text-sm text-gray-700">
                         <p>
@@ -27,9 +27,9 @@ export default function SavedAddressList({ addresses = [], onDelete }) {
                     </div>
                     <button
                         onClick={() => onDelete(i)}
-                        className="text-red-500 hover:underline text-sm font-medium"
+                        className="absolute bottom-2 right-3 text-red-500 hover:underline text-sm font-medium"
                     >
-                        Изтрий
+                        x
                     </button>
                 </li>
             ))}
