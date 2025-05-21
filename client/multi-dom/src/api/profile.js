@@ -16,12 +16,16 @@ const toggleFavorite = (productId) => {
     return requester.post(`${baseUrl}/favorites/toggle`, { productId });
 };
 
+const getFavoriteProducts = () => requester.get(`${baseUrl}/favorites`);
+
+
 const profileApi = {
     getAddresses,
     addAddress,
     deleteAddress,
     updateUser,
-    toggleFavorite
+    toggleFavorite,
+    getFavoriteProducts
 };
 
 export default profileApi;
