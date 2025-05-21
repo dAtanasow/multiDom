@@ -6,11 +6,14 @@ import { useCartContext } from "../../context/CartContext";
 import cartApi from "../../api/cart";
 import { toast } from "react-toastify";
 import ReviewList from "../reviews/ReviewList";
+import useFavorites from "../../hooks/useFavorites";
 
 export default function ProductDetails() {
     const { id } = useParams();
     const { product, loading, activeImage, averageRating, setActiveImage, relatedProducts } = useProductDetails(id);
     const { addToCart: addToCartContext } = useCartContext();
+    const { isFavorite, toggleFavorite } = useFavorites();
+
 
     const handleAddToCart = async () => {
         try {
@@ -98,9 +101,18 @@ export default function ProductDetails() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.97 }}
                         onClick={handleAddToCart}
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-base py-3 px-8 rounded-xl shadow-md transition self-start"
+                        className="bg-blue-600 m-1 hover:bg-blue-700 text-white text-base py-3 px-8 rounded-xl shadow-md transition self-start"
                     >
                         Добави в количката
+                    </motion.button>
+
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => toggleFavorite(product._id)}
+                        className={"border m-1 text-base py-3 px-4 rounded-xl shadow-md transition bg-white border-gray-300 text-gray-700"}
+                    >
+                        {isFavorite(product._id) ? "🤍" : "❤️"}
                     </motion.button>
 
                     <div className="flex items-center gap-6 mt-6 text-sm text-gray-600">
@@ -118,24 +130,26 @@ export default function ProductDetails() {
 
             <ReviewList productId={id} />
 
-            {relatedProducts.length > 0 && (
-                <motion.div className="mt-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Свързани продукти</h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-                        {relatedProducts.map((item) => (
-                            <div key={item._id} className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
-                                <img
-                                    src={item.images?.[0] || "/placeholder.jpg"}
-                                    alt={item.name}
-                                    className="h-32 w-full object-contain mb-3"
-                                />
-                                <p className="text-sm font-medium text-gray-700 line-clamp-2">{item.name}</p>
-                                <p className="text-sm text-blue-600 font-semibold">{item.price.toFixed(2)} лв.</p>
-                            </div>
-                        ))}
-                    </div>
-                </motion.div>
-            )}
-        </motion.section>
+            {
+                relatedProducts.length > 0 && (
+                    <motion.div className="mt-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Свързани продукти</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                            {relatedProducts.map((item) => (
+                                <div key={item._id} className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
+                                    <img
+                                        src={item.images?.[0] || "/placeholder.jpg"}
+                                        alt={item.name}
+                                        className="h-32 w-full object-contain mb-3"
+                                    />
+                                    <p className="text-sm font-medium text-gray-700 line-clamp-2">{item.name}</p>
+                                    <p className="text-sm text-blue-600 font-semibold">{item.price.toFixed(2)} лв.</p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )
+            }
+        </motion.section >
     );
 }
