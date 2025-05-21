@@ -22,7 +22,6 @@ const getCart = async (req, res, next) => {
     }
 };
 
-
 const updateCart = async (req, res, next) => {
     try {
         const { items } = req.body;

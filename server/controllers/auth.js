@@ -135,8 +135,6 @@ const login = async (req, res, next) => {
     }
 };
 
-
-
 const refreshAccessToken = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
     console.log("cookies получени от клиента:", req.cookies);
