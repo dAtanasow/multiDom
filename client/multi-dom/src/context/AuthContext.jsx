@@ -66,6 +66,8 @@ function AuthProvider({ children }) {
         accessToken: authState ? authState.accessToken : null,
         isAuthenticate: !!authState?.user,
         role: authState?.user?.role || 'user',
+        addresses: authState?.user?.addresses || [],
+        favorites: authState?.user?.favorites || [],
         changeAuthState,
         logout,
         isLoggingOut,
