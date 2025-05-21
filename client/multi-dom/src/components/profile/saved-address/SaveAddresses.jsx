@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useDelivery } from "../../../hooks/useDelivery";
 import AddressForm from "./AddressForm";
 import SavedAddressList from "./SavedAddressList";
+import { toast } from "react-toastify";
+import { useUserAddresses, useDelivery } from "../../../hooks/useAddress";
 
-export default function SavedAddresses({ addresses = [], onAdd, onDelete }) {
+export default function SavedAddresses() {
     const [newAddress, setNewAddress] = useState({
         label: "",
         deliveryMethod: "address",
@@ -16,6 +17,13 @@ export default function SavedAddresses({ addresses = [], onAdd, onDelete }) {
         },
     });
     const [error, setError] = useState("");
+
+    const {
+        addresses,
+        handleAddAddress,
+        handleDeleteAddress,
+        refreshAddresses,
+    } = useUserAddresses();
 
     const {
         deliveryCompany,
@@ -74,17 +82,26 @@ export default function SavedAddresses({ addresses = [], onAdd, onDelete }) {
     }, [selectedOfficeId, offices, deliveryCompany]);
 
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!newAddress.label || !newAddress.deliveryMethod || !newAddress.city ||
-            (newAddress.deliveryMethod === "address" && !newAddress.address) ||
-            (newAddress.deliveryMethod === "office" &&
-                (!newAddress.office.name || !newAddress.office.address || !newAddress.office.courierName))) {
+
+        const isValid =
+            newAddress.label &&
+            newAddress.deliveryMethod &&
+            newAddress.city &&
+            (newAddress.deliveryMethod === "address"
+                ? newAddress.address
+                : newAddress.office.name &&
+                newAddress.office.address &&
+                newAddress.office.courierName);
+
+        if (!isValid) {
             setError("Моля, попълнете всички задължителни полета.");
             return;
         }
 
-        onAdd({
+        const payload = {
             ...newAddress,
             office: newAddress.deliveryMethod === "office"
                 ? {
@@ -96,21 +113,27 @@ export default function SavedAddresses({ addresses = [], onAdd, onDelete }) {
             address: newAddress.deliveryMethod === "address"
                 ? newAddress.address
                 : undefined
-        });
+        };
 
-
-        setNewAddress({
-            label: "",
-            deliveryMethod: "address",
-            city: "",
-            address: "",
-            office: {
-                name: "",
+        try {
+            await handleAddAddress(payload);
+            toast.success("Адресът беше добавен успешно!");
+            setNewAddress({
+                label: "",
+                deliveryMethod: "address",
+                city: "",
                 address: "",
-                courierName: ""
-            }
-        });
-        setError("");
+                office: {
+                    name: "",
+                    address: "",
+                    courierName: ""
+                }
+            });
+            setError("");
+            await refreshAddresses();
+        } catch (err) {
+            toast.error("Възникна грешка при добавяне на адрес.");
+        }
     };
 
 
@@ -122,7 +145,7 @@ export default function SavedAddresses({ addresses = [], onAdd, onDelete }) {
         <div className="bg-gray-50 flex flex-col lg:flex-row gap-5">
             <div className="rounded-2xl p-6 w-full lg:w-1/2">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">📍 Запазени адреси</h3>
-                <SavedAddressList addresses={addresses} onDelete={onDelete} />
+                <SavedAddressList addresses={addresses} onDelete={handleDeleteAddress} />
             </div>
             <div className="bg-white rounded-2xl m-auto p-6 w-full h-full lg:w-1/2">
                 <h4 className="text-xlfont-bold text-gray-800 mb-4">➕ Добави нов адрес</h4>

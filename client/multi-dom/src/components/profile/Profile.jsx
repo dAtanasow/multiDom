@@ -12,8 +12,6 @@ import {
 } from "react-icons/fi";
 import SaveButton from "../buttons/SaveButton";
 import EditButton from "../buttons/EditButton";
-import { useUserAddresses } from "../../hooks/useUserAddresses";
-import { useDelivery } from "../../hooks/useDelivery";
 import SavedAddresses from "./saved-address/SaveAddresses";
 
 const sections = [
@@ -37,16 +35,6 @@ export default function Profile() {
         handleEdit,
         handleCancel,
     } = useProfile();
-
-    const {
-        addresses,
-        newAddress,
-        handleAddressChange,
-        handleAddAddress,
-        handleDeleteAddress
-    } = useUserAddresses();
-
-    const deliveryHook = useDelivery(newAddress, handleAddressChange);
 
     return (
         <div className="flex flex-col min-h-screen pb-20 bg-gray-50">
@@ -102,12 +90,7 @@ export default function Profile() {
                         )}
 
                         {activeTab === "addresses" && (
-                            <SavedAddresses
-                                addresses={addresses}
-                                onAdd={handleAddAddress}
-                                onDelete={handleDeleteAddress}
-                                deliveryHook={deliveryHook}
-                            />
+                            <SavedAddresses />
                         )}
                     </div>
                 </main>
