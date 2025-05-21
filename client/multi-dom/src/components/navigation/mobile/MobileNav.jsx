@@ -40,7 +40,7 @@ export default function MobileNav({ onClose }) {
             </svg>
           </button>
         </div>
-        <nav className="flex flex-col space-y-4 mt-6 leading-10 text-gray-800 font-medium text-xl">
+        <nav className="flex flex-col space-y-4 mt-6 leading-8 text-gray-800 font-medium">
           {navLinks.map((link) => (
             <div key={link.label} className="flex flex-col">
               <div className="flex items-center justify-between">
@@ -70,7 +70,7 @@ export default function MobileNav({ onClose }) {
                     <button
                       key={subLink.label}
                       onClick={() => navigationHandler(subLink.href)}
-                      className="text-lg leading-8 hover:text-blue-500 transition text-left"
+                      className="text-sm leading-7 hover:text-blue-500 transition text-left"
                     >
                       {subLink.label}
                     </button>
