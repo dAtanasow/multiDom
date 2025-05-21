@@ -1,5 +1,5 @@
 import usePersistedState from "../hooks/usePersistedState";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { getAccessToken } from "../utils/authUtil";
 import { useNavigate } from "react-router";
 
@@ -33,7 +33,7 @@ function AuthProvider({ children }) {
             console.warn("Missing access token during logout");
             return;
         }
-    
+
         if (isLoggingOut) return;
         setIsLoggingOut(true);
         try {
@@ -66,8 +66,6 @@ function AuthProvider({ children }) {
         accessToken: authState ? authState.accessToken : null,
         isAuthenticate: !!authState?.user,
         role: authState?.user?.role || 'user',
-        addresses: authState?.user?.addresses || [],
-        favorites: authState?.user?.favorites || [],
         changeAuthState,
         logout,
         isLoggingOut,
