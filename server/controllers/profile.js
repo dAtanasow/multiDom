@@ -1,3 +1,4 @@
+const Product = require("../models/Product");
 const User = require("../models/User");
 
 async function getUserAddresses(req, res) {
@@ -141,29 +142,38 @@ const editProfile = async (req, res, next) => {
 };
 
 const toggleFavorite = async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const { productId } = req.body;
+    try {
+        const userId = req.user._id;
+        const { productId } = req.body;
 
-    const user = await User.findById(userId);
+        const user = await User.findById(userId);
 
-    if (!user) return res.status(404).json({ message: 'Потребителят не е намерен' });
+        if (!user) return res.status(404).json({ message: 'Потребителят не е намерен' });
 
-    const index = user.favorites.indexOf(productId);
+        const index = user.favorites.indexOf(productId);
 
-    if (index > -1) {
-      user.favorites.splice(index, 1);
-    } else {
-      user.favorites.push(productId);
+        if (index > -1) {
+            user.favorites.splice(index, 1);
+        } else {
+            user.favorites.push(productId);
+        }
+
+        await user.save();
+        res.json({ favorites: user.favorites });
+    } catch (err) {
+        res.status(500).json({ message: 'Грешка при запазване на любими' });
     }
-
-    await user.save();
-    res.json({ favorites: user.favorites });
-  } catch (err) {
-    res.status(500).json({ message: 'Грешка при запазване на любими' });
-  }
 };
 
+const getFavoritesList = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).populate("favorites");
+        res.json(user.favorites || []);
+    } catch (err) {
+        console.error("Грешка при взимане на любими продукти:", err);
+        res.status(500).json({ message: "Грешка при зареждане на любими" });
+    }
+};
 
 module.exports = {
     getUserAddresses,
@@ -171,4 +181,5 @@ module.exports = {
     deleteUserAddress,
     editProfile,
     toggleFavorite,
+    getFavoritesList,
 };
