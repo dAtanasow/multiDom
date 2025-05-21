@@ -12,11 +12,16 @@ const updateUser = (data) => {
     return requester.put(`${baseUrl}/edit`, data);
 }
 
+const toggleFavorite = (productId) => {
+    return requester.post(`${baseUrl}/favorites/toggle`, { productId });
+};
+
 const profileApi = {
     getAddresses,
     addAddress,
     deleteAddress,
-    updateUser
+    updateUser,
+    toggleFavorite
 };
 
 export default profileApi;
