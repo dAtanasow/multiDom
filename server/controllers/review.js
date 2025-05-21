@@ -12,6 +12,8 @@ const getReviewsByProductId = async (req, res) => {
 };
 
 const addReview = async (req, res) => {
+    const { productId, rating, comment } = req.body;
+
     const existing = await Review.findOne({
         productId,
         userId: req.user._id,
@@ -22,7 +24,6 @@ const addReview = async (req, res) => {
     }
 
     try {
-        const { productId, rating, comment } = req.body;
         const review = await Review.create({
             productId,
             rating,

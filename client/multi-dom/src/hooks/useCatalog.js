@@ -10,6 +10,7 @@ export function useCatalog() {
 
     const category = searchParams.get("category") || null;
     const subCategory = searchParams.get("subCategory") || null;
+    const search = searchParams.get("search");
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -23,6 +24,9 @@ export function useCatalog() {
                     query.append("category", category);
                 }
 
+                if (search) {
+                    query.append("search", search);
+                }
                 const data = await catalogApi.getAll(query.toString());
 
                 const resolved = Array.isArray(data)
@@ -41,7 +45,7 @@ export function useCatalog() {
         };
 
         fetchProducts();
-    }, [category, subCategory]);
+    }, [category, subCategory, search]);
 
     return { products, loading, category, subCategory };
 }

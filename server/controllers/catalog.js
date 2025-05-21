@@ -5,6 +5,7 @@ const getAllProducts = async (req, res, next) => {
     try {
         const {
             search,
+            tag,
             subCategory,
             category,
             minPrice,
@@ -22,6 +23,9 @@ const getAllProducts = async (req, res, next) => {
         if (search) {
             filter.name = { $regex: search, $options: 'i' };
         }
+        if (tag) {
+            filter.tags = { $in: [tag] };
+        }
 
         if (subCategory) {
             filter.subCategory = subCategory;
@@ -33,6 +37,9 @@ const getAllProducts = async (req, res, next) => {
 
         if (req.query.featured === 'true') {
             filter.isFeatured = true;
+        }
+        if (req.query.tag) {
+            filter.tags = { $in: [req.query.tag] };
         }
 
         if (minPrice || maxPrice) {

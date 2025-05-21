@@ -5,6 +5,7 @@ import ProfileButton from "../../buttons/ProfileButton";
 import MenuButton from "../../buttons/MenuButton";
 import SearchButton from "../../buttons/SearchButton";
 import AdminButton from "../../buttons/AdminButton";
+import TagSearch from "../../search/TagSearch";
 
 export default function MobileHeaderContent({
   setMobileMenuOpen,
@@ -45,11 +46,7 @@ export default function MobileHeaderContent({
       {/* Търсачка */}
       {showSearch && (
         <div className="absolute top-full left-0 w-full bg-white px-4 pb-2">
-          <input
-            type="text"
-            placeholder="Търси продукт..."
-            className="w-full px-4 py-2 border rounded-xl border-gray-300 focus:outline-none"
-          />
+          <TagSearch onClose={() => setShowSearch(false)} />
         </div>
       )}
     </div>
