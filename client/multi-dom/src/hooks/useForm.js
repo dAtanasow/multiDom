@@ -1,56 +1,35 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useForm(initialValues, submitCallback, options = { reinitializeForm: false }) {
-    const [errors, setError] = useState([]);
+    const [errors, setError] = useState({});
     const [pending, setPending] = useState(false);
 
     const valuesRef = useRef(initialValues);
     const [valuesState, setValuesState] = useState(initialValues);
 
     const setValues = (newValues, merge = true) => {
-        const updated =
-            typeof newValues === "function"
-                ? newValues(valuesRef.current)
-                : newValues;
+        const result = typeof newValues === "function"
+            ? newValues(valuesRef.current)
+            : newValues;
 
-        const result = merge
-            ? { ...valuesRef.current, ...updated }
-            : updated;
+        const updated = merge
+            ? { ...valuesRef.current, ...result }
+            : result;
 
-        valuesRef.current = result;
-        setValuesState(result);
+        valuesRef.current = updated;
+        setValuesState(updated);
     };
-
-    useEffect(() => {
-        if (options.reinitializeForm) {
-            setValues(initialValues, false);
-        }
-    }, [options.reinitializeForm, initialValues]);
 
     const changeHandler = (e) => {
         const { name, type, value, checked } = e.target;
         const newValue = type === "checkbox" ? checked : value;
 
-        const path = name.split(".");
-        const newValues = { ...valuesRef.current };
-        let current = newValues;
-
-        for (let i = 0; i < path.length - 1; i++) {
-            const part = path[i];
-            current[part] = current[part] || {};
-            current = current[part];
-        }
-
-        current[path[path.length - 1]] = newValue;
-
-        valuesRef.current = newValues;
-        setValuesState(newValues);
+        const updated = updateNestedValue(valuesRef.current, name, newValue);
+        valuesRef.current = updated;
+        setValuesState(updated);
 
         if (errors[name]) {
-            setError((prev) => ({
-                ...prev,
-                [name]: undefined,
-            }));
+            setError((prev) => ({ ...prev, [name]: undefined }));
         }
     };
 
@@ -61,7 +40,7 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
         setPending(true);
         try {
             await submitCallback(valuesRef.current);
-            setError([]);
+            setError({});
         } catch (error) {
             setError(error);
         } finally {
@@ -90,6 +69,23 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
         setError,
         changeHandler,
         submitHandler,
-        appendImage
+        appendImage,
     };
+}
+
+
+
+function updateNestedValue(obj, path, value) {
+    const keys = path.split(".");
+    const newObj = { ...obj };
+    let current = newObj;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        current[key] = current[key] || {};
+        current = current[key];
+    }
+
+    current[keys[keys.length - 1]] = value;
+    return newObj;
 }
