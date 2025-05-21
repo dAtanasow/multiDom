@@ -7,34 +7,44 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
     const valuesRef = useRef(initialValues);
     const [valuesState, setValuesState] = useState(initialValues);
 
-    const setValues = (newValues) => {
+    const setValues = (newValues, merge = true) => {
         const updated =
             typeof newValues === "function"
                 ? newValues(valuesRef.current)
                 : newValues;
 
-        valuesRef.current = { ...updated };
-        setValuesState({ ...updated });
-    };
+        const result = merge
+            ? { ...valuesRef.current, ...updated }
+            : updated;
 
+        valuesRef.current = result;
+        setValuesState(result);
+    };
 
     useEffect(() => {
         if (options.reinitializeForm) {
-            setValues(initialValues);
+            setValues(initialValues, false);
         }
     }, [options.reinitializeForm, initialValues]);
 
     const changeHandler = (e) => {
         const { name, type, value, checked } = e.target;
-
         const newValue = type === "checkbox" ? checked : value;
 
-        valuesRef.current[name] = newValue;
+        const path = name.split(".");
+        const newValues = { ...valuesRef.current };
+        let current = newValues;
 
-        setValuesState((prev) => ({
-            ...prev,
-            [name]: newValue,
-        }));
+        for (let i = 0; i < path.length - 1; i++) {
+            const part = path[i];
+            current[part] = current[part] || {};
+            current = current[part];
+        }
+
+        current[path[path.length - 1]] = newValue;
+
+        valuesRef.current = newValues;
+        setValuesState(newValues);
 
         if (errors[name]) {
             setError((prev) => ({
@@ -46,11 +56,9 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
 
     const submitHandler = async (e) => {
         e.preventDefault();
-
         if (pending) return;
 
         setPending(true);
-
         try {
             await submitCallback(valuesRef.current);
             setError([]);
@@ -72,7 +80,6 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
             images: updatedImages,
         }));
     };
-
 
     return {
         values: valuesState,
