@@ -4,7 +4,7 @@ const { createOrder, getAllOrders, getOrderById, updateOrderStatus } = require("
 const { isAdmin } = require("../utils/isAdmin");
 const { auth } = require("../utils");
 
-router.post("/", auth(), isAdmin, createOrder);
+router.post("/", createOrder);
 router.get("/", auth(), isAdmin, getAllOrders);
 router.get("/:id", auth(), isAdmin, getOrderById);
 router.put("/:id/status", auth(), isAdmin, updateOrderStatus);
