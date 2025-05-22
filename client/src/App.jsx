@@ -20,6 +20,7 @@ import ProductDetails from "./components/product-details/ProductDetails";
 import Cart from "./components/cart/Cart";
 import Checkout from "./components/checkout/Checkоut";
 import ThankYouPage from "./components/thank-you/ThankYouPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
     <div>
       <Header />
       <ErrorBoundary>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
