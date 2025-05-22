@@ -20,10 +20,11 @@ export async function requester(method, url, data) {
         options.headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
-    if (method !== "GET" && data) {
+    if (method !== "GET") {
         options.headers["Content-Type"] = "application/json";
-        options.body = JSON.stringify(data);
+        options.body = JSON.stringify(data || {});
     }
+
     if (!url.startsWith("http")) {
         url = baseUrl + url;
     }

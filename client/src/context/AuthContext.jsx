@@ -1,5 +1,5 @@
 import usePersistedState from "../hooks/usePersistedState";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { getAccessToken } from "../utils/authUtil";
 import { useNavigate } from "react-router";
 
@@ -37,7 +37,7 @@ function AuthProvider({ children }) {
         if (isLoggingOut) return;
         setIsLoggingOut(true);
         try {
-            await fetch("http://localhost:3000/api/auth/logout", {
+            await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
                 method: "POST",
                 credentials: "include",
                 headers: {

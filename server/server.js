@@ -21,6 +21,9 @@ dbConnector()
 
         app.use('/api', apiRouter);
 
-        app.listen(config.port, console.log(`Listening on port ${config.port}!`));
+        app.listen(config.port, () => {
+            console.log(`✅ Server is running on port ${config.port}`);
+        });
+
     })
     .catch(console.error);
