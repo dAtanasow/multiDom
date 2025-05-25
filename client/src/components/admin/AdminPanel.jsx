@@ -1,7 +1,7 @@
 import { useState } from "react";
-import OrdersAdmin from "./orders-admin/Orders";
 import CreateProduct from "./products-admin/CreateProduct";
 import ProductsTable from "./products-admin/ProductsTable";
+import Orders from "./orders-admin/Orders";
 
 export default function AdminPanel() {
     const [section, setSection] = useState("products");
@@ -10,9 +10,9 @@ export default function AdminPanel() {
     const [editingProduct, setEditingProduct] = useState(null);
 
     return (
-        <div className="p-4">
+        <div className="flex flex-col text-center mt-2 xl:mt-12 md:mt-20 relative overflow-visible">
             <h2 className="text-2xl font-bold mb-4">Админ панел</h2>
-            <div className="flex gap-4 mb-4">
+            <div className="flex gap-4 justify-center mb-4">
                 <button
                     onClick={() => setSection("products")}
                     className={`p-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${section === "products"
@@ -37,7 +37,7 @@ export default function AdminPanel() {
 
             {section === "products" && (
                 <>
-                    <div className="flex gap-2 mb-4">
+                    <div className="flex gap-2 justify-center mb-4">
                         <button
                             onClick={() => setProductView("create")}
                             className={`p-2 rounded-lg text-sm font-medium transition-colors duration-200 ${productView === "create"
@@ -77,7 +77,7 @@ export default function AdminPanel() {
             {/* Подменю за поръчки */}
             {section === "orders" && (
                 <>
-                    <div className="flex gap-2 mb-4">
+                    <div className="flex gap-2 justify-center mb-4">
                         <button
                             onClick={() => setOrderStatus("new")}
                             className={`p-2 rounded-lg text-sm font-medium transition-colors duration-200 ${orderStatus === "new"
@@ -108,7 +108,7 @@ export default function AdminPanel() {
                             ✅ Приключени
                         </button>
                     </div>
-                    <OrdersAdmin status={orderStatus} />
+                    <Orders status={orderStatus} />
                 </>
             )}
         </div>

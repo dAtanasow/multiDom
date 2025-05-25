@@ -1,16 +1,13 @@
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import {
   useCatalog,
   useCatalogFilters,
 } from "../../hooks/useCatalog";
 import navLinks from "../../utils/navLinks";
-import { useCartContext } from "../../context/CartContext";
-import { toast } from "react-toastify";
 import ProductCard from "./product-card/ProductCard";
 
 export default function Catalog() {
-  const { products, loading } = useCatalog();
-  const { addToCart } = useCartContext();
+  const { products } = useCatalog();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -46,7 +43,7 @@ export default function Catalog() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8 overflow-x-hidden">
+    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8 md:mt-10 xl:mt-2 overflow-x-hidden">
 
       {/* Sidebar filters */}
       <aside className="hidden md:block w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">

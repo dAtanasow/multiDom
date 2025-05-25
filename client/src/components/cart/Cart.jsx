@@ -36,9 +36,8 @@ export default function Cart() {
     }
 
     return (
-        <div className="max-w-3xl mx-auto py-10 px-4">
-            <h1 className="text-2xl font-bold mb-6">Моята количка</h1>
-
+        <div className="max-w-3xl md:mt-10 mx-auto py-10 px-4">
+            <h1 className="text-2xl font-bold text-center mb-6">Моята количка</h1>
             <div className="space-y-6">
                 {cart.map((item) => (
                     <div key={item._id} className="flex items-start gap-4 border-b pb-4">
@@ -84,26 +83,27 @@ export default function Cart() {
             </div>
 
             {/* Общо и действия */}
-            <div className="mt-10 space-y-4 pt-4">
+            <div className="mt-5 space-y-4 pt-4">
                 <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Общо:</span>
                     <span className="text-blue-600 font-semibold text-base">{total.toFixed(2)} лв.</span>
                 </div>
 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center flex-wrap gap-4">
                     <button
                         onClick={clearCart}
                         className="text-red-600 text-sm hover:underline"
                     >
                         Изчисти количката
                     </button>
+
+                    <Link to="/checkout" className="ml-auto">
+                        <button className="w-full md:w-64 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 text-sm transition">
+                            Премини към поръчка
+                        </button>
+                    </Link>
                 </div>
 
-                <Link to="/checkout" className="block w-full">
-                    <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm">
-                        Премини към поръчка
-                    </button>
-                </Link>
             </div>
         </div>
     );

@@ -12,7 +12,7 @@ export default function CreateProduct({ editingProduct, setEditingProduct, setPr
     } = useCreateProduct(editingProduct, setEditingProduct, setProductView);
 
     return (
-        <div className="p-6 max-w-4xl mx-auto">
+        <div className="p-2 max-w-4xl mx-auto">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">
                 {editingProduct ? `Редакция на продукт: ${editingProduct.name}` : "Създай нов продукт"}
             </h2>

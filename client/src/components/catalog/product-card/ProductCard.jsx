@@ -3,7 +3,16 @@ import { toast } from "react-toastify";
 import { useCartContext } from "../../../context/CartContext";
 
 export default function ProductCard({ product }) {
-    const { addToCart } = useCartContext();
+    const { addToCartContext } = useCartContext();
+
+    const handleAddToCart = async () => {
+        try {
+            await addToCartContext(product);
+            toast.success("Продуктът беше добавен в количката.");
+        } catch (err) {
+            toast.error("Грешка при добавяне в количката:", err);
+        }
+    };
 
     if (!product) return null;
 
@@ -47,10 +56,7 @@ export default function ProductCard({ product }) {
                     )}
 
                     <button
-                        onClick={() => {
-                            addToCart(product);
-                            toast.success("Продуктът беше добавен в количката.");
-                        }}
+                        onClick={handleAddToCart}
                         className="w-full text-xs py-1 px-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                     >
                         Добави

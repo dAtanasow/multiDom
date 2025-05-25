@@ -68,21 +68,30 @@ export default function Checkout() {
                 phone,
             }));
         }
-    }, [firstName, lastName, email, phone]);
+    }, [firstName, lastName, email, phone, setValues]);
 
     useEffect(() => {
-        if (form.deliveryMethod === "address") {
-            setValues((prev) => ({
-                ...prev,
-                office: null,
-            }));
-        } else if (form.deliveryMethod === "office" && form.office?.address) {
-            setValues((prev) => ({
+        if (form.deliveryMethod === "address" && form.office !== null) {
+            setValues(prev => {
+                if (prev.office === null) return prev;
+                return { ...prev, office: null };
+            });
+        }
+    }, [form.deliveryMethod, form.office, setValues]);
+
+    useEffect(() => {
+        if (
+            form.deliveryMethod === "office" &&
+            form.office?.address &&
+            form.address !== form.office.address
+        ) {
+            setValues(prev => ({
                 ...prev,
                 address: form.office.address,
             }));
         }
-    }, [form.deliveryMethod]);
+    }, [form.deliveryMethod, form.office?.address, form.address, setValues]);
+
 
 
     return (

@@ -25,7 +25,7 @@ export default function Orders({ status }) {
     };
 
     return (
-        <div className="space-y-4">
+        <div>
             {getOrders().map(order => (
                 <OrderCard
                     key={order._id}

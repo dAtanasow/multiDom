@@ -29,25 +29,25 @@ export default function DesktopHeaderContent() {
   return (
     <>
       <div className="hidden md:block bg-white shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-2 py-1 flex items-center justify-between">
           <div className="flex-shrink-0">
             <Link to="/">
               <img
                 src="icons/мултиДом-logo.jpeg"
                 alt="МултиДом"
-                className="w-40"
+                className="w-30"
               />
             </Link>
           </div>
 
           <div className="flex flex-col items-center flex-grow px-4">
-            <div className="flex w-full max-w-md">
+            <div className="flex w-full h-8 max-w-md">
               <input
                 type="text"
                 placeholder="Търси продукт..."
                 className="flex-grow px-4 py-2 border rounded-l-xl border-gray-300 focus:outline-none"
               />
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-r-xl hover:bg-blue-700 transition">
+              <button className="bg-blue-600 text-white text-center px-3 rounded-r-xl hover:bg-blue-700 transition">
                 Търси
               </button>
             </div>
@@ -65,7 +65,7 @@ export default function DesktopHeaderContent() {
       </div>
 
       {/* Навигацията ще се скрива при скрол */}
-      <div className={`transition-all duration-300 fixed top-30 w-full z-50 bg-white shadow ${hideNav ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"}`}>
+      <div className={`transition-all duration-200 fixed top-19 w-full z-50 bg-white shadow ${hideNav ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"}`}>
         <div className="max-w-7xl mx-auto px-4">
           <DesktopNav />
         </div>

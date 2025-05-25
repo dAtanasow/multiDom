@@ -10,7 +10,7 @@ export default function Home() {
     <div className="flex flex-col">
       <Slider />
       <Welcome />
-      <BestSellers />
+      {/* <BestSellers /> */}
       <NewProducts />
       <SelectedProducts />
       <Advantages />
