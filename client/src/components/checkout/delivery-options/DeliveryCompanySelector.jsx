@@ -1,3 +1,5 @@
+import { DELIVERY_COMPANIES } from "../../../constants/deliveryCompanies";
+
 export default function DeliveryCompanySelector({
     selectedCompany,
     onChange,
@@ -12,8 +14,8 @@ export default function DeliveryCompanySelector({
                     <label
                         key={company}
                         className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${selectedCompany === company
-                                ? "border-blue-500 bg-blue-50"
-                                : "border-gray-300"
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-300"
                             }`}
                     >
                         <input
@@ -26,11 +28,13 @@ export default function DeliveryCompanySelector({
                             className="hidden"
                         />
                         <span className="text-sm font-medium">
-                            {company}{" "}
+                            {DELIVERY_COMPANIES[company]}{" "}
                             <span className="text-gray-500">
-                                ({price.toFixed(2)} лв.)
+                                ({price.office.toFixed(2)} лв.)
                             </span>
+
                         </span>
+
                     </label>
                 ))}
             </div>

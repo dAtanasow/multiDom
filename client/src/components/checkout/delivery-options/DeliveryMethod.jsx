@@ -1,4 +1,4 @@
-export default function DeliveryMethod({ deliveryMethod, setDeliveryMethod }) {
+export default function DeliveryMethod({ deliveryMethod, onChange }) {
     return (
         <div>
             <label className="block text-sm font-medium mb-2">Метод на доставка</label>
@@ -9,7 +9,7 @@ export default function DeliveryMethod({ deliveryMethod, setDeliveryMethod }) {
                         name="deliveryMethod"
                         value="office"
                         checked={deliveryMethod === "office"}
-                        onChange={(e) => setDeliveryMethod(e.target.value)}
+                        onChange={(e) => onChange(e.target.value)}
                         className="hidden"
                     />
                     <span className="text-sm">🏤 До офис</span>
@@ -21,7 +21,7 @@ export default function DeliveryMethod({ deliveryMethod, setDeliveryMethod }) {
                         name="deliveryMethod"
                         value="address"
                         checked={deliveryMethod === "address"}
-                        onChange={(e) => setDeliveryMethod(e.target.value)}
+                        onChange={(e) => onChange(e.target.value)}
                         className="hidden"
                     />
                     <span className="text-sm">🏠 До адрес (+1.50 лв.)</span>

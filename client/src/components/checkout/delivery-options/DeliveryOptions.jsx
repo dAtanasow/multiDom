@@ -22,8 +22,15 @@ export default function DeliveryOptions({
             office: null,
             address: prev.deliveryMethod === "address" ? prev.address : "",
         }));
+
         setDeliveryCompany(company);
     };
+
+    const handleMethodChange = (method) => {
+        setDeliveryMethod(method);
+        setValues((prev) => ({ ...prev, deliveryMethod: method }));
+    };
+
 
     return (
         <>
@@ -40,6 +47,7 @@ export default function DeliveryOptions({
                 <DeliveryMethod
                     deliveryMethod={deliveryMethod}
                     setDeliveryMethod={setDeliveryMethod}
+                    onChange={handleMethodChange}
                 />
             )}
 
