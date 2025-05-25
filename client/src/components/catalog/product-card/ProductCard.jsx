@@ -1,16 +1,19 @@
 import { Link } from "react-router";
 import { toast } from "react-toastify";
 import { useCartContext } from "../../../context/CartContext";
+import { normalizeProduct } from "../../../utils/normalize";
 
 export default function ProductCard({ product }) {
     const { addToCartContext } = useCartContext();
+    const normalized = normalizeProduct(product)
 
     const handleAddToCart = async () => {
         try {
-            await addToCartContext(product);
+            await addToCartContext(normalizeProduct(normalized));
             toast.success("Продуктът беше добавен в количката.");
         } catch (err) {
-            toast.error("Грешка при добавяне в количката:", err);
+            console.error("Грешка при добавяне:", err);
+            toast.error("Грешка при добавяне в количката.");
         }
     };
 

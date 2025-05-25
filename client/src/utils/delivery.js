@@ -1,6 +1,6 @@
 import econtApi from '../api/econt';
 import speedyApi from '../api/speedy';
-import { normalizeAddress, normalizeOffices } from './location';
+import { normalizeAddress, normalizeOffices } from './normalize';
 
 export function extractOfficeFromAddress(address) {
     return {

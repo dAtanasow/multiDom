@@ -1,48 +1,65 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useAuthContext } from "./AuthContext";
 import cartApi from "../api/cart";
-import formatCartItems from "../utils/formatCartItems";
 import { syncLocalCartToServer } from "../utils/cartSync";
 
 const CartContext = createContext();
 export const useCartContext = () => useContext(CartContext);
 
 function CartProvider({ children }) {
+    const [updatingId, setUpdatingId] = useState(null);
     const [cart, setCart] = useState(() => {
         const saved = localStorage.getItem("cart");
         return saved ? JSON.parse(saved) : [];
     });
-    const { isAuthenticate } = useAuthContext();
-    const syncedRef = useRef(false);
+    const { isAuthenticate, userId, isUserLoaded, accessToken } = useAuthContext();
+    const syncedRef = useRef({ userId: null, synced: false });
+    const syncedUserRef = useRef(null);
 
     useEffect(() => {
         const loadCart = async () => {
-            if (!isAuthenticate) return;
             try {
-                const rawCart = await cartApi.getCart();
-                setCart(formatCartItems(rawCart?.items || []));
+                const cartData = await cartApi.getCart();
+                setCart(Array.isArray(cartData) ? cartData : cartData.items || []);
             } catch (err) {
-                console.error("Грешка при зареждане на количката от сървъра:", err);
+                console.error("Грешка при зареждане на количката:", err);
             }
         };
-        loadCart();
-    }, [isAuthenticate]);
+
+        if (isUserLoaded && isAuthenticate && accessToken) {
+            loadCart();
+        }
+    }, [isUserLoaded, isAuthenticate, accessToken]);
 
     useEffect(() => {
-        if (isAuthenticate && !syncedRef.current) {
-            syncLocalCartToServer(setCart);
-            syncedRef.current = true;
-        }
-    }, [isAuthenticate]);
+        const syncAndLoadCart = async () => {
+            if (!isAuthenticate || !userId || !isUserLoaded) return;
+            if (syncedUserRef.current === userId) return;
+
+            try {
+                await syncLocalCartToServer();
+                syncedUserRef.current = userId;
+            } catch (err) {
+                console.error("Грешка при sync/load:", err);
+            }
+        };
+
+        syncAndLoadCart();
+    }, [isAuthenticate, userId, isUserLoaded]);
 
     const addToCartContext = async (product) => {
         if (!product || !product._id || typeof product.price !== "number") return;
-
         if (isAuthenticate) {
             try {
                 await cartApi.addToCart(product._id, 1);
-                const updatedCart = await cartApi.getCart();
-                setCart(formatCartItems(updatedCart.items));
+                setCart(prev => {
+                    const found = prev.find(i => i._id === product._id);
+                    const updated = found
+                        ? prev.map(i =>
+                            i._id === product._id ? { ...i, quantity: i.quantity + 1 } : i)
+                        : [...prev, { ...product, quantity: 1 }];
+                    return updated;
+                });
             } catch (err) {
                 console.error("[addToCartContext] Server error:", err);
             }
@@ -74,29 +91,36 @@ function CartProvider({ children }) {
         }
     };
 
-    const updateQuantity = (productId, quantity) => {
+    const updateQuantity = async (productId, quantity) => {
+        const newQuantity = Math.max(1, quantity);
+
         const updated = cart.map((item) =>
             item._id === productId
-                ? { ...item, quantity: Math.max(1, quantity) }
+                ? { ...item, quantity: newQuantity }
                 : item
         );
+
         setCart(updated);
 
         if (isAuthenticate) {
-            cartApi
-                .updateCart({
+            setUpdatingId(productId);
+            try {
+                await cartApi.updateCart({
                     items: updated.map(({ _id, quantity }) => ({
                         product: _id,
                         quantity,
                     })),
-                })
-                .catch((err) => {
-                    console.error("[updateQuantity] Server update failed:", err);
                 });
+            } catch (err) {
+                console.error("[updateQuantity] Server update failed:", err);
+            } finally {
+                setUpdatingId(null);
+            }
         } else {
             localStorage.setItem("cart", JSON.stringify(updated));
         }
     };
+
 
     const clearCart = (options = { localOnly: false }) => {
         setCart([]);
@@ -108,9 +132,10 @@ function CartProvider({ children }) {
     };
 
 
+
     return (
         <CartContext.Provider
-            value={{ cart, addToCartContext, removeFromCart, updateQuantity, clearCart, syncedRef, setCart }}
+            value={{ cart, addToCartContext, removeFromCart, updateQuantity, clearCart, syncedRef, updatingId, setCart }}
         >
             {children}
         </CartContext.Provider>
