@@ -1,4 +1,3 @@
-const Product = require("../models/Product");
 const User = require("../models/User");
 
 async function getUserAddresses(req, res) {
