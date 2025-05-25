@@ -1,9 +1,12 @@
-const { default: mongoose } = require("mongoose");
+const { mongoose } = require("mongoose");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 
 const getCart = async (req, res, next) => {
     try {
+        if (!req.user || !req.user._id) {
+            return res.status(200).json({ items: [] }); // За гости — празна или локална количка
+        }
         const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
 
         if (!cart) {
@@ -24,6 +27,7 @@ const getCart = async (req, res, next) => {
 
 const updateCart = async (req, res, next) => {
     try {
+        if (!req.user) return res.status(401).json({ message: "Изисква се автентикация." });
         const { items } = req.body;
         let cart = await Cart.findOneAndUpdate(
             { user: req.user._id },
@@ -38,6 +42,7 @@ const updateCart = async (req, res, next) => {
 
 const deleteCartItem = async (req, res, next) => {
     try {
+        if (!req.user) return res.status(401).json({ message: "Изисква се автентикация." });
         const { productId } = req.params;
         const cart = await Cart.findOneAndUpdate(
             { user: req.user._id },
@@ -53,6 +58,7 @@ const deleteCartItem = async (req, res, next) => {
 
 const clearCart = async (req, res, next) => {
     try {
+        if (!req.user) return res.status(401).json({ message: "Изисква се автентикация." });
         const cart = await Cart.findOneAndUpdate(
             { user: req.user._id },
             { items: [] },
@@ -67,43 +73,42 @@ const clearCart = async (req, res, next) => {
 
 const addToCart = async (req, res, next) => {
     try {
-        const userId = req.user._id;
         const { productId, quantity = 1 } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(productId)) {
-            return next(new CustomError("Невалидно ID на продукт", 400));
+            return res.status(400).json({ message: "Невалидно ID на продукт" });
         }
 
         const product = await Product.findById(productId);
         if (!product) {
-            return next(new CustomError("Продуктът не съществува", 404));
+            return res.status(404).json({ message: "Продуктът не съществува" });
         }
 
+        if (!req.user || !req.user._id) {
+            console.log("🔓 Гост добавя продукт. Прекратено.");
+            return res.status(200).json({ message: "Продуктът е добавен локално (гост)" });
+        }
+
+        const userId = req.user._id;
         let cart = await Cart.findOne({ user: userId });
 
         if (!cart) {
-            cart = new Cart({
-                user: userId,
-                items: [{ product: productId, quantity }],
-            });
-        } else {
-            const existingItem = cart.items.find((item) =>
-                item.product.toString() === productId
-            );
-
-            if (existingItem) {
-                existingItem.quantity = Math.max(existingItem.quantity, quantity); // ✅ избягва дубли
-            } else {
-                cart.items.push({ product: productId, quantity });
-            }
+            cart = new Cart({ user: userId, items: [] });
         }
 
-        cart.items = cart.items.filter(item => item.product !== null);
+        const item = cart.items.find(i => i.product.toString() === productId);
+        if (item) {
+            item.quantity += quantity;
+        } else {
+            cart.items.push({ product: productId, quantity });
+        }
+
         await cart.save();
         await cart.populate("items.product");
 
         res.status(200).json(cart);
     } catch (err) {
+        console.error("❌ Грешка в addToCart:", err);
         next(err);
     }
 };
