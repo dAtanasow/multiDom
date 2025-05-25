@@ -37,3 +37,17 @@ export function normalizeText(str = "") {
 export function normalizeAddress(address = "", city = "") {
     return normalizeText(`${address} ${city}`);
 }
+
+export const normalizeProduct = (product) => {
+    if (!product || typeof product !== 'object') return product;
+
+    const hasValidDiscount =
+        typeof product.discountPrice === "number" &&
+        product.discountPrice < product.price;
+
+    return {
+        ...product,
+        discountPrice: hasValidDiscount ? product.discountPrice : null,
+        quantity: product.quantity ?? 1
+    };
+};
