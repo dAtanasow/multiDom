@@ -7,19 +7,35 @@ const getCart = async (req, res, next) => {
         if (!req.user || !req.user._id) {
             return res.status(200).json({ items: [] }); // За гости — празна или локална количка
         }
+
         const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
 
         if (!cart) {
-            return res.status(200).json({ user: req.user._id, items: [] });
+            return res.status(200).json({ items: [] });
         }
 
         const cleanedItems = cart.items.filter(item => item.product !== null);
+
         if (cleanedItems.length !== cart.items.length) {
             cart.items = cleanedItems;
             await cart.save();
         }
 
-        res.status(200).json(cart);
+        const flatItems = cleanedItems.map(item => {
+            const product = item.product;
+
+            return {
+                _id: product._id,
+                name: product.name,
+                price: product.price,
+                discountPrice: product.discountPrice,
+                images: product.images || [],
+                quantity: item.quantity
+            };
+        });
+
+        res.status(200).json({ items: flatItems });
+
     } catch (err) {
         next(err);
     }
@@ -85,8 +101,10 @@ const addToCart = async (req, res, next) => {
         }
 
         if (!req.user || !req.user._id) {
-            console.log("🔓 Гост добавя продукт. Прекратено.");
-            return res.status(200).json({ message: "Продуктът е добавен локално (гост)" });
+            return res.status(200).json({
+                message: "Гост потребител — количката се управлява от клиента",
+                localOnly: true
+            });
         }
 
         const userId = req.user._id;
@@ -96,7 +114,8 @@ const addToCart = async (req, res, next) => {
             cart = new Cart({ user: userId, items: [] });
         }
 
-        const item = cart.items.find(i => i.product.toString() === productId);
+        const item = cart.items.find(i => i.product.equals(productId));
+
         if (item) {
             item.quantity += quantity;
         } else {

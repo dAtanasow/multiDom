@@ -33,10 +33,13 @@ export async function syncLocalCartToServer(setCart) {
         }
 
         const updatedCart = await cartApi.getCart();
-        const formatted = formatCartItems(updatedCart.items)
-        setCart(formatted);
+        setCart(formatCartItems(updatedCart.items));
         localStorage.removeItem("cart");
     } catch (err) {
-        console.error("[SYNC] Error syncing cart:", err);
+        if (err?.response?.status === 401) {
+            console.warn("[SYNC] Token expired — skipping cart sync.");
+        } else {
+            console.error("[SYNC] Error syncing cart:", err);
+        }
     }
 }
