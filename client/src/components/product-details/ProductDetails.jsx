@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Star, Truck, ShieldCheck } from "lucide-react";
 import { useProductDetails } from "../../hooks/useCatalog";
 import { useCartContext } from "../../context/CartContext";
-import cartApi from "../../api/cart";
 import { toast } from "react-toastify";
 import ReviewList from "../reviews/ReviewList";
 import useFavorites from "../../hooks/useFavorites";
@@ -11,19 +10,18 @@ import useFavorites from "../../hooks/useFavorites";
 export default function ProductDetails() {
     const { id } = useParams();
     const { product, loading, activeImage, averageRating, setActiveImage, relatedProducts } = useProductDetails(id);
-    const { addToCart: addToCartContext } = useCartContext();
+    const { addToCartContext } = useCartContext();
     const { isFavorite, toggleFavorite } = useFavorites();
-
 
     const handleAddToCart = async () => {
         try {
             await addToCartContext(product);
-            await cartApi.addToCart(product._id, 1);
-            toast.success("Продуктът е добавен в количката!");
+            toast.success("Продуктът беше добавен в количката.");
         } catch (err) {
-            toast.error("Грешка при добавяне в количката.");
+            toast.error("Грешка при добавяне в количката:", err);
         }
     };
+
 
     if (loading) return <div className="p-10 text-center text-gray-500 text-lg animate-pulse">Зареждане...</div>;
     if (!product) return <div className="p-10 text-center text-red-500">Продуктът не е намерен.</div>;
