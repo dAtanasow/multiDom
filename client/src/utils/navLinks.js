@@ -1,3 +1,13 @@
+import {
+    MdCleaningServices,
+    MdBabyChangingStation,
+    MdOutlineSanitizer,
+    MdOutlineLocalLaundryService,
+    MdCategory,
+} from "react-icons/md";
+import { PiToiletPaper } from "react-icons/pi";
+import { GiToothbrush, GiPerfumeBottle } from "react-icons/gi";
+import { FaThLarge } from "react-icons/fa";
 const encode = (str) => encodeURIComponent(str);
 
 const navLinks = [
@@ -15,6 +25,7 @@ const navLinks = [
             label: sublabel,
             href: `/catalog?category=${encode("ПЕРИЛНИ ПРЕПАРАТИ")}&subCategory=${encode(sublabel)}`,
         })),
+        icon: MdOutlineLocalLaundryService,
     },
     {
         label: "ПОЧИСТВАЩИ ПРЕПАРАТИ",
@@ -32,6 +43,7 @@ const navLinks = [
             label: sublabel,
             href: `/catalog?category=${encode("ПОЧИСТВАЩИ ПРЕПАРАТИ")}&subCategory=${encode(sublabel)}`,
         })),
+        icon: MdCleaningServices
     },
     {
         label: "ХИГИЕНА",
@@ -45,6 +57,7 @@ const navLinks = [
             label: sublabel,
             href: `/catalog?category=${encode("ХИГИЕНА")}&subCategory=${encode(sublabel)}`,
         })),
+        icon: MdOutlineSanitizer
     },
     {
         label: "КОЗМЕТИКА",
@@ -64,6 +77,7 @@ const navLinks = [
             label: sublabel,
             href: `/catalog?category=${encode("КОЗМЕТИКА")}&subCategory=${encode(sublabel)}`,
         })),
+        icon: GiPerfumeBottle
     },
     {
         label: "БЕБЕТА И ДЕЦА",
@@ -75,6 +89,7 @@ const navLinks = [
             label: sublabel,
             href: `/catalog?category=${encode("БЕБЕТА И ДЕЦА")}&subCategory=${encode(sublabel)}`,
         })),
+        icon: MdBabyChangingStation
     },
     {
         label: "ХАРТИЯ",
@@ -87,6 +102,7 @@ const navLinks = [
             label: sublabel,
             href: `/catalog?category=${encode("ХАРТИЯ")}&subCategory=${encode(sublabel)}`,
         })),
+        icon: PiToiletPaper
     },
     {
         label: "УСТНА ХИГИЕНА",
@@ -99,14 +115,17 @@ const navLinks = [
             label: sublabel,
             href: `/catalog?category=${encode("УСТНА ХИГИЕНА")}&subCategory=${encode(sublabel)}`,
         })),
+        icon: GiToothbrush
     },
     {
         label: "ДРУГИ",
         href: `/catalog?category=${encode("ДРУГИ")}`,
+        icon: MdCategory
     },
     {
         label: "ВСИЧКИ",
         href: `/catalog`,
+        icon: FaThLarge
     },
 ];
 
