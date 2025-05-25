@@ -51,13 +51,10 @@ export default function Checkout() {
         deliveryCompany,
         loadingOffices,
     });
-
-    const { productTotal, deliveryTotal, total } = useTotals(
-        cart,
+    const { deliveryTotal, total, totalStandard, totalDiscount } = useTotals(cart,
         form.deliveryCompany,
         form.deliveryMethod,
-        deliveryPrices
-    );
+        deliveryPrices);
 
     useEffect(() => {
         if (firstName && lastName && email && phone) {
@@ -141,11 +138,23 @@ export default function Checkout() {
                     }
                 />
 
-
-                <div className="border-t pt-4 text-right text-base font-semibold text-blue-600">
-                    Продукти: {productTotal.toFixed(2)} лв.<br />
-                    Доставка: {deliveryTotal.toFixed(2)} лв.<br />
-                    <span className="text-xl text-green-700 animate-pulse">Общо: {total.toFixed(2)} лв.</span>
+                <div className="border-t pt-4 text-sm text-right space-y-1">
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Продукти (без отстъпка):</span>
+                        <span className="font-medium">{totalStandard.toFixed(2)} лв.</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Отстъпка:</span>
+                        <span className="text-green-600">– {totalDiscount.toFixed(2)} лв.</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Доставка:</span>
+                        <span>{deliveryTotal.toFixed(2)} лв.</span>
+                    </div>
+                    <div className="flex justify-between text-base font-semibold pt-2 border-t mt-2">
+                        <span className="text-gray-800">Общо с отстъпка:</span>
+                        <span className="text-green-700 text-lg">{total.toFixed(2)} лв.</span>
+                    </div>
                 </div>
 
                 <button type="submit" className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
