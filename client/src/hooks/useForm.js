@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback } from "react";
+import { useRef, useState } from "react";
+import { isSame } from "../utils/compare";
 
-export function useForm(initialValues, submitCallback, options = { reinitializeForm: false }) {
+export function useForm(initialValues, submitCallback) {
     const [errors, setError] = useState({});
     const [pending, setPending] = useState(false);
 
     const valuesRef = useRef(initialValues);
     const [valuesState, setValuesState] = useState(initialValues);
 
-    const setValues = (newValues, merge = true) => {
+    const setValues = useCallback((newValues, merge = true) => {
         const result = typeof newValues === "function"
             ? newValues(valuesRef.current)
             : newValues;
@@ -16,9 +18,11 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
             ? { ...valuesRef.current, ...result }
             : result;
 
-        valuesRef.current = updated;
-        setValuesState(updated);
-    };
+        if (!isSame(valuesRef.current, updated)) {
+            valuesRef.current = updated;
+            setValuesState(updated);
+        }
+    }, []);
 
     const changeHandler = (e) => {
         const { name, type, value, checked } = e.target;
@@ -72,8 +76,6 @@ export function useForm(initialValues, submitCallback, options = { reinitializeF
         appendImage,
     };
 }
-
-
 
 function updateNestedValue(obj, path, value) {
     const keys = path.split(".");
