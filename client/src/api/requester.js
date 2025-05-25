@@ -10,14 +10,9 @@ export async function requester(method, url, data) {
         credentials: "include",
     };
 
-    const accessToken = getAccessToken();
-
-    const isAuthRequired =
-        !url.includes("/auth/login") &&
-        !url.includes("/auth/register")
-
-    if (accessToken && isAuthRequired) {
-        options.headers["Authorization"] = `Bearer ${accessToken}`;
+    const token = getAccessToken();
+    if (token) {
+        options.headers["Authorization"] = `Bearer ${token}`;
     }
 
     if (method !== "GET") {
@@ -29,18 +24,14 @@ export async function requester(method, url, data) {
         url = baseUrl + url;
     }
 
-
     let response = await fetch(url, options);
-    if ((response.status === 401 || response.status === 403)) {
 
-        const refreshSuccess = await tryRefreshToken();
-        if (refreshSuccess) {
+    if ((response.status === 401 || response.status === 403) && token) {
+        const refreshed = await tryRefreshToken();
+        if (refreshed) {
             const newToken = getAccessToken();
             if (newToken) {
-                options.headers = {
-                    ...options.headers,
-                    "Authorization": `Bearer ${newToken}`,
-                };
+                options.headers["Authorization"] = `Bearer ${newToken}`;
                 response = await fetch(url, options);
             }
         } else {
@@ -49,7 +40,6 @@ export async function requester(method, url, data) {
     }
 
     const contentType = response.headers.get("Content-Type");
-
     let result = {};
     if (contentType?.includes("application/json")) {
         try {
@@ -61,11 +51,10 @@ export async function requester(method, url, data) {
 
     if (!response.ok) {
         if (response.status === 409) {
-            console.warn('Конфликт: ', result.message || 'Грешка 409');
+            console.warn("Конфликт: ", result.message || "Грешка 409");
             return { status: 409, data: result };
         }
-
-        throw new Error(result.message || 'Възникна грешка');
+        throw new Error(result.message || "Възникна грешка");
     }
 
     if (response.status === 204) return {};
@@ -79,19 +68,17 @@ export async function requester(method, url, data) {
 
 async function tryRefreshToken() {
     try {
-        const response = await fetch(`${baseUrl}/auth/refresh-token`, {
+        const res = await fetch(`${baseUrl}/auth/refresh-token`, {
             method: "POST",
             credentials: "include",
         });
+        if (!res.ok) return false;
 
-        if (!response.ok) return false;
-
-        const data = await response.json();
+        const data = await res.json();
         if (data.accessToken) {
             setAccessToken(data.accessToken);
             return true;
         }
-
         return false;
     } catch (err) {
         console.error("Грешка при опит за refresh:", err);
