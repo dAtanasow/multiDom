@@ -12,10 +12,14 @@ const login = (data) => {
 
 const logout = () => requester.post(`${baseUrl}/logout`);
 
+const getCurrentUser = () => {
+    return requester.get(`${baseUrl}/me`);
+}
 const userApi = {
     register,
     login,
-    logout
+    logout,
+    getCurrentUser
 };
 
 export default userApi;

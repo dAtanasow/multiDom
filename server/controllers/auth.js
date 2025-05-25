@@ -153,9 +153,30 @@ const refreshAccessToken = async (req, res, next) => {
     }
 };
 
+const getCurrentUser = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        res.json({
+            _id: req.user._id,
+            email: req.user.email,
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            phone: req.user.phone,
+            role: req.user.role,
+        });
+    } catch (err) {
+        console.error("Error getting current user:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
 module.exports = {
     register,
     login,
     logout,
-    refreshAccessToken
+    refreshAccessToken,
+    getCurrentUser
 }
