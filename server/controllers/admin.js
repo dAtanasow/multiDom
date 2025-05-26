@@ -1,4 +1,20 @@
 const Product = require("../models/Product");
+const uploadImageBuffer = require("../utils/uploadImageBuffer");
+
+async function normalizeImages(images = []) {
+    const processed = [];
+
+    for (const img of images) {
+        if (typeof img === "string" && img.startsWith("data:image")) {
+            const url = await uploadImageBuffer(img);
+            processed.push(url);
+        } else {
+            processed.push(img);
+        }
+    }
+
+    return processed;
+}
 
 const createProduct = async (req, res, next) => {
     try {
@@ -34,7 +50,7 @@ const createProduct = async (req, res, next) => {
             quantity,
             unitCount,
             unitType,
-            images: Array.isArray(images) ? images : [images],
+            images: await normalizeImages(Array.isArray(images) ? images : [images]),
             originCountry,
             isFeatured,
         });
@@ -49,6 +65,11 @@ const createProduct = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
     try {
+        if (req.body.images) {
+            req.body.images = await normalizeImages(
+                Array.isArray(req.body.images) ? req.body.images : [req.body.images]
+            );
+        }
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id,
             req.body,
