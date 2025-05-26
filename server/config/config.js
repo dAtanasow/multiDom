@@ -4,7 +4,7 @@ const config = {
     development: {
         port: process.env.PORT || 3000,
         dbURL: process.env.MONGO_URI,
-        cookieSecret: process.env.COOKIESECRET,
+        cookieSecret: process.env.COOKIESECRET || 'ArielNaBelo',
         jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
         jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
         origin: ['http://localhost:5173'],
@@ -15,7 +15,7 @@ const config = {
         cookieSecret: process.env.COOKIESECRET,
         jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
         jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
-        origin: ['https://multidom-460607.web.app'],
+        origin: process.env.FRONTEND_URL || 'https://multidom-460607.web.app',
     },
 };
 
