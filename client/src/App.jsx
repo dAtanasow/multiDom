@@ -9,7 +9,6 @@ import About from "./components/footer/about/About";
 import Contact from "./components/footer/contact/Contact";
 import Privacy from "./components/footer/privacy/Privacy";
 import Terms from "./components/footer/terms/Terms";
-import Login from "./components/login/Login";
 import Register from "./components/register/Register";
 import Profile from "./components/profile/Profile";
 import PrivateRoute from "./components/private-router/PrivateRoute";
@@ -31,7 +30,6 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/catalog/:id" element={<ProductDetails />} />
