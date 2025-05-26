@@ -3,6 +3,7 @@ import { useForm } from "./useForm";
 import { deliveryPrices } from "../constants/deliveryPrices";
 import orderApi from "../api/order";
 import { useMemo } from "react";
+import { toast } from "react-toastify";
 
 export function useCheckoutForm(cart, clearCart) {
     const navigate = useNavigate();
@@ -28,8 +29,12 @@ export function useCheckoutForm(cart, clearCart) {
 
     return useForm(initialValues, async (form) => {
         const { deliveryCompany, deliveryMethod } = form;
-        const basePrice = deliveryPrices[deliveryCompany] || 0;
-        const deliveryTotal = basePrice + (deliveryMethod === "address" ? 1.5 : 0);
+        const methodPrice = deliveryPrices[deliveryCompany]?.[deliveryMethod];
+        const deliveryTotal = typeof methodPrice === 'number' ? methodPrice : 0;
+
+        if (!deliveryCompany || !deliveryMethod || deliveryTotal === 0) {
+            return toast.info("Моля, изберете метод и доставчик, за да се изчисли цената.");
+        }
 
         const payload = {
             ...form,
@@ -40,9 +45,14 @@ export function useCheckoutForm(cart, clearCart) {
             items: cart.map(item => ({
                 productId: item._id,
                 name: item.name,
-                price: item.price,
+                price: item.discountPrice && item.discountPrice < item.price
+                    ? item.discountPrice
+                    : item.price,
+                originalPrice: item.price,
+                discountPrice: item.discountPrice,
                 quantity: item.quantity,
-            })),
+                images: item.images
+            }))
         };
 
         try {
@@ -53,4 +63,5 @@ export function useCheckoutForm(cart, clearCart) {
             console.error("❌ Грешка при изпращане на поръчка:", err);
         }
     });
+
 }
