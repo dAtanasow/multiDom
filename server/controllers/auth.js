@@ -22,14 +22,14 @@ const logout = async (req, res, next) => {
             res.clearCookie('token', {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'Strict',
+                sameSite: 'None',
             });
         }
         if (req.cookies.refreshToken) {
             res.clearCookie('refreshToken', {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'Strict',
+                sameSite: 'None',
             });
         }
         res.status(200).json({ message: 'Успешно излязохте от профила.' });
@@ -70,8 +70,8 @@ const register = async (req, res, next) => {
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "Strict",
+            secure: true,
+            sameSite: "None",
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дни
         });
 
@@ -114,8 +114,8 @@ const login = async (req, res, next) => {
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            secure: true,
+            sameSite: "None",
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дни
         });
 
@@ -146,6 +146,13 @@ const refreshAccessToken = async (req, res, next) => {
     try {
         const data = verifyRefreshToken(refreshToken);
         const accessToken = createAccessToken({ _id: data._id });
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
 
         res.status(200).json({ accessToken });
     } catch (err) {

@@ -5,11 +5,10 @@ const { verifyAccessToken } = require("../utils/jwt");
 function auth(redirectUnauthenticated = true) {
     return async function (req, res, next) {
         try {
-
             if (req.headers.upgrade === 'websocket') {
                 return next();
             }
-            const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
+            const token = req.headers.authorization?.split(' ')[1];
 
             if (!token) {
                 if (redirectUnauthenticated) {
@@ -33,7 +32,6 @@ function auth(redirectUnauthenticated = true) {
             }
 
             const payload = await verifyAccessToken(token);
-
             const user = await User.findById(payload._id);
             if (!user) {
                 return res.status(401).json({ message: "User not found." });
@@ -45,8 +43,6 @@ function auth(redirectUnauthenticated = true) {
 
 
         } catch (err) {
-            console.error("AUTH ERROR:", err);
-
             const tokenErrorMessages = {
                 TokenExpiredError: "Сесията е изтекла. Моля, влезте отново.",
                 JsonWebTokenError: "Невалиден токен. Моля, влезте отново.",
