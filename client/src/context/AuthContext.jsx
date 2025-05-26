@@ -30,6 +30,16 @@ function AuthProvider({ children }) {
     }
 
     useEffect(() => {
+        const listener = () => {
+            navigate("/?panel=login");
+        };
+
+        window.addEventListener("unauthorized", listener);
+        return () => window.removeEventListener("unauthorized", listener);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
         const checkUser = async () => {
             try {
                 const userData = await userApi.getCurrentUser();
@@ -72,7 +82,7 @@ function AuthProvider({ children }) {
             localStorage.removeItem("cart");
 
             setAuthState({ user: null, accessToken: null });
-            navigate("/login");
+            navigate("/?panel=login");
         } catch (err) {
             console.error("Logout API error:", err);
         } finally {

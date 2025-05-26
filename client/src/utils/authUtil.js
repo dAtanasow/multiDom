@@ -32,4 +32,10 @@ export function setAccessToken(newAccessToken) {
 
 export function clearAuth() {
     localStorage.removeItem('auth');
-}
+};
+
+
+export const onUnauthorized = () => {
+    const event = new CustomEvent("unauthorized");
+    window.dispatchEvent(event);
+};

@@ -1,4 +1,4 @@
-import { getAccessToken, setAccessToken, clearAuth } from "../utils/authUtil";
+import { getAccessToken, setAccessToken, clearAuth, onUnauthorized } from "../utils/authUtil";
 import { toast } from "react-toastify";
 
 const baseUrl = import.meta.env.VITE_API_URL;
@@ -26,13 +26,19 @@ export async function requester(method, url, data) {
 
     let response = await fetch(url, options);
 
-    if ((response.status === 401 || response.status === 403) && token) {
+    if ((response.status === 401 || response.status === 403) && token && !url.includes("/auth/refresh-token")) {
         const refreshed = await tryRefreshToken();
         if (refreshed) {
             const newToken = getAccessToken();
             if (newToken) {
                 options.headers["Authorization"] = `Bearer ${newToken}`;
                 response = await fetch(url, options);
+
+                if (response.status === 401 || response.status === 403) {
+                    return handleUnauthorized();
+                }
+            } else {
+                return handleUnauthorized();
             }
         } else {
             return handleUnauthorized();
@@ -71,17 +77,27 @@ async function tryRefreshToken() {
         const res = await fetch(`${baseUrl}/auth/refresh-token`, {
             method: "POST",
             credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
         });
-        if (!res.ok) return false;
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.warn("❌ Refresh отказан:", res.status, errorText);
+            return false;
+        }
 
         const data = await res.json();
+
         if (data.accessToken) {
             setAccessToken(data.accessToken);
             return true;
         }
+
         return false;
     } catch (err) {
-        console.error("Грешка при опит за refresh:", err);
+        console.error("💥 Грешка при опит за refresh:", err);
         return false;
     }
 }
@@ -89,7 +105,7 @@ async function tryRefreshToken() {
 function handleUnauthorized() {
     clearAuth();
     toast.error("Сесията ви е изтекла. Моля, влезте отново.");
-    window.location.href = "/";
+    onUnauthorized();
 }
 
 export const get = requester.bind(null, "GET");
