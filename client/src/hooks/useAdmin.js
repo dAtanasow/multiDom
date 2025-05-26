@@ -70,7 +70,7 @@ export function useCreateProduct(editingProduct, setEditingProduct, setProductVi
 
                 resetForm();
             } catch (err) {
-                toast.error("Възникна грешка при запазване.");
+                toast.error("Възникна грешка при запазване.", err);
             } finally {
                 setPending(false);
             }
@@ -134,6 +134,7 @@ export function useCreateProduct(editingProduct, setEditingProduct, setProductVi
                 isFeatured: !!editingProduct.isFeatured,
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editingProduct]);
 
     return {
@@ -157,7 +158,7 @@ export function useProductsTable() {
             const res = await productApi.getAll();
             setProducts(res.products || []);
         } catch (err) {
-            toast.error("Грешка при зареждане на продуктите.");
+            toast.error("Грешка при зареждане на продуктите.", err);
         }
     };
 
@@ -181,7 +182,7 @@ export function useProductsTable() {
                             toast.success("Продуктът беше изтрит успешно.");
                             fetchProducts();
                         } catch (err) {
-                            toast.error("Възникна грешка при изтриване.");
+                            toast.error("Възникна грешка при изтриване.", err);
                         }
                     },
                 },
