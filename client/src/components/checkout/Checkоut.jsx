@@ -51,10 +51,9 @@ export default function Checkout() {
         deliveryCompany,
         loadingOffices,
     });
-    const { deliveryTotal, total, totalStandard, totalDiscount } = useTotals(cart,
-        form.deliveryCompany,
-        form.deliveryMethod,
-        deliveryPrices);
+
+    const { deliveryTotal, total, totalStandard, totalDiscount } = useTotals(cart, form, deliveryPrices);
+
 
     useEffect(() => {
         if (firstName && lastName && email && phone) {

@@ -6,6 +6,26 @@ const createOrder = async (req, res) => {
     try {
         const orderData = req.body;
 
+        const totalStandard = orderData.items.reduce(
+            (sum, item) => sum + (item.originalPrice || item.price) * item.quantity,
+            0
+        );
+
+        const total = orderData.items.reduce(
+            (sum, item) => sum + item.price * item.quantity,
+            0
+        );
+
+        const totalDiscount = totalStandard - total;
+
+        let rawDelivery = orderData.deliveryTotal;
+        if (typeof rawDelivery !== "number") {
+            rawDelivery = parseFloat(rawDelivery);
+            if (isNaN(rawDelivery)) rawDelivery = 0;
+        }
+        orderData.deliveryTotal = rawDelivery;
+        const grandTotal = total + orderData.deliveryTotal;
+
         if (orderData.invoice?.useInvoice) {
             orderData.invoice = {
                 useInvoice: true,
@@ -18,17 +38,14 @@ const createOrder = async (req, res) => {
             orderData.invoice = { useInvoice: false };
         }
 
-        const total = orderData.items.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0
-        );
-        const grandTotal = total + (orderData.deliveryTotal || 0);
         const order = await Order.create(orderData);
 
         let officeDetails = order.office || undefined;
         await sendOrderConfirmationEmail(order.email, {
             ...orderData,
             total: grandTotal,
+            totalStandard,
+            totalDiscount,
             orderId: order._id,
             officeDetails
         });
@@ -37,8 +54,9 @@ const createOrder = async (req, res) => {
             message: "Поръчката е приета и имейлът е изпратен.",
             orderId: order._id,
         });
+
     } catch (error) {
-        console.error("Грешка при създаване на поръчка:", error);
+        console.error("❌ Грешка при създаване на поръчка:", error);
         res.status(500).json({ message: "Грешка при обработка на поръчката." });
     }
 };
