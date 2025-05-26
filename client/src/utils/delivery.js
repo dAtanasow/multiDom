@@ -4,6 +4,7 @@ import { normalizeAddress, normalizeOffices } from './normalize';
 
 export function extractOfficeFromAddress(address) {
     return {
+        _id: address.office?._id || '',
         name: address.office?.name || '',
         address: address.office?.address || '',
         courierName: address.office?.courierName || '',
@@ -26,9 +27,9 @@ export function extractNewFormValues(address) {
 
 export async function fetchCourierOffices(city, deliveryCompany) {
     let result = [];
-    if (deliveryCompany === 'Еконт') {
+    if (deliveryCompany === 'econt') {
         result = await econtApi.getByCity(city);
-    } else if (deliveryCompany === 'Спиди') {
+    } else if (deliveryCompany === 'speedy') {
         result = await speedyApi.getByCity(city);
     }
 

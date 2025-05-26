@@ -27,13 +27,22 @@ export function isSameOffice(userOffice, candidate) {
 
     const nameMatch = normalizeText(userOffice.name) === normalizeText(candidate.name);
     const courierMatch = normalizeText(userOffice.courierName) === normalizeText(candidate.courierName);
-    const addressMatch =
-        normalizeAddress(userOffice.address) === normalizeAddress(candidate.address) ||
-        normalizeAddress(candidate.address).includes(normalizeAddress(userOffice.address));
+    const addressMatch = (() => {
+        const user = normalizeAddress(userOffice.address);
+        const candidateAddr = normalizeAddress(candidate.address);
+
+        return (
+            user === candidateAddr ||
+            candidateAddr.includes(user) ||
+            user.includes(candidateAddr)
+        );
+    })();
 
     const idMatch = userOffice._id && candidate._id
-        ? userOffice._id === candidate._id
+        ? String(userOffice._id) === String(candidate._id)
         : true;
 
-    return nameMatch && courierMatch && addressMatch && idMatch;
+    const result = nameMatch && courierMatch && addressMatch && idMatch;
+
+    return result;
 }

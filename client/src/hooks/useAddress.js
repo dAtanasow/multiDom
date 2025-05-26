@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import profileApi from '../api/profile';
 import { extractOfficeFromAddress, extractNewFormValues, fetchCourierOffices } from '../utils/delivery';
-
+import { deliveryPrices } from '../constants/deliveryPrices';
 import { isSame, isSameOffice, } from '../utils/compare'
 
 export function useUserAddresses() {
@@ -102,6 +102,7 @@ export function useApplyAddressToForm({
     loadingOffices,
 }) {
     const prevAppliedRef = useRef(null);
+    const pendingOfficeRef = useRef(null);
 
     useEffect(() => {
         const addressObj = addresses.find((a) => a._id === selectedSavedAddress);
@@ -124,17 +125,27 @@ export function useApplyAddressToForm({
         }
     }, [form.deliveryMethod, selectedOfficeId, setSelectedOfficeId]);
 
+
     useEffect(() => {
         const address = addresses.find((a) => a._id === selectedSavedAddress);
-        if (!address || address.deliveryMethod !== 'office' || loadingOffices || !offices?.length) return;
+        if (!address || address.deliveryMethod !== 'office') return;
 
         const userOffice = extractOfficeFromAddress(address);
-        const match = offices.find((o) => isSameOffice(userOffice, o));
+        pendingOfficeRef.current = userOffice;
+    }, [selectedSavedAddress, addresses]);
+
+    useEffect(() => {
+        if (!pendingOfficeRef.current || loadingOffices || !offices?.length) return;
+
+        const match = offices.find((o) => isSameOffice(pendingOfficeRef.current, o));
 
         if (match && match._id !== selectedOfficeId) {
             setSelectedOfficeId(match._id);
         }
-    }, [offices, addresses, selectedSavedAddress, form.city, selectedOfficeId, form.deliveryCompany, loadingOffices, setSelectedOfficeId]);
+
+        pendingOfficeRef.current = null;
+    }, [offices, loadingOffices, selectedOfficeId, setSelectedOfficeId]);
+
 }
 
 export function useDelivery(form, setValues) {
@@ -149,6 +160,20 @@ export function useDelivery(form, setValues) {
     const setDeliveryCompany = (val) => setValues(prev => ({ ...prev, deliveryCompany: val }));
     const deliveryMethod = form.deliveryMethod;
     const setDeliveryMethod = (val) => setValues(prev => ({ ...prev, deliveryMethod: val }));
+
+    useEffect(() => {
+        const rawPrice = deliveryPrices?.[deliveryCompany]?.[deliveryMethod];
+        const price = typeof rawPrice === 'number' ? rawPrice : parseFloat(rawPrice);
+        const isValidPrice = !isNaN(price) && isFinite(price);
+
+        console.log("📦 Цена за доставка (debug):", rawPrice, "→", price, "валидна?", isValidPrice);
+
+        setValues((prev) => ({
+            ...prev,
+            deliveryTotal: isValidPrice ? price : 0,
+        }));
+    }, [deliveryCompany, deliveryMethod, setValues]);
+
 
     useEffect(() => {
         if (!selectedOfficeId || !offices.length) return;
@@ -186,20 +211,23 @@ export function useDelivery(form, setValues) {
 
     useEffect(() => {
         const fetchOffices = async () => {
-            const city = form.city?.trim();
-            if (!city || deliveryMethod !== 'office' || !deliveryCompany) return;
+            const city = form.city?.trim().toLowerCase();
+            const courier = deliveryCompany?.trim().toLowerCase();
+
+            if (!city || deliveryMethod !== 'office' || !courier) return;
 
             setLoadingOffices(true);
             try {
-                const officesData = await fetchCourierOffices(city, deliveryCompany);
+                const officesData = await fetchCourierOffices(city, courier);
                 setOffices(officesData);
             } catch (err) {
-                console.error('Грешка при зареждане на офиси:', err);
+                console.error('❌ Грешка при зареждане на офиси:', err);
                 setOffices([]);
             } finally {
                 setLoadingOffices(false);
             }
         };
+
         fetchOffices();
     }, [form.city, deliveryCompany, deliveryMethod]);
 
