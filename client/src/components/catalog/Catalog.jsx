@@ -5,9 +5,10 @@ import {
 } from "../../hooks/useCatalog";
 import navLinks from "../../utils/navLinks";
 import ProductCard from "./product-card/ProductCard";
+import SpinnerLoader from "../SpinnerLoader";
 
 export default function Catalog() {
-  const { products } = useCatalog();
+  const { products, loading } = useCatalog();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -109,16 +110,20 @@ export default function Catalog() {
         </div>
 
         {/* Products grid */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 overflow-x-hidden max-w-full">
-          {sortedProducts.map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-          {sortedProducts.length === 0 && (
-            <p className="col-span-full text-center text-gray-600">
-              Няма намерени продукти.
-            </p>
-          )}
-        </div>
+        {loading ? (
+          <SpinnerLoader />
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 overflow-x-hidden max-w-full">
+            {sortedProducts.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+            {sortedProducts.length === 0 && !loading && (
+              <p className="col-span-full text-center text-gray-600">
+                Няма намерени продукти.
+              </p>
+            )}
+          </div>
+        )}
       </main >
 
       {/* Mobile Filters SlideOver */}

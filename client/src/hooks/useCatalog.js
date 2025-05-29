@@ -47,7 +47,7 @@ export function useCatalog() {
         fetchProducts();
     }, [category, subCategory, search]);
 
-    return { products, loading, category, subCategory };
+    return { products, loading, setLoading, category, subCategory };
 }
 
 export function useCatalogFilters(products = []) {
