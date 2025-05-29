@@ -35,44 +35,45 @@ export default function NewProducts() {
   }, []);
 
   return (
-    <div className="relative max-w-screen-xl mx-auto px-4">
-      <h2 className="text-2xl font-bold text-center mb-6">Нови продукти</h2>
+    <div className="relative w-full">
+      <div className="max-w-screen-xl mx-auto px-4 relative overflow-hidden">
+        <h2 className="text-2xl font-bold text-center mb-8">Нови продукти</h2>
 
-      {loading ? (
-        <DotsLoader />
-      ) : (
-        <div className="relative">
-          <button
-            onClick={() => scroll("left")}
-            className="absolute top-1/2 -translate-y-1/2 left-0 xl:-left-6 z-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 transition"
-          >
-            <FiChevronLeft />
-          </button>
+        {loading ? (
+          <DotsLoader />
+        ) : (
+          <div className="relative w-full">
+            {/* Стрелки вътре в ограничен контейнер */}
+            <button
+              onClick={() => scroll("left")}
+              className="hidden sm:flex absolute top-1/2 -translate-y-1/2 left-2 z-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 transition"
+            >
+              <FiChevronLeft />
+            </button>
 
-          <div
-            ref={scrollRef}
-            className="flex overflow-x-auto gap-4 scrollbar-hide scroll-smooth px-2"
-            style={{ scrollSnapType: "x mandatory" }}
-          >
-            {products.map((product) => (
-              <div key={product._id} className="flex-shrink-0 w-[240px] snap-start">
-                <ProductCard product={product} />
-              </div>
-            ))}
+            <div
+              ref={scrollRef}
+              className="w-full max-w-full flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide snap-x snap-mandatory"
+            >
+              {products.map((product) => (
+                <div
+                  key={product._id}
+                  className="flex-shrink-0 snap-start w-[240px]"
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => scroll("right")}
+              className="hidden sm:flex absolute top-1/2 -translate-y-1/2 right-2 z-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 transition"
+            >
+              <FiChevronRight />
+            </button>
           </div>
-
-          <button
-            onClick={() => scroll("right")}
-            className="absolute top-1/2 -translate-y-1/2 right-0 xl:-right-6 z-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 transition"
-          >
-            <FiChevronRight />
-          </button>
-        </div>
-      )}
-
-      {!loading && products.length === 0 && (
-        <p className="text-center text-gray-600 mt-4">Няма намерени продукти.</p>
-      )}
+        )}
+      </div>
     </div>
   );
 }
