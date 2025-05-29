@@ -7,7 +7,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import { useUserAddresses, useDelivery, useApplyAddressToForm } from "../../hooks/useAddress";
 import { useEffect, useState } from "react";
 import { useCheckoutForm } from "../../hooks/useCheckoutForm";
-import CustomerInfo from "./CustomerInfo";
+import CustomerInfo from "./customer-info/CustomerInfo";
 import SavedAddressSelect from "./SaveAddressSelect";
 import DeliveryOptions from "./delivery-options/DeliveryOptions";
 import InvoiceSection from "./invoice/InvoiceSection";
@@ -53,7 +53,6 @@ export default function Checkout() {
     });
 
     const { deliveryTotal, total, totalStandard, totalDiscount } = useTotals(cart, form, deliveryPrices);
-
 
     useEffect(() => {
         if (firstName && lastName && email && phone) {
@@ -107,6 +106,7 @@ export default function Checkout() {
                     handleSelectCity={handleSelectCity}
                     cities={cities}
                     isMobile={isMobile}
+                    setValues={setValues}
                 />
                 <DeliveryOptions
                     form={form}

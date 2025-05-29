@@ -166,8 +166,6 @@ export function useDelivery(form, setValues) {
         const price = typeof rawPrice === 'number' ? rawPrice : parseFloat(rawPrice);
         const isValidPrice = !isNaN(price) && isFinite(price);
 
-        console.log("📦 Цена за доставка (debug):", rawPrice, "→", price, "валидна?", isValidPrice);
-
         setValues((prev) => ({
             ...prev,
             deliveryTotal: isValidPrice ? price : 0,

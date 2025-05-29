@@ -22,8 +22,6 @@ export function useProfile() {
         errors,
         pending,
         setValues,
-        setPending,
-        setError,
         changeHandler,
         submitHandler,
     } = useForm(initialValues, onSubmit);
@@ -37,7 +35,7 @@ export function useProfile() {
         };
         setInitialValues(newValues);
         setValues(newValues);
-    }, [firstName, lastName, email, phone]);
+    }, [firstName, lastName, email, phone, setValues]);
 
     function isSameData(newData, originalData) {
         return Object.keys(originalData).every(

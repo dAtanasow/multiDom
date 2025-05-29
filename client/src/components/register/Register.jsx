@@ -1,24 +1,15 @@
-import { useState, useEffect } from "react";
 import { useForm } from "../../hooks/useForm";
 import { useRegister } from "../../hooks/useAuth";
 import { useAuthContext } from "../../context/AuthContext";
-
-const countries = [
-  { name: "България", code: "+359" },
-  { name: "Германия", code: "+49" },
-  { name: "Франция", code: "+33" },
-  { name: "САЩ", code: "+1" },
-  { name: "Великобритания", code: "+44" },
-];
+import CustomPhoneInput from "../CustomPhoneInput";
+import { useState } from "react";
 
 export default function Register({ onClose, onLoginClick, visible }) {
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
-  const [phoneNumber, setPhoneNumber] = useState("");
-
   const { changeAuthState } = useAuthContext();
   const { register, loading: registerLoading } = useRegister();
+  const [phoneError, setPhoneError] = useState(false);
 
-  const { values, changeHandler, submitHandler, pending } = useForm(
+  const { values, changeHandler, submitHandler, pending, setValues } = useForm(
     {
       firstName: "",
       lastName: "",
@@ -28,12 +19,7 @@ export default function Register({ onClose, onLoginClick, visible }) {
       rePassword: "",
     },
     async (formData) => {
-      const fullPhone = selectedCountry.code + phoneNumber;
-
-      const result = await register({
-        ...formData,
-        phone: fullPhone,
-      });
+      const result = await register(formData);
 
       changeAuthState({
         user: result.user,
@@ -41,8 +27,7 @@ export default function Register({ onClose, onLoginClick, visible }) {
       });
 
       onClose();
-    }
-  );
+    })
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -78,35 +63,12 @@ export default function Register({ onClose, onLoginClick, visible }) {
             className="border p-2 rounded-lg"
             required
           />
-          <div className="flex space-x-2">
-            <select
-              className="border p-2 rounded-lg w-1/3"
-              value={selectedCountry.code}
-              onChange={(e) =>
-                setSelectedCountry(
-                  countries.find((c) => c.code === e.target.value)
-                )
-              }
-            >
-              {countries.map((country) => (
-                <option key={country.code} value={country.code}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
-
-            <div className="flex items-center border p-2 rounded-lg w-2/3">
-              <span className="text-gray-500 mr-2">{selectedCountry.code}</span>
-              <input
-                type="tel"
-                className="outline-none w-full"
-                placeholder="Телефонен номер"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+          <CustomPhoneInput
+            value={values.phone}
+            onChange={(phone) => setValues(prev => ({ ...prev, phone }))}
+            error={phoneError}
+            setError={setPhoneError}
+          />
           <input
             type="email"
             name="email"

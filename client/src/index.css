@@ -1,3 +1,4 @@
 @import "tailwindcss";
 @import 'react-confirm-alert/src/react-confirm-alert.css';
 @import 'react-toastify/dist/ReactToastify.css';
+@import 'react-phone-input-2/lib/style.css';

@@ -1,10 +1,26 @@
+import { useState } from "react";
+import CustomPhoneInput from "../CustomPhoneInput";
+
 export function ProfileFields({ values, changeHandler, editMode }) {
+    const [phoneError, setPhoneError] = useState(false);
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
             <Field label="Име" value={values.firstName} name="firstName" editMode={editMode} changeHandler={changeHandler} />
             <Field label="Фамилия" value={values.lastName} name="lastName" editMode={editMode} changeHandler={changeHandler} />
             <Field label="Имейл" value={values.email} name="email" editMode={editMode} changeHandler={changeHandler} />
-            <Field label="Телефон" value={values.phone} name="phone" editMode={editMode} changeHandler={changeHandler} />
+            <CustomPhoneInput
+                value={String(values.phone)}
+                onChange={(phone) => {
+                    if (typeof phone === 'string') {
+                        changeHandler({ target: { name: 'phone', value: phone } });
+                    } else {
+                        console.warn("Получен невалиден номер:", phone);
+                    }
+                }}
+
+                error={phoneError}
+                setError={setPhoneError}
+            />
         </div>
     );
 }
