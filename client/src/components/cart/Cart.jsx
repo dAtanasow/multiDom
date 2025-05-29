@@ -3,9 +3,16 @@ import { useCartContext } from "../../context/CartContext";
 import { ShoppingCart } from "lucide-react";
 import { motion } from "framer-motion";
 import CartItem from "./CartItem";
+import { useEffect, useState } from "react";
+import SpinnerLoader from "../SpinnerLoader";
 
 export default function Cart() {
     const { cart, clearCart, updateQuantity, removeFromCart } = useCartContext();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(false);
+    }, [cart]);
 
     const totalStandard = cart.reduce((sum, item) => {
         const price = typeof item.price === 'number' ? item.price : 0;
@@ -19,6 +26,9 @@ export default function Cart() {
         return sum + price * item.quantity;
     }, 0);
 
+    if (loading) {
+        return <SpinnerLoader />;
+    }
 
     const totalDiscount = totalStandard - totalWithDiscount;
     if (!cart || cart.length === 0) {

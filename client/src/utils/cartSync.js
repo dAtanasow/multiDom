@@ -4,6 +4,10 @@ import formatCartItems from "./formatCartItems";
 export async function syncLocalCartToServer(setCart) {
     const localCartRaw = localStorage.getItem("cart");
     if (!localCartRaw) return;
+    if (typeof setCart !== "function") {
+        console.error("[SYNC] Provided setCart is not a function");
+        return;
+    }
 
     const items = JSON.parse(localCartRaw);
     const validItems = items.filter(item => item?._id && typeof item.price === "number" && item.name);
@@ -33,7 +37,7 @@ export async function syncLocalCartToServer(setCart) {
         }
 
         const updatedCart = await cartApi.getCart();
-        setCart(formatCartItems(updatedCart.items));
+        setCart(uniqueById(formatCartItems(updatedCart.items)));
         localStorage.removeItem("cart");
     } catch (err) {
         if (err?.response?.status === 401) {
@@ -42,4 +46,12 @@ export async function syncLocalCartToServer(setCart) {
             console.error("[SYNC] Error syncing cart:", err);
         }
     }
+}
+
+function uniqueById(items) {
+    const map = new Map();
+    for (const item of items) {
+        map.set(item._id, item);
+    }
+    return Array.from(map.values());
 }
