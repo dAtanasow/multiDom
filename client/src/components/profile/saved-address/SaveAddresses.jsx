@@ -135,13 +135,13 @@ export default function SavedAddresses() {
             setError("");
             await refreshAddresses();
         } catch (err) {
-            toast.error("Възникна грешка при добавяне на адрес.");
+            toast.error("Възникна грешка при добавяне на адрес.", err.message);
         }
     };
 
     useEffect(() => {
         setDeliveryMethod(newAddress.deliveryMethod);
-    }, [newAddress.deliveryMethod]);
+    }, [newAddress.deliveryMethod, setDeliveryMethod]);
 
     return (
         <div className="flex flex-col lg:flex-row gap-8">
