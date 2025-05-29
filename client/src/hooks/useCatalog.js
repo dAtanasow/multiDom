@@ -103,8 +103,9 @@ export function useProductDetails(productId) {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(null);
-    const [relatedProducts, setRelatedProducts] = useState([]);
     const [averageRating, setAverageRating] = useState(0);
+    const [relatedProducts, setRelatedProducts] = useState([]);
+    const [relatedLoading, setRelatedLoading] = useState(true);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -130,13 +131,16 @@ export function useProductDetails(productId) {
         const fetchRelated = async () => {
             if (product?.subCategory) {
                 try {
+                    setRelatedLoading(true);
                     const query = new URLSearchParams({ subCategory: product.subCategory }).toString();
                     const all = await catalogApi.getAll(query);
                     const products = Array.isArray(all) ? all : all.products || [];
-                    const filtered = products.filter(p => p._id !== product._id).slice(0, 4);
+                    const filtered = products.filter(p => p._id !== product._id).slice(0, 8);
                     setRelatedProducts(filtered);
                 } catch (err) {
                     console.error("Грешка при зареждане на свързани продукти:", err.message);
+                } finally {
+                    setRelatedLoading(false);
                 }
             }
         };
@@ -150,6 +154,7 @@ export function useProductDetails(productId) {
         activeImage,
         averageRating,
         setActiveImage,
-        relatedProducts
+        relatedProducts,
+        relatedLoading
     };
 }

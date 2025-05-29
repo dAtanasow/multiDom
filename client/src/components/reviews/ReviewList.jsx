@@ -35,75 +35,52 @@ export default function ReviewList({ productId }) {
             )}
 
             {reviews.map((review) => (
-                <div
-                    key={review._id}
-                    className="bg-white p-4 rounded-lg shadow-sm border"
-                >
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-medium">  {review.userId.firstName} {review.userId.lastName}</p>
-                        <p className="text-yellow-500 text-lg">
-                            {"★".repeat(review.rating)}
-                            {"☆".repeat(5 - review.rating)}
-                        </p>
+                <div key={review._id} className="bg-white p-5 rounded-2xl shadow border border-gray-100">
+                    <div className="flex items-start justify-between mb-2">
+                        <div>
+                            <p className="text-base font-semibold text-gray-800">
+                                {review.userId.firstName} {review.userId.lastName}
+                            </p>
+                            <p className="text-sm text-gray-600">{review.comment}</p>
+                        </div>
+                        <div className="text-yellow-500 text-sm font-medium whitespace-nowrap">
+                            {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+                        </div>
                     </div>
-                    <p className="text-sm text-gray-700 mb-2">{review.comment}</p>
 
-                    <div className="flex items-center gap-4 text-sm">
-                        <button
-                            className="flex items-center gap-1 text-blue-600"
-                            onClick={() => likeReview(review._id)}
-                        >
+                    <div className="flex items-center gap-4 mt-3 text-sm">
+                        <button onClick={() => likeReview(review._id)} className="flex items-center gap-1 text-blue-600 hover:underline">
                             <ThumbsUp size={16} /> {review.likes.length}
                         </button>
-                        <button
-                            className="flex items-center gap-1 text-red-500"
-                            onClick={() => dislikeReview(review._id)}
-                        >
+                        <button onClick={() => dislikeReview(review._id)} className="flex items-center gap-1 text-red-500 hover:underline">
                             <ThumbsDown size={16} /> {review.dislikes.length}
                         </button>
-                        <button
-                            className="text-gray-500 hover:underline"
-                            onClick={() => toggleExpanded(review._id)}
-                        >
+                        <button onClick={() => toggleExpanded(review._id)} className="text-gray-500 hover:underline">
                             {expanded[review._id] ? "Скрий коментари" : "Виж коментари"}
                         </button>
                         {userId === review.userId._id && (
-                            <button
-                                className="text-sm flex gap-1 text-red-600 ml-auto"
-                                onClick={() => {
-                                    if (window.confirm("Сигурни ли сте, че искате да изтриете това ревю?")) {
-                                        deleteReview(review._id);
-                                    }
-                                }}
-                            >
+                            <button onClick={() => window.confirm("Сигурни ли сте, че искате да изтриете това ревю?") && deleteReview(review._id)}
+                                className="ml-auto text-red-500 hover:text-red-700">
                                 <Trash2 size={16} />
                             </button>
                         )}
-
                     </div>
 
                     {expanded[review._id] && (
-                        <div className="mt-4 border-t pt-3 space-y-3">
-                            {Array.isArray(review.comments) && review.comments.map((c) => (
-                                <div
-                                    key={c._id}
-                                    className="bg-gray-100 p-3 rounded-lg shadow-sm flex justify-between items-start gap-4"
-                                >
-                                    <div className="text-sm text-gray-800">
-                                        <p className="font-semibold mb-1">{c?.name || "Анонимен"}:</p>
+                        <div className="mt-4 bg-gray-50 rounded-xl p-4 space-y-3">
+                            {review.comments?.map((c) => (
+                                <div key={c._id} className="flex justify-between items-start text-sm text-gray-800">
+                                    <div>
+                                        <p className="font-medium mb-1">{c?.name || "Анонимен"}:</p>
                                         <p className="text-gray-700">{c.text}</p>
                                     </div>
                                     {userId === c.userId && (
-                                        <button
-                                            onClick={() => deleteComment(review._id, c._id)}
-                                            className="text-xs text-red-500 hover:underline whitespace-nowrap"
-                                        >
+                                        <button onClick={() => deleteComment(review._id, c._id)} className="text-red-500 hover:underline text-xs">
                                             Изтрий
                                         </button>
                                     )}
                                 </div>
                             ))}
-
                             <CommentForm onSubmit={(text) => addComment(review._id, text)} />
                         </div>
                     )}

@@ -1,4 +1,4 @@
-import CitySelect from "../../checkout/CitySelect";
+import CitySelect from "../../checkout/customer-info/CitySelect";
 import OfficeListbox from "../../checkout/delivery-options/OfficeListbox";
 import { cities } from "../../mock-data/office-places";
 

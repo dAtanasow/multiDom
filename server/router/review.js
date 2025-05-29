@@ -34,6 +34,6 @@ router.put('/:reviewId/comments/:commentId/replies/:replyId/dislike', auth(), di
 
 router.delete("/:reviewId", auth(), deleteReview);
 
-router.get("/product/:productId", getReviewsByProductId);
+router.get("/:productId", getReviewsByProductId);
 
 module.exports = router;

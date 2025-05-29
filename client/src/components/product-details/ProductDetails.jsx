@@ -7,10 +7,15 @@ import { toast } from "react-toastify";
 import ReviewList from "../reviews/ReviewList";
 import useFavorites from "../../hooks/useFavorites";
 import { normalizeProduct } from "../../utils/normalize";
+import ProductCard from "../catalog/product-card/ProductCard";
 
 export default function ProductDetails() {
     const { id } = useParams();
-    const { product, loading, activeImage, averageRating, setActiveImage, relatedProducts } = useProductDetails(id);
+    const {
+        product, loading, activeImage,
+        averageRating, setActiveImage,
+        relatedProducts, relatedLoading
+    } = useProductDetails(id);
     const { addToCartContext } = useCartContext();
     const { isFavorite, toggleFavorite } = useFavorites();
 
@@ -57,8 +62,17 @@ export default function ProductDetails() {
                     <h1 className="text-4xl font-bold text-gray-900 leading-snug">{product.name}</h1>
 
                     <div className="flex items-center gap-3">
-                        <p className="text-3xl text-green-600 font-extrabold">{product.price.toFixed(2)} лв.</p>
-                        <span className="text-sm text-gray-500">с вкл. ДДС</span>
+                        <div className="flex items-center gap-3">
+                            {product.discountPrice && product.discountPrice < product.price ? (
+                                <>
+                                    <p className="text-3xl text-green-600 font-extrabold">{product.discountPrice.toFixed(2)} лв.</p>
+                                    <p className="text-lg text-gray-400 line-through">{product.price.toFixed(2)} лв.</p>
+                                </>
+                            ) : (
+                                <p className="text-3xl text-green-600 font-extrabold">{product.price.toFixed(2)} лв.</p>
+                            )}
+                            <span className="text-sm text-gray-500">с вкл. ДДС</span>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-1">
@@ -127,28 +141,30 @@ export default function ProductDetails() {
                 </motion.div>
             </div>
 
-            <ReviewList productId={id} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-10 xl:gap-15 mt-16">
+                <div className="max-h-[600px] overflow-y-auto pr-2">
+                    <h2 className="text-xl font-semibold mb-4 text-gray-800">Отзиви</h2>
+                    <ReviewList productId={id} />
+                </div>
 
-            {
-                relatedProducts.length > 0 && (
-                    <motion.div className="mt-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Свързани продукти</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-                            {relatedProducts.map((item) => (
-                                <div key={item._id} className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
-                                    <img
-                                        src={item.images?.[0] || "/placeholder.jpg"}
-                                        alt={item.name}
-                                        className="h-32 w-full object-contain mb-3"
-                                    />
-                                    <p className="text-sm font-medium text-gray-700 line-clamp-2">{item.name}</p>
-                                    <p className="text-sm text-blue-600 font-semibold">{item.price.toFixed(2)} лв.</p>
-                                </div>
-                            ))}
-                        </div>
-                    </motion.div>
-                )
-            }
+                {relatedProducts.length > 0 && (
+                    <div>
+                        <h2 className="text-xl font-semibold mb-4 text-gray-800">Свързани продукти</h2>
+                        {relatedLoading ? (
+                            <p className="text-sm text-gray-500 animate-pulse">Зареждане...</p>
+                        ) : relatedProducts.length > 0 ? (
+                            <div className="grid grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-6">
+                                {relatedProducts.map((item) => (
+                                    <ProductCard key={item._id} product={item} />
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-500">Няма свързани продукти</p>
+                        )}
+                    </div>
+                )}
+            </div>
+
         </motion.section >
     );
 }

@@ -5,7 +5,7 @@ const Product = require("../models/Product");
 const getCart = async (req, res, next) => {
     try {
         if (!req.user || !req.user._id) {
-            return res.status(200).json({ items: [] }); // За гости — празна или локална количка
+            return res.status(200).json({ items: [] })
         }
 
         const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
@@ -45,13 +45,16 @@ const updateCart = async (req, res, next) => {
     try {
         if (!req.user) return res.status(401).json({ message: "Изисква се автентикация." });
         const { items } = req.body;
-        let cart = await Cart.findOneAndUpdate(
+
+        const cart = await Cart.findOneAndUpdate(
             { user: req.user._id },
-            { user: req.user._id, items },
+            { $set: { items } },
             { upsert: true, new: true }
-        );
+        ).populate("items.product");
+
         res.status(200).json(cart);
     } catch (err) {
+        console.error("❌ Грешка в updateCart:", err);
         next(err);
     }
 };
@@ -59,7 +62,9 @@ const updateCart = async (req, res, next) => {
 const deleteCartItem = async (req, res, next) => {
     try {
         if (!req.user) return res.status(401).json({ message: "Изисква се автентикация." });
+
         const { productId } = req.params;
+
         const cart = await Cart.findOneAndUpdate(
             { user: req.user._id },
             { $pull: { items: { product: productId } } },
@@ -68,6 +73,7 @@ const deleteCartItem = async (req, res, next) => {
 
         res.status(200).json(cart);
     } catch (err) {
+        console.error("❌ Грешка в deleteCartItem:", err);
         next(err);
     }
 };
@@ -75,17 +81,20 @@ const deleteCartItem = async (req, res, next) => {
 const clearCart = async (req, res, next) => {
     try {
         if (!req.user) return res.status(401).json({ message: "Изисква се автентикация." });
+
         const cart = await Cart.findOneAndUpdate(
             { user: req.user._id },
-            { items: [] },
+            { $set: { items: [] } },
             { new: true }
         ).populate("items.product");
 
         res.status(200).json(cart);
     } catch (err) {
+        console.error("❌ Грешка в clearCart:", err);
         next(err);
     }
 };
+
 
 const addToCart = async (req, res, next) => {
     try {
@@ -108,30 +117,37 @@ const addToCart = async (req, res, next) => {
         }
 
         const userId = req.user._id;
-        let cart = await Cart.findOne({ user: userId });
 
-        if (!cart) {
-            cart = new Cart({ user: userId, items: [] });
+        const cart = await Cart.findOneAndUpdate(
+            {
+                user: userId,
+                "items.product": productId
+            },
+            {
+                $inc: { "items.$.quantity": quantity }
+            },
+            { new: true }
+        ).populate("items.product");
+
+        if (cart) {
+            return res.status(200).json(cart);
         }
 
-        const item = cart.items.find(i => i.product.equals(productId));
+        // Ако продуктът още го няма
+        const updatedCart = await Cart.findOneAndUpdate(
+            { user: userId },
+            {
+                $push: { items: { product: productId, quantity } }
+            },
+            { upsert: true, new: true }
+        ).populate("items.product");
 
-        if (item) {
-            item.quantity += quantity;
-        } else {
-            cart.items.push({ product: productId, quantity });
-        }
-
-        await cart.save();
-        await cart.populate("items.product");
-
-        res.status(200).json(cart);
+        res.status(200).json(updatedCart);
     } catch (err) {
         console.error("❌ Грешка в addToCart:", err);
         next(err);
     }
 };
-
 
 module.exports = {
     getCart,
