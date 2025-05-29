@@ -1,6 +1,10 @@
 import CitySelect from "./CitySelect";
+import CustomPhoneInput from "../../CustomPhoneInput";
+import { useState } from "react";
 
-export default function CustomerInfo({ form, changeHandler, selectedCity, handleSelectCity, isMobile, cities }) {
+export default function CustomerInfo({ form, changeHandler, selectedCity, handleSelectCity, isMobile, cities, setValues }) {
+    const [phoneError, setPhoneError] = useState(false);
+
     return (
         <div className={`grid ${isMobile ? "grid-cols-1" : "grid-cols-2"} gap-4`}>
             <input
@@ -20,13 +24,11 @@ export default function CustomerInfo({ form, changeHandler, selectedCity, handle
                 required
                 className="border p-2 rounded"
             />
-            <input
-                name="phone"
-                placeholder="Телефон"
-                value={form.phone ? "+" + form.phone : ""}
-                onChange={changeHandler}
-                required
-                className="border p-2 rounded"
+            <CustomPhoneInput
+                value={String(form.phone)}
+                onChange={(phone) => setValues(prev => ({ ...prev, phone }))}
+                error={phoneError}
+                setError={setPhoneError}
             />
             <CitySelect
                 cities={cities}
