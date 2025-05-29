@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-10">
+    <footer className="bg-blue-900/100 text-gray-100 py-10">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Logo and description */}
         <div>
@@ -49,27 +49,7 @@ export default function Footer() {
           </p>
           <p>Адрес: кв. Овча купел, ул. "Войводина Могила" 42, 1618 София</p>
         </div>
-
-        {/* Newsletter Subscription */}
-        <div className="flex flex-col space-y-3">
-          <h3 className="text-lg font-semibold mb-2">Абонирайте се</h3>
-          <p className="text-sm">
-            Получавайте новини и промоции директно на вашия имейл.
-          </p>
-          <form className="flex flex-col space-y-2">
-            <input
-              type="email"
-              placeholder="Вашият имейл"
-              className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-            >
-              Абонирай се
-            </button>
-          </form>
-        </div>
+        
         <div className="flex flex-col space-y-3">
           <h3 className="text-lg font-semibold mb-2">Последвайте ни</h3>
           <div className="flex space-x-4">

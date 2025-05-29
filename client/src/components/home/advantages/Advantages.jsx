@@ -13,7 +13,7 @@ export default function Advantages() {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <div className="flex flex-col items-center text-center">
-          <CheckCircleIcon className="w-16 h-16 text-blue-600 mb-4" />
+          <CheckCircleIcon className="w-16 h-16 text-blue-800 mb-4" />
           <h3 className="text-lg font-medium text-gray-800">
             100% Качество на продуктите
           </h3>
@@ -24,7 +24,7 @@ export default function Advantages() {
         </div>
 
         <div className="flex flex-col items-center text-center">
-          <TruckIcon className="w-16 h-16 text-blue-600 mb-4" />
+          <TruckIcon className="w-16 h-16 text-blue-800 mb-4" />
           <h3 className="text-lg font-medium text-gray-800">
             Бърза доставка в цялата страна
           </h3>
@@ -34,17 +34,17 @@ export default function Advantages() {
         </div>
 
         <div className="flex flex-col items-center text-center">
-          <ShieldCheckIcon className="w-16 h-16 text-blue-600 mb-4" />
+          <ShieldCheckIcon className="w-16 h-16 text-blue-800 mb-4" />
           <h3 className="text-lg font-medium text-gray-800">
             Сигурно Пазаруване
           </h3>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-800 mt-2">
             Вашите данни са защитени с най-съвременните технологии за сигурност.
           </p>
         </div>
 
         <div className="flex flex-col items-center text-center">
-          <ArrowPathIcon className="w-16 h-16 text-blue-600 mb-4" />
+          <ArrowPathIcon className="w-16 h-16 text-blue-800 mb-4" />
           <h3 className="text-lg font-medium text-gray-800">
             Връщане в срок от 14 дни
           </h3>
