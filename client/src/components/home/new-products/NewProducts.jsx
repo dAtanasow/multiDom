@@ -1,14 +1,25 @@
-import { useEffect, useState } from "react";
-import catalogApi from "../../../api/catalog";
+import { useEffect, useRef, useState } from "react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import ProductCard from "../../catalog/product-card/ProductCard";
+import catalogApi from "../../../api/catalog";
 
 export default function NewProducts() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState();
+  const scrollRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (!scrollRef.current) return;
+    const scrollAmount = 300;
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth"
+    });
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await catalogApi.getNewest(4);
+        const data = await catalogApi.getNewest(8);
         setProducts(data.products);
       } catch (err) {
         console.error("Грешка при зареждане на нови продукти:", err);
@@ -19,14 +30,44 @@ export default function NewProducts() {
   }, []);
 
   return (
-    <section className="bg-gray-100 py-12 px-4 md:px-12">
-      <h2 className="text-2xl font-semibold text-center mb-8">Нови продукти</h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
+    <div className="relative">
+      <h2 className="text-2xl font-bold text-center mb-4">Нови продукти</h2>
+
+      <div className="flex items-center max-w-screen-xl mx-auto md:px-4">
+        <button
+          onClick={() => scroll("left")}
+          className="absolute top-40 left-0 xl:left-10 z-50 p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-xl"
+        >
+          <FiChevronLeft />
+        </button>
+
+        <div
+          ref={scrollRef}
+          className="flex overflow-x-auto gap-4 scrollbar-hide scroll-smooth px-2"
+          style={{ scrollSnapType: "x mandatory" }}
+        >
+          {products?.map((product) => (
+            <div
+              key={product._id}
+              className="flex-shrink-0 w-[240px] snap-start"
+            >
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={() => scroll("right")}
+          className="absolute top-40 right-0 xl:right-10 z-50 p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-xl"
+        >
+          <FiChevronRight />
+        </button>
       </div>
-    </section>
+    </div>
+
   );
 }
+
+
+
 
