@@ -4,7 +4,7 @@ import CustomPhoneInput from "../CustomPhoneInput";
 export function ProfileFields({ values, changeHandler, editMode }) {
     const [phoneError, setPhoneError] = useState(false);
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+        <div className="flex flex-col gap-4 max-w-sm mx-auto">
             <Field label="Име" value={values.firstName} name="firstName" editMode={editMode} changeHandler={changeHandler} />
             <Field label="Фамилия" value={values.lastName} name="lastName" editMode={editMode} changeHandler={changeHandler} />
             <Field label="Имейл" value={values.email} name="email" editMode={editMode} changeHandler={changeHandler} />
@@ -27,22 +27,22 @@ export function ProfileFields({ values, changeHandler, editMode }) {
 
 function Field({ label, value, name, editMode, changeHandler }) {
     return (
-        <div className="bg-gray-100 rounded-xl p-4 shadow-sm flex flex-col">
-            <span className="text-sm text-gray-500">{label}</span>
+        <div className="flex flex-col gap-1">
+            <label htmlFor={name} className="text-sm text-gray-400">
+                {label}
+            </label>
             {editMode ? (
                 <input
+                    id={name}
                     name={name}
                     value={value}
                     onChange={changeHandler}
-                    placeholder={`Въведи ${label.toLowerCase()}`}
-                    className="mt-2 p-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    autoComplete="off"
+                    className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                 />
             ) : (
-                <span className="text-lg font-semibold text-gray-800">
-                    {name === "phone" ? `+${value}` : value}
-                </span>
+                <p className="text-base text-gray-800 font-medium">{value}</p>
             )}
         </div>
+
     );
 }
