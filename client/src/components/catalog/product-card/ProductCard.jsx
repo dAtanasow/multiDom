@@ -20,47 +20,42 @@ export default function ProductCard({ product }) {
     if (!product) return null;
 
     return (
-        <div className="relative bg-white p-2 rounded-md shadow-sm hover:shadow-md transition flex flex-col min-h-[240px] w-full max-w-full min-w-0">
+        <div className="relative bg-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col h-[380px]">
             {product.discountPrice && (
-                <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow">
+                <div className="absolute top-2 left-2 bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-lg uppercase tracking-wide z-10">
                     {`-${Math.round(100 - (product.discountPrice / product.price) * 100)}%`}
                 </div>
             )}
 
-            <Link to={`/catalog/${product._id}`}>
+            <Link to={`/catalog/${product._id}`} className="block rounded-md p-2">
                 <img
                     src={product.images?.[0] || "/images/placeholder.jpg"}
                     alt={product.name}
-                    className="h-32 w-full object-contain mb-2"
+                    className="h-44 w-full object-contain transition-transform duration-200 hover:scale-105"
                 />
             </Link>
 
-            <div className="flex-1 flex flex-col justify-between">
-                <div>
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1 line-clamp-2 leading-tight">
-                        {product.name}
-                    </h3>
-                </div>
+            <div className="flex-1 flex flex-col justify-between mt-2">
+                <h3 className="font-semibold text-gray-800 leading-tight">
+                    {product.name}
+                </h3>
+                <p className="text-sm text-gray-700 mb-6">
+                    {product.unitCount} {product.unitType}
+                </p>
 
-                <div className="mt-auto flex flex-col items-start gap-1">
+                <div>
                     {product.discountPrice ? (
-                        <div className="flex items-baseline gap-2">
-                            <p className="text-blue-600 text-sm font-bold">
-                                {product.discountPrice.toFixed(2)} лв.
-                            </p>
-                            <p className="text-sm text-gray-500 line-through">
-                                {product.price.toFixed(2)} лв.
-                            </p>
+                        <div className="flex items-center justify-between gap-2 font-bold text-blue-600">
+                            <span className="text-lg">{product.discountPrice.toFixed(2)} лв.</span>
+                            <span className="text-s text-gray-400 line-through">{product.price.toFixed(2)} лв.</span>
                         </div>
                     ) : (
-                        <p className="text-blue-600 text-sm font-bold">
-                            {product.price.toFixed(2)} лв.
-                        </p>
+                        <div className="text-lg font-bold text-blue-600">{product.price.toFixed(2)} лв.</div>
                     )}
 
                     <button
                         onClick={handleAddToCart}
-                        className="w-full text-xs py-1 px-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                        className="mt-2 w-full text-xs py-1 px-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
                     >
                         Добави
                     </button>
