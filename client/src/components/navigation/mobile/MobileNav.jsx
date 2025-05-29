@@ -1,26 +1,21 @@
 import { useState } from "react";
 import navLinks from "../../../utils/navLinks";
 import { RiAppsLine } from "react-icons/ri";
-import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 
 export default function MobileNav({ onClose }) {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isClosing, setIsClosing] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
-  useEffect(() => {
-    const timeout = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timeout);
-  }, []);
-
   const navigationHandler = (href) => {
     onClose();
-    window.location.href = href;
+    navigate(href);
   };
 
   const handleClose = () => {
@@ -53,15 +48,14 @@ export default function MobileNav({ onClose }) {
           {navLinks.map((link) => (
             <div key={link.label} className="space-y-1">
               <div className="flex items-center justify-between">
-                <div
-                  className={`w-[75%] max-w-xs bg-white h-full flex flex-col transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] transform ${isClosing ? "opacity-0 scale-95 -translate-x-4" : isVisible ? "opacity-100 scale-100 translate-x-0" : "opacity-0 scale-95 translate-x-4"
-                    }`}
+                <button
+                  onClick={() => navigationHandler(link.href)}
+                  className="flex items-center gap-2 text-left w-full text-blue-600 hover:text-blue-800"
                 >
-                  <div className="flex items-center gap-2">
-                    {link.icon && <link.icon className="text-blue-500 w-5 h-5" />}
-                    <span>{link.label}</span>
-                  </div>
-                </div>
+                  {link.icon && <link.icon className="w-5 h-5" />}
+                  {link.label}
+                </button>
+
                 {link.subLinks && (
                   <button
                     onClick={(e) => {
@@ -98,6 +92,7 @@ export default function MobileNav({ onClose }) {
               )}
             </div>
           ))}
+
         </nav>
       </div>
 
@@ -106,6 +101,6 @@ export default function MobileNav({ onClose }) {
         className={`flex-1 backdrop-blur-sm transition-opacity duration-300 ${isClosing ? "opacity-0" : "opacity-100"
           } bg-white/10`}
       ></div>
-    </div >
+    </div>
   );
 }
