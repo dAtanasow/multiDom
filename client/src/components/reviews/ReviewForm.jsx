@@ -8,6 +8,10 @@ export default function ReviewForm({ productId, onReviewSubmit, userReview }) {
     const [hovered, setHovered] = useState(0);
     const [comment, setComment] = useState("");
 
+    if (userReview) {
+        return null;
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -22,9 +26,10 @@ export default function ReviewForm({ productId, onReviewSubmit, userReview }) {
             setComment("");
             onReviewSubmit?.();
         } catch (err) {
-            toast.error("Грешка при изпращане на ревю.");
+            toast.error("Грешка при изпращане на ревю.", err);
         }
     };
+
 
     return (
         <form onSubmit={handleSubmit} className="mb-8 space-y-4">

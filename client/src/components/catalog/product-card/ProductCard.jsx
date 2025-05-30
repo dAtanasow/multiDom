@@ -2,6 +2,8 @@ import { Link } from "react-router";
 import { toast } from "react-toastify";
 import { useCartContext } from "../../../context/CartContext";
 import { normalizeProduct } from "../../../utils/normalize";
+import { Rating } from '@smastrom/react-rating';
+import '@smastrom/react-rating/style.css';
 
 export default function ProductCard({ product }) {
     const { addToCartContext } = useCartContext();
@@ -20,7 +22,7 @@ export default function ProductCard({ product }) {
     if (!product) return null;
 
     return (
-        <div className="relative bg-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col h-[380px]">
+        <div className="relative bg-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col min-w-44 h-[380px]">
             {product.discountPrice && (
                 <div className="absolute top-2 left-2 bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-lg uppercase tracking-wide z-10">
                     {`-${Math.round(100 - (product.discountPrice / product.price) * 100)}%`}
@@ -31,17 +33,31 @@ export default function ProductCard({ product }) {
                 <img
                     src={product.images?.[0] || "/images/placeholder.jpg"}
                     alt={product.name}
-                    className="h-44 w-full object-contain transition-transform duration-200 hover:scale-105"
+                    className="h-45 w-full object-contain transition-transform duration-200 hover:scale-105"
                 />
             </Link>
 
-            <div className="flex-1 flex flex-col justify-between mt-2">
-                <h3 className="font-semibold text-gray-800 leading-tight">
-                    {product.name}
-                </h3>
-                <p className="text-sm text-gray-700 mb-6">
+            <h3 className="font-semibold text-gray-800 mt-2 leading-tight">
+                {product.name}
+            </h3>
+            <div className="flex-1 flex flex-col justify-between">
+                <p className="text-sm mt-1 text-gray-700">
                     {product.unitCount} {product.unitType}
                 </p>
+
+                <div className="mt-1 flex">
+                    <Rating
+                        style={{ maxWidth: 100 }}
+                        value={product.averageRating}
+                        items={5}
+                        fraction={10}
+                        readOnly
+                    />
+                    <p className="text-xs text-gray-600 ml-2">{product.averageRating.toFixed(1)} / 5</p>
+                    {product.reviewCount?.length > 0 && (
+                        <p className="text-xs text-gray-600">{product.averageRating.toFixed(1)} / 5</p>
+                    )}
+                </div>
 
                 <div>
                     {product.discountPrice ? (

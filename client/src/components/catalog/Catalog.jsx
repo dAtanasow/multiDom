@@ -52,8 +52,7 @@ export default function Catalog() {
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8 md:mt-15 xl:mt-12 overflow-x-hidden">
-
-      <aside className="hidden md:block w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
+      <aside className="hidden lg:block w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Филтри</h2>
         <div className="space-y-4">
           {navLinks.map((cat) => (
@@ -119,7 +118,7 @@ export default function Catalog() {
           <SpinnerLoader />
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 overflow-x-hidden max-w-full">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 overflow-x-hidden max-w-full">
               {paginatedProducts.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}

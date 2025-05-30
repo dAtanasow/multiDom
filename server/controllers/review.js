@@ -1,5 +1,6 @@
 const { mongoose } = require("mongoose");
 const Review = require("../models/Review");
+const Product = require("../models/Product");
 
 const getReviewsByProductId = async (req, res) => {
     try {
@@ -10,6 +11,7 @@ const getReviewsByProductId = async (req, res) => {
         res.status(500).json({ message: 'Грешка при зареждане на ревюта' });
     }
 };
+
 
 const addReview = async (req, res) => {
     const { productId, rating, comment } = req.body;
@@ -29,6 +31,16 @@ const addReview = async (req, res) => {
             rating,
             comment,
             userId: req.user._id,
+        });
+
+        const reviews = await Review.find({ productId });
+        const averageRating =
+            reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
+        const reviewCount = reviews.length;
+
+        await Product.findByIdAndUpdate(productId, {
+            averageRating,
+            reviewCount,
         });
 
         res.status(201).json(review);

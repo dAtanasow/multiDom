@@ -3,6 +3,7 @@ import ReviewForm from "./ReviewForm";
 import CommentForm from "./CommentForm";
 import useReviews from "../../hooks/useReviews";
 import { useAuthContext } from "../../context/AuthContext";
+import SpinnerLoader from "../SpinnerLoader";
 
 export default function ReviewList({ productId }) {
     const { userId } = useAuthContext();
@@ -28,7 +29,7 @@ export default function ReviewList({ productId }) {
                 userReview={userReview}
                 onReviewSubmit={refetchReviews}
             />
-            {loading && <p className="text-sm text-gray-500">Зареждане на ревюта...</p>}
+            {loading && <SpinnerLoader />}
 
             {!loading && (!reviews || reviews.length === 0) && (
                 <p className="text-sm text-gray-500">Няма ревюта</p>
