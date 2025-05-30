@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const getNextProductNumber = require("../utils/getNextNumber");
 const uploadImageBuffer = require("../utils/uploadImageBuffer");
 
 async function normalizeImages(images = []) {
@@ -40,6 +41,7 @@ const createProduct = async (req, res, next) => {
 
 
         const product = new Product({
+            productNumber: await getNextProductNumber(),
             name,
             manufacturer,
             category,
