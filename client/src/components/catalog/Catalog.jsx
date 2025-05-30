@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import {
   useCatalog,
@@ -11,6 +12,8 @@ export default function Catalog() {
   const { products, loading } = useCatalog();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
 
   const {
     sortOption,
@@ -42,6 +45,10 @@ export default function Catalog() {
     toggleCategory(label);
     setMobileFiltersOpen(false);
   };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = sortedProducts.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(sortedProducts.length / itemsPerPage));
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8 md:mt-15 xl:mt-12 overflow-x-hidden">
@@ -77,19 +84,10 @@ export default function Catalog() {
       </aside>
 
       <main className="flex-1">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4 flex-wrap">
+          <h1 className="text-2xl font-bold text-gray-800">Каталог</h1>
 
-          <div className="flex items-center justify-between w-full">
-            <h1 className="text-2xl font-bold text-gray-800">Каталог</h1>
-            <button
-              onClick={() => setMobileFiltersOpen(true)}
-              className="md:hidden bg-blue-600 text-white py-1.5 px-3 rounded-md text-sm hover:bg-blue-700 transition"
-            >
-              Филтрирай
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 whitespace-nowrap">
+          <div className="flex items-center gap-3 flex-wrap">
             <p className="text-sm text-gray-500">
               Намерени продукти: {sortedProducts.length}
             </p>
@@ -102,22 +100,55 @@ export default function Catalog() {
               <option value="price-low">Цена: Ниска към висока</option>
               <option value="price-high">Цена: Висока към ниска</option>
             </select>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="border border-gray-300 rounded-lg p-2 text-sm"
+            >
+              <option value={12}>12 на страница</option>
+              <option value={24}>24 на страница</option>
+              <option value={48}>48 на страница</option>
+            </select>
           </div>
         </div>
 
         {loading ? (
           <SpinnerLoader />
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 overflow-x-hidden max-w-full">
-            {sortedProducts.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-            {sortedProducts.length === 0 && !loading && (
-              <p className="col-span-full text-center text-gray-600">
-                Няма намерени продукти.
-              </p>
-            )}
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 overflow-x-hidden max-w-full">
+              {paginatedProducts.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+              {sortedProducts.length === 0 && !loading && (
+                <p className="col-span-full text-center text-gray-600">
+                  Няма намерени продукти.
+                </p>
+              )}
+            </div>
+            <div className="flex justify-center mt-6 gap-2 flex-wrap items-center">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 rounded border text-sm disabled:opacity-50"
+              >
+                Назад
+              </button>
+              <span className="text-sm text-gray-600">
+                Страница {totalPages === 0 ? 1 : currentPage} от {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => p + 1)}
+                disabled={currentPage >= totalPages}
+                className="px-3 py-1 rounded border text-sm disabled:opacity-50"
+              >
+                Напред
+              </button>
+            </div>
+          </>
         )}
       </main >
 
