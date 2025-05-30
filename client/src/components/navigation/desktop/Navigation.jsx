@@ -4,9 +4,9 @@ import navLinks from "../../../utils/navLinks";
 export default function DesktopNav() {
   return (
     <nav className="p-2 relative">
-      <div className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-2 text-gray-700 font-medium">
+      <div className="hidden md:flex flex-wrap justify-center gap-x-8 gap-y-2 text-gray-700 font-medium">
         {navLinks.map((link) => (
-          <div key={link.label} className="relative group">
+          <div key={link.label} className="relative group font-medium">
             <NavLink
               to={link.href}
               className="whitespace-nowrap hover:text-blue-600 transition"

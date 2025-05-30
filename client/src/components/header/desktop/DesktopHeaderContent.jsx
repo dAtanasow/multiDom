@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // поправено от "react-router"
+import { Link } from "react-router-dom";
 import DesktopNav from "../../navigation/desktop/Navigation";
 import CartButton from "../../buttons/CartButton";
 import ProfileButton from "../../buttons/ProfileButton";
@@ -68,7 +68,7 @@ export default function DesktopHeaderContent() {
 
       {/* Scroll Hide/Show Navigation */}
       <div className={`transition-all duration-200 fixed top-26 w-full z-40 bg-white shadow ${hideNav ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"}`}>
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-full mx-auto px-4">
           <DesktopNav />
         </div>
       </div>
