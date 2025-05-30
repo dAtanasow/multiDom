@@ -1,6 +1,9 @@
+import { useIsMobile } from "../../../hooks/useResponsive";
 import InvoiceFields from "./InvoiceFields";
 
+
 export default function InvoiceSection({ invoice, setInvoiceValue }) {
+    const isMobile = useIsMobile()
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -23,6 +26,7 @@ export default function InvoiceSection({ invoice, setInvoiceValue }) {
             {invoice.useInvoice && (
                 <InvoiceFields
                     form={invoice}
+                    isMobile={isMobile}
                     changeHandler={(e) =>
                         setInvoiceValue((prev) => ({
                             ...prev,
