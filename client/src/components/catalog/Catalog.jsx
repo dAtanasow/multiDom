@@ -44,9 +44,8 @@ export default function Catalog() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8 md:mt-10 xl:mt-2 overflow-x-hidden">
+    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8 md:mt-15 xl:mt-12 overflow-x-hidden">
 
-      {/* Sidebar filters */}
       <aside className="hidden md:block w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Филтри</h2>
         <div className="space-y-4">
@@ -77,12 +76,9 @@ export default function Catalog() {
         </button>
       </aside>
 
-      {/* Main content */}
       <main className="flex-1">
-        {/* Top bar: title + filters + sort */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
 
-          {/* Title and filter button */}
           <div className="flex items-center justify-between w-full">
             <h1 className="text-2xl font-bold text-gray-800">Каталог</h1>
             <button
@@ -93,8 +89,8 @@ export default function Catalog() {
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
-            <p className="text-sm text-gray-500 mt-1">
+          <div className="flex items-center gap-2 whitespace-nowrap">
+            <p className="text-sm text-gray-500">
               Намерени продукти: {sortedProducts.length}
             </p>
             <select
@@ -109,7 +105,6 @@ export default function Catalog() {
           </div>
         </div>
 
-        {/* Products grid */}
         {loading ? (
           <SpinnerLoader />
         ) : (
@@ -126,7 +121,6 @@ export default function Catalog() {
         )}
       </main >
 
-      {/* Mobile Filters SlideOver */}
       < div
         className={`fixed inset-0 z-50 flex justify-end transition-transform duration-300 ${mobileFiltersOpen ? "translate-x-0" : "translate-x-full"
           }`

@@ -33,7 +33,7 @@ export default function Cart() {
     const totalDiscount = totalStandard - totalWithDiscount;
     if (!cart || cart.length === 0) {
         return (
-            <div className="max-w-xl mx-auto py-20 px-6 text-center">
+            <div className="max-w-xl mx-auto py-40 px-6 text-center">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -56,7 +56,7 @@ export default function Cart() {
 
     return (
         <div className="max-w-3xl md:mt-10 mx-auto py-10 px-4">
-            <h1 className="text-2xl font-bold text-center mb-6">Моята количка</h1>
+            <h1 className="text-2xl font-medium text-center mb-6">Моята количка</h1>
             <div className="space-y-6">
                 {cart.map((item) => (
                     <CartItem

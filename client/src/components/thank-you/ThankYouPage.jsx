@@ -10,7 +10,7 @@ export default function ThankYouPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-2xl mx-auto mt-10 sm:mt-20 text-center p-8 bg-white"
+            className="max-w-2xl mx-auto my-20 sm:mt-20 text-center p-8 bg-white"
         >
             <div className="flex justify-center mb-3">
                 <CheckCircle className="text-green-600 w-12 h-12" />

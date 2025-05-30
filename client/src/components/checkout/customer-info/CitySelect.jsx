@@ -33,7 +33,7 @@ export default function CitySelect({ cities, selectedCity, setSelectedCity }) {
         <div className="relative">
             <Combobox value={internalSelected} onChange={handleSelect}>
                 <div className="relative">
-                    <div className="relative w-full cursor-default overflow-hidden rounded-lg border bg-white text-left shadow-md focus:outline-none">
+                    <div className="relative w-full cursor-default overflow-hidden rounded-sm border bg-white text-left shadow-md focus:outline-none">
                         <ComboboxInput
                             className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
                             displayValue={() => internalSelected}
@@ -45,7 +45,7 @@ export default function CitySelect({ cities, selectedCity, setSelectedCity }) {
                         </ComboboxButton>
                     </div>
                     {filteredCities.length > 0 && (
-                        <ComboboxOptions className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white py-1 text-sm shadow-lg">
+                        <ComboboxOptions className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-sm border bg-white py-1 text-sm shadow-lg">
                             {filteredCities.map((city, i) => (
                                 <ComboboxOption
                                     key={i}
