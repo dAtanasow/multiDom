@@ -4,7 +4,7 @@ export default function SearchButton({ onClick }) {
             className="cursor-pointer p-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
             aria-label="Tърсене">
             <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-7 h-7 text-blue-600"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"

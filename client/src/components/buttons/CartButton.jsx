@@ -8,11 +8,11 @@ export default function CartButton() {
     return (
         <Link
             to="/cart"
-            className="relative cursor-pointer p-2 rounded-xl hover:bg-blue-700 hover:text-white transition"
+            className="relative cursor-pointer p-2 rounded-xl hover:bg-blue-700 transition"
             aria-label="Количка"
         >
             <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-7 h-7 text-blue-600 hover:text-white"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"

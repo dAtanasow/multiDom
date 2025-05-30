@@ -10,9 +10,9 @@ export default function AdminButton() {
     return (
         <Link
             to="/admin"
-            className="flex items-center gap-2 px-3 py-2 text-sm md:text-base text-white hover:bg-blue-600 hover:bg-blue-700 rounded-lg transition"
+            className="flex items-center gap-2 px-2 py-2 text-sm md:text-base hover:bg-blue-700 rounded-lg transition"
         >
-            <ShieldCheck className="text-blue-600" />
+            <ShieldCheck className="text-blue-600 hover:text-white w-7 h-7" />
         </Link>
     );
 }
