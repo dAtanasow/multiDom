@@ -151,14 +151,18 @@ export function useCreateProduct(editingProduct, setEditingProduct, setProductVi
 
 export function useProductsTable() {
     const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
 
     const fetchProducts = async () => {
         try {
+            setLoading(true);
             const res = await productApi.getAll();
             setProducts(res.products || []);
         } catch (err) {
             toast.error("Грешка при зареждане на продуктите.", err);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -196,6 +200,7 @@ export function useProductsTable() {
 
     return {
         products,
+        loading,
         editingProduct,
         setEditingProduct,
         fetchProducts,
