@@ -58,16 +58,18 @@ export default function Profile() {
                     <button
                         onClick={logout}
                         disabled={isLoggingOut}
-                        className="mt-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+                        className="mt-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 mb-5 rounded-lg transition"
                     >
                         {isLoggingOut ? "Излизане..." : "Изход"}
                     </button>
                 </aside>
             )}
 
-            <main className="flex-1 pt-12 px-4 md:px-12">
+            <main className="flex-1 pt-12 px-4 max-w-full overflow-x-hidden">
+
                 {activeTab === "details" && (
-                    <div className="bg-white rounded-2xl shadow-md p-8 max-w-xl xl:mt-2 md:mt-10 mx-auto">
+                    <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 md:p-8 max-w-md w-full mx-auto">
+
                         <h3 className="text-2xl font-bold text-gray-800 text-center mb-6">Детайли на профила</h3>
                         <form onSubmit={editMode ? submitHandler : undefined}>
                             <ProfileFields

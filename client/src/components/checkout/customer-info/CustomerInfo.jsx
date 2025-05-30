@@ -6,7 +6,8 @@ export default function CustomerInfo({ form, changeHandler, selectedCity, handle
     const [phoneError, setPhoneError] = useState(false);
 
     return (
-        <div className={`grid ${isMobile ? "grid-cols-1" : "grid-cols-2"} gap-4`}>
+      <div className={`grid ${isMobile ? "grid-cols-1" : "grid-cols-2"} gap-4 relative z-30`}>
+
             <input
                 name="name"
                 placeholder="Име и фамилия"

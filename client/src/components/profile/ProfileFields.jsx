@@ -17,9 +17,9 @@ export function ProfileFields({ values, changeHandler, editMode }) {
                         console.warn("Получен невалиден номер:", phone);
                     }
                 }}
-
                 error={phoneError}
                 setError={setPhoneError}
+                disabled={!editMode}
             />
         </div>
     );

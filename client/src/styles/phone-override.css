@@ -1,0 +1,41 @@
+.react-tel-input {
+    position: relative !important;
+    z-index: auto !important;
+}
+
+.react-tel-input .country-list {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    width: max-content !important;
+    min-width: 100% !important;
+    max-height: 240px !important;
+    overflow-y: auto !important;
+    z-index: 50 !important;
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.375rem !important;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.react-tel-input .flag-dropdown {
+    border: none !important;
+    border-right: none !important;
+    background-color: white !important;
+    box-shadow: none !important;
+}
+
+.react-tel-input .flag-dropdown::after {
+    display: none !important;
+}
+
+.react-tel-input .form-control {
+    border-right: none !important;
+    min-width: 0 !important;
+    width: 100% !important;
+}
+
+.react-tel-input input:disabled {
+    background-color: #f9fafb;
+    cursor: not-allowed;
+}
