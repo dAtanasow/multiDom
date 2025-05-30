@@ -37,7 +37,7 @@ export default function SelectedProducts() {
   return (
     <div className="w-full relative">
       <div className="max-w-screen-xl mx-auto px-4">
-        <h2 className="text-2xl font-bold text-center mb-8">Препоръчани продукти</h2>
+        <h2 className="text-2xl font-medium text-center mb-8">Препоръчани продукти</h2>
 
         {loading ? (
           <div className="min-h-[300px] flex items-center justify-center">

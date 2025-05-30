@@ -37,13 +37,12 @@ export default function NewProducts() {
   return (
     <div className="relative w-full">
       <div className="max-w-screen-xl mx-auto px-4 relative overflow-hidden">
-        <h2 className="text-2xl font-bold text-center mb-8">Нови продукти</h2>
+        <h2 className="text-2xl font-medium text-center mb-8">Нови продукти</h2>
 
         {loading ? (
           <DotsLoader />
         ) : (
           <div className="relative w-full">
-            {/* Стрелки вътре в ограничен контейнер */}
             <button
               onClick={() => scroll("left")}
               className="hidden sm:flex absolute top-1/2 -translate-y-1/2 left-2 z-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 transition"
