@@ -4,6 +4,8 @@ import DesktopNav from "../../navigation/desktop/Navigation";
 import CartButton from "../../buttons/CartButton";
 import ProfileButton from "../../buttons/ProfileButton";
 import AdminButton from "../../buttons/AdminButton";
+import TagSearch from "../../search/TagSearch";
+import { FiSearch } from "react-icons/fi";
 
 export default function DesktopHeaderContent() {
   const [hideNav, setHideNav] = useState(false);
@@ -27,10 +29,10 @@ export default function DesktopHeaderContent() {
   return (
     <>
       <div className="hidden md:block bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-4 py-3 grid grid-cols-12 items-center gap-6">
 
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="col-span-2">
             <Link to="/">
               <img
                 src="/icons/мултиДом-logo.jpeg"
@@ -41,24 +43,19 @@ export default function DesktopHeaderContent() {
           </div>
 
           {/* Search Box */}
-          <div className="flex flex-col items-center flex-grow max-w-2xl mx-auto">
-            <div className="flex w-full">
-              <input
-                type="text"
-                placeholder="Търси продукт..."
-                className="flex-grow px-4 py-2 border rounded-l-xl border-gray-300 focus:outline-none"
-              />
-              <button className="bg-blue-600 text-white px-4 rounded-r-xl hover:bg-blue-700 transition">
-                Търси
-              </button>
+          <div className="col-span-8 flex flex-col items-center justify-center">
+            <div className="relative w-full max-w-xl">
+              <div className="relative">
+                <TagSearch />
+              </div>
             </div>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-gray-600 mt-1 text-center">
               Безплатна доставка за поръчки над 70 лв.
             </p>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="col-span-2 flex items-center justify-end gap-4">
             <AdminButton />
             <ProfileButton />
             <CartButton />

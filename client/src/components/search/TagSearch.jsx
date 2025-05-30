@@ -1,14 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import catalogApi from "../../api/catalog";
 import { useLocation, useNavigate, Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { FiSearch } from "react-icons/fi";
 
 export default function TagSearch({ onClose }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [products, setProducts] = useState([]);
-    const navigate = useNavigate()
+    const [showDropdown, setShowDropdown] = useState(false);
+    const navigate = useNavigate();
     const location = useLocation();
+    const inputRef = useRef(null);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -24,11 +27,11 @@ export default function TagSearch({ onClose }) {
             } catch (err) {
                 console.log(err.message);
             }
-        }
+        };
         if (searchTerm) {
             fetchProducts();
         }
-    }, [searchTerm])
+    }, [searchTerm]);
 
     useEffect(() => {
         if (searchTerm === "") {
@@ -44,40 +47,63 @@ export default function TagSearch({ onClose }) {
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
+        setShowDropdown(true);
+    };
+
+    const handleBlur = () => {
+        setTimeout(() => setShowDropdown(false), 150);
     };
 
     const onSearch = (e) => {
         e.preventDefault();
-        navigate(`/catalog?search=${encodeURIComponent(searchTerm)}`)
-        if (onClose) onClose();
-    }
+        if (searchTerm.trim()) {
+            navigate(`/catalog?search=${encodeURIComponent(searchTerm)}`);
+            setSearchTerm("");
+            setShowDropdown(false);
+            inputRef.current?.blur();
+            if (onClose) onClose();
+        }
+    };
 
     return (
-        <div>
-            <form onSubmit={onSearch}>
-                <input
-                    type="text"
-                    placeholder="Търси..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    className="w-full px-4 py-2 mt-2 border rounded-xl border-gray-300 focus:outline-none"
-                />
+        <div className="relative w-full">
+            <form onSubmit={onSearch} className="relative w-full">
+                <div className="flex items-center w-full border border-gray-300 rounded-full overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                    <input
+                        type="text"
+                        placeholder="Търси..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        onBlur={handleBlur}
+                        ref={inputRef}
+                        className="flex-grow px-4 py-2 text-sm focus:outline-none rounded-l-full"
+                    />
+                    <button
+                        type="submit"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 h-full flex items-center justify-center rounded-r-full"
+                    >
+                        <FiSearch className="text-white text-base" />
+                    </button>
+                </div>
             </form>
             <AnimatePresence>
-                {searchTerm && filteredProducts.length > 0 && (
+                {searchTerm && showDropdown && filteredProducts.length > 0 && (
                     <motion.ul
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -5 }}
                         transition={{ duration: 0.2 }}
-                        className="bg-white mt-2 border border-gray-200 rounded-2xl shadow-lg max-h-72 overflow-y-auto divide-y divide-gray-100 z-50"
+                        className="absolute left-0 right-0 w-full bg-white mt-2 border border-gray-200 rounded-2xl shadow-lg max-h-72 overflow-y-auto divide-y divide-gray-100 z-50"
                     >
                         {filteredProducts.map(product => (
                             <Link
                                 key={product._id}
                                 to={`/catalog/${product._id}`}
                                 className="block"
-                                onClick={onClose}
+                                onClick={() => {
+                                    setShowDropdown(false);
+                                    if (onClose) onClose();
+                                }}
                             >
                                 <li className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors">
                                     <img
@@ -91,12 +117,12 @@ export default function TagSearch({ onClose }) {
                         ))}
                     </motion.ul>
                 )}
-                {searchTerm && filteredProducts.length === 0 && (
+                {searchTerm && showDropdown && filteredProducts.length === 0 && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="mt-2 bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-500 text-center shadow"
+                        className="absolute left-0 right-0 w-full mt-2 bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-500 text-center shadow"
                     >
                         Няма съвпадения
                     </motion.div>
