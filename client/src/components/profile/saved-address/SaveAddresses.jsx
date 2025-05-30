@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AddressForm from "./AddressForm";
 import SavedAddressList from "./SavedAddressList";
 import { toast } from "react-toastify";
 import { useUserAddresses, useDelivery } from "../../../hooks/useAddress";
+import { isSame } from "../../../utils/compare";
 
 export default function SavedAddresses() {
+    const [error, setError] = useState("");
     const [newAddress, setNewAddress] = useState({
         label: "",
         deliveryMethod: "address",
@@ -16,7 +18,14 @@ export default function SavedAddresses() {
             courierName: "",
         },
     });
-    const [error, setError] = useState("");
+
+    const setNewAddressCallback = useCallback((updater) => {
+        setNewAddress(prev => {
+            const next = typeof updater === 'function' ? updater(prev) : updater;
+            return isSame(prev, next) ? prev : next;
+        });
+    }, []);
+
 
     const {
         addresses,
@@ -41,7 +50,7 @@ export default function SavedAddresses() {
             deliveryMethod: newAddress.deliveryMethod,
             city: newAddress.city,
         },
-        setNewAddress
+        setNewAddressCallback
     );
 
     const handleChange = (e) => {
