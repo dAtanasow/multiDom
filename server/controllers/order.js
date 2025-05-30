@@ -1,6 +1,8 @@
 const Order = require("../models/Order");
+const Counter = require("../models/Counter");
 const Product = require("../models/Product")
 const { sendOrderConfirmationEmail } = require("../utils/email");
+const getNextNumber = require("../utils/getNextNumber");
 
 const createOrder = async (req, res) => {
     try {
@@ -27,16 +29,22 @@ const createOrder = async (req, res) => {
         const grandTotal = total + orderData.deliveryTotal;
 
         if (orderData.invoice?.useInvoice) {
+            orderData.invoiceNumber = await getNextNumber("invoiceNumber");
+
             orderData.invoice = {
                 useInvoice: true,
                 companyName: orderData.invoice.companyName,
                 bulstat: orderData.invoice.bulstat,
                 vatNumber: orderData.invoice.vatNumber,
+                address: orderData.invoice.address,
                 mol: orderData.invoice.mol,
-            };
+            }
+
         } else {
             orderData.invoice = { useInvoice: false };
         }
+
+        orderData.orderNumber = await getNextNumber("orderNumber");
 
         const order = await Order.create(orderData);
 
@@ -59,7 +67,7 @@ const createOrder = async (req, res) => {
         console.error("❌ Грешка при създаване на поръчка:", error);
         res.status(500).json({ message: "Грешка при обработка на поръчката." });
     }
-};
+}
 
 const getOrderById = async (req, res) => {
     try {

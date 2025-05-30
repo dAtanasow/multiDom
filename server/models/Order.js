@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
+    orderNumber: { type: Number, unique: true },
     name: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String, required: true },
@@ -15,9 +16,11 @@ const orderSchema = new mongoose.Schema({
     },
     invoice: {
         useInvoice: { type: Boolean, default: false },
+        invoiceNumber: { type: Number, unique: true, sparse: true },
         companyName: { type: String },
         bulstat: { type: String },
         vatNumber: { type: String },
+        address: { type: String },
         mol: { type: String }
     },
     items: [
@@ -38,5 +41,7 @@ const orderSchema = new mongoose.Schema({
         default: Date.now,
     },
 });
+
+
 
 module.exports = mongoose.model("Order", orderSchema, "orders");
