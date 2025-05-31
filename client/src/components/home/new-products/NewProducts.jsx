@@ -22,7 +22,7 @@ export default function NewProducts() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const data = await catalogApi.getNewest(8);
+        const data = await catalogApi.getNewest(12);
         setProducts(data.products);
       } catch (err) {
         console.error("Грешка при зареждане на нови продукти:", err);
@@ -52,8 +52,9 @@ export default function NewProducts() {
 
             <div
               ref={scrollRef}
-              className="w-full max-w-full flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide snap-x snap-mandatory"
+              className="scroll-container flex gap-4 overflow-x-auto"
             >
+
               {products.map((product) => (
                 <div
                   key={product._id}

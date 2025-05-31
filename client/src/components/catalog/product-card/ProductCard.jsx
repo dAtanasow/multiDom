@@ -22,7 +22,7 @@ export default function ProductCard({ product }) {
     if (!product) return null;
 
     return (
-        <div className="relative bg-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col min-w-44 h-[380px]">
+        <div className="relative bg-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col min-w-46 h-[380px]">
             {product.discountPrice && (
                 <div className="absolute top-2 left-2 bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-lg uppercase tracking-wide z-10">
                     {`-${Math.round(100 - (product.discountPrice / product.price) * 100)}%`}
@@ -33,7 +33,7 @@ export default function ProductCard({ product }) {
                 <img
                     src={product.images?.[0] || "/images/placeholder.jpg"}
                     alt={product.name}
-                    className="h-45 w-full object-contain transition-transform duration-200 hover:scale-105"
+                    className="h-40 w-full object-contain transition-transform duration-200 hover:scale-105"
                 />
             </Link>
 

@@ -54,10 +54,14 @@ export default function SelectedProducts() {
 
             <div
               ref={scrollRef}
-              className="flex overflow-x-auto gap-4 scrollbar-hide scroll-smooth snap-x snap-mandatory"
+              className="scroll-container flex gap-4 overflow-x-auto"
             >
+
               {products.map((product) => (
-                <div key={product._id} className="flex-shrink-0 w-[240px] snap-start">
+                <div
+                  key={product._id}
+                  className="flex-shrink-0 snap-start w-[240px]"
+                >
                   <ProductCard product={product} />
                 </div>
               ))}
@@ -65,7 +69,7 @@ export default function SelectedProducts() {
 
             <button
               onClick={() => scroll("right")}
-              className="hidden sm:flex absolute top-1/2 right-2 -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 transition"
+              className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400"
             >
               <FiChevronRight />
             </button>

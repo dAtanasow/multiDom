@@ -1,3 +1,4 @@
+import scrollbar from 'tailwind-scrollbar';
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -8,6 +9,9 @@ export default {
         'react-tel-input',
         'country-list',
         'search-box',
+        'scrollbar-none',
+        'hover:scrollbar-thin',
+        'hover:scrollbar-thumb-blue-300',
     ],
     theme: {
         extend: {
@@ -25,5 +29,6 @@ export default {
             },
         },
     },
-    plugins: [],
+    plugins: [scrollbar],
+
 }
