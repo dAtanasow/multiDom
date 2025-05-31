@@ -34,7 +34,7 @@ export default function ProductDetails() {
 
     return (
         <motion.section className="max-w-7xl mx-auto px-4 py-12" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div className="grid md:grid-cols-2 gap-12">
+            <div className="grid md:grid-cols-2 mt-xl-between md:mt-10 gap-12">
                 {/* Gallery */}
                 <div className="space-y-5">
                     <div className="bg-white border rounded-3xl shadow-lg p-6">
