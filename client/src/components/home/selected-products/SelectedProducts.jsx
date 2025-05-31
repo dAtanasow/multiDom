@@ -54,7 +54,7 @@ export default function SelectedProducts() {
 
             <div
               ref={scrollRef}
-              className="scroll-container flex gap-4 overflow-x-auto"
+              className="scroll-container flex gap-3 overflow-x-auto"
             >
 
               {products.map((product) => (
@@ -69,10 +69,11 @@ export default function SelectedProducts() {
 
             <button
               onClick={() => scroll("right")}
-              className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400"
+              className="hidden sm:flex absolute top-1/2 right-2 -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 transition"
             >
               <FiChevronRight />
             </button>
+
           </div>
         ) : (
           <p className="text-center text-gray-500">Няма налични продукти.</p>

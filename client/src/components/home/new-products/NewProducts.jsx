@@ -52,7 +52,7 @@ export default function NewProducts() {
 
             <div
               ref={scrollRef}
-              className="scroll-container flex gap-4 overflow-x-auto"
+              className="scroll-container flex gap-3 overflow-x-auto"
             >
 
               {products.map((product) => (
