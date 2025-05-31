@@ -7,6 +7,7 @@ export default function ReviewForm({ productId, onReviewSubmit, userReview }) {
     const [rating, setRating] = useState(0);
     const [hovered, setHovered] = useState(0);
     const [comment, setComment] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
     if (userReview) {
         return null;
@@ -14,6 +15,7 @@ export default function ReviewForm({ productId, onReviewSubmit, userReview }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitting(true);
 
         try {
             if (userReview) {
@@ -27,9 +29,10 @@ export default function ReviewForm({ productId, onReviewSubmit, userReview }) {
             onReviewSubmit?.();
         } catch (err) {
             toast.error("Грешка при изпращане на ревю.", err);
+        } finally {
+            setSubmitting(false);
         }
     };
-
 
     return (
         <form onSubmit={handleSubmit} className="mb-8 space-y-4">
@@ -58,10 +61,10 @@ export default function ReviewForm({ productId, onReviewSubmit, userReview }) {
 
             <button
                 type="submit"
-                disabled={rating === 0}
-                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-5 rounded-xl"
+                disabled={rating === 0 || submitting}
+                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-5 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                Изпрати отзив
+                {submitting ? "Изпращане..." : "Изпрати отзив"}
             </button>
         </form>
     );
