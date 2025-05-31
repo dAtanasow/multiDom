@@ -21,8 +21,17 @@ const getAllProducts = async (req, res, next) => {
 
         const filter = {};
         if (search) {
-            filter.name = { $regex: search, $options: 'i' };
+            const searchRegex = { $regex: search, $options: 'i' };
+
+            filter.$or = [
+                { name: searchRegex },
+                { description: searchRegex },
+                { category: searchRegex },
+                { subCategory: searchRegex },
+                { tags: { $elemMatch: searchRegex } },
+            ];
         }
+
         if (tag) {
             filter.tags = { $in: [tag] };
         }
@@ -71,8 +80,6 @@ const getAllProducts = async (req, res, next) => {
         next(err);
     }
 };
-
-
 
 const getProductById = async (req, res) => {
     try {

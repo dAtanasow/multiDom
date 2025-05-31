@@ -20,6 +20,7 @@ export default function TagSearch({ onClose }) {
     }, [location.search]);
 
     useEffect(() => {
+        
         const fetchProducts = async () => {
             try {
                 const result = await catalogApi.getAll();
@@ -34,13 +35,22 @@ export default function TagSearch({ onClose }) {
     }, [searchTerm]);
 
     useEffect(() => {
+
         if (searchTerm === "") {
             setFilteredProducts(products);
         } else {
-            const lowercasedTerm = searchTerm.toLowerCase();
-            const filtered = products.filter(product =>
-                product.tags.some(tag => tag.toLowerCase().includes(lowercasedTerm))
-            );
+            const normalizeText = (text) =>
+                text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+          
+            const filtered = products.filter(product => {
+                const search = normalizeText(searchTerm);
+                return (
+                    normalizeText(product.name).includes(search) ||
+                    normalizeText(product.description).includes(search) ||
+                    product.tags.some(tag => normalizeText(tag).includes(search))
+                );
+            });
+
             setFilteredProducts(filtered);
         }
     }, [searchTerm, products]);
