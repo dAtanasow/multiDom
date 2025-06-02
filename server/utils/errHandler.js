@@ -1,19 +1,22 @@
 function errorHandler(err, req, res, next) {
-    if (res.headersSent) {
-        return;
-    }
+    if (res.headersSent) return;
 
     const statusCode = err.status || 500;
-    const message = err.message || 'Something went wrong on the server.';
+    const message = statusCode === 500
+        ? 'Internal server error.'
+        : err.message || 'Something went wrong.';
 
-    console.error(`🔥 Error at ${req.method} ${req.url}`);
-    console.error(err.stack);
-
-    res.status(statusCode).json({
+    const errorResponse = {
         success: false,
-        message: statusCode === 500 ? 'Internal server error.' : message,
-        ...(process.env.NODE_ENV === 'development' && { error: err.stack })
-    });
+        message,
+        ...(err.code && { code: err.code }),
+        ...(process.env.NODE_ENV === 'development' && { error: err.stack }),
+    };
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(statusCode).json(errorResponse);
 }
 
-module.exports = errorHandler;
+module.exports = {
+    errorHandler
+}

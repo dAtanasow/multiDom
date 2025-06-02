@@ -3,7 +3,7 @@ const router = express.Router();
 const { auth } = require('../utils');
 const { createProduct, updateProduct, deleteProduct }
     = require('../controllers/admin');
-const { isAdmin } = require('../utils/isAdmin');
+const { isAdmin } = require('../middlewares/isAdmin');
 
 router.post('/create', auth(), isAdmin, createProduct);
 router.put('/update/:id', auth(), isAdmin, updateProduct)

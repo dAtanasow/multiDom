@@ -6,6 +6,7 @@ const cors = require('cors');
 const express = require('express');
 const dbConnector = require('./config/db');
 const apiRouter = require('./router');
+const { errorHandler } = require('./utils/errHandler');
 
 dbConnector()
     .then(() => {
@@ -24,6 +25,7 @@ dbConnector()
         require('./config/express')(app);
 
         app.use('/api', apiRouter);
+        app.use(errorHandler);
 
         app.listen(config.port, () => {
             console.log(`✅ Server is running on port ${config.port}`);

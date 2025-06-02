@@ -1,5 +1,5 @@
 const { createToken, verifyToken } = require('./jwt');
-const auth = require('./auth');
+const auth = require('../middlewares/auth');
 const errorHandler = require('./errHandler');
 
 jwt = { createToken, verifyToken }

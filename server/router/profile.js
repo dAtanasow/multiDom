@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { editProfile, getUserAddresses, addUserAddress, deleteUserAddress, toggleFavorite, getUserProfile, getFavoritesList } = require("../controllers/profile");
-const auth = require("../utils/auth");
+const auth = require("../middlewares/auth");
 
 router.get("/addresses", auth(), getUserAddresses);
 router.post("/addresses", auth(), addUserAddress);

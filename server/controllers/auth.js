@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const TokenBlacklist = require('../models/tokenBlacklist');
-const CustomError = require('../utils/CustomError');
+const CustomError = require("../utils/CustomError");
 const { createAccessToken, createRefreshToken, verifyRefreshToken } = require('../utils/jwt');
 const Cart = require('../models/Cart');
 
@@ -39,16 +39,12 @@ const logout = async (req, res, next) => {
 };
 
 const register = async (req, res, next) => {
-    const { firstName, lastName, phone, email, password, rePassword } = req.body;
-
-    if (!firstName || !lastName || !phone || !email || !password, !rePassword) {
-        return next(new CustomError('Моля, попълнете всички полета.', 400));
-    }
+    const { firstName, lastName, phone, email, password } = req.body;
 
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return next(new CustomError('Имейлът вече е регистриран.', 400));
+            return next(new CustomError('Имейлът вече е регистриран.', 400, 'EMAIL_EXISTS'));
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -72,7 +68,7 @@ const register = async (req, res, next) => {
             httpOnly: true,
             secure: true,
             sameSite: "None",
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дни
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
         res.status(201).json({
@@ -93,10 +89,6 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-        return next(new CustomError('Моля, въведете имейл и парола.', 400));
-    }
 
     try {
         const user = await User.findOne({ email });
