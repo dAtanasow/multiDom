@@ -1,4 +1,4 @@
-import { useCreateProduct } from "../../../hooks/useAdmin";
+import { useCreateProduct } from "../../../../../hooks/useAdmin";
 
 export default function CreateProduct({ editingProduct, setEditingProduct, setProductView }) {
     const {
@@ -17,7 +17,6 @@ export default function CreateProduct({ editingProduct, setEditingProduct, setPr
                 {editingProduct ? `Редакция на продукт: ${editingProduct.name}` : "Създай нов продукт"}
             </h2>
             <form onSubmit={submitHandler} className="space-y-4 mb-6">
-                {/* Грид контейнер */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="border p-2 w-full md:col-span-2" />
 
@@ -61,7 +60,6 @@ export default function CreateProduct({ editingProduct, setEditingProduct, setPr
                     <input name="tags" placeholder="Тагове (разделени със запетая)" value={values.tags || ""} onChange={changeHandler} className="border p-2 w-full md:col-span-2" />
                 </div>
 
-                {/* Бутоните накрая под формата */}
                 <div className="flex flex-wrap gap-4 pt-4">
                     <button type="submit" className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700" disabled={pending}>
                         {editingProduct ? "Запази промените" : "Създай продукт"}

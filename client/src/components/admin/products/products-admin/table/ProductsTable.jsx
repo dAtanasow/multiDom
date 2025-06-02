@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { useProductsTable } from "../../../hooks/useAdmin";
-import GenericSearch from "../../search/GenericSearch";
-import SpinnerLoader from "../../SpinnerLoader";
+import { useProductsTable } from "../../../../../hooks/useAdmin";
+import GenericSearch from "../../../../search/GenericSearch";
+import SpinnerLoader from "../../../../SpinnerLoader";
 
 export default function ProductsTable({ setProductView, setEditingProduct }) {
   const { products, handleDelete, loading } = useProductsTable();

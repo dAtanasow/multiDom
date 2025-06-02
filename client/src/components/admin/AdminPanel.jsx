@@ -1,13 +1,10 @@
 import { useState } from "react";
-import CreateProduct from "./products-admin/CreateProduct";
-import ProductsTable from "./products-admin/ProductsTable";
 import Orders from "./orders-admin/Orders";
+import ProductManager from "./products/products-admin/ProductsManager";
 
 export default function AdminPanel() {
     const [section, setSection] = useState("products");
-    const [productView, setProductView] = useState("create");
     const [orderStatus, setOrderStatus] = useState("new");
-    const [editingProduct, setEditingProduct] = useState(null);
 
     return (
         <div className="flex flex-col text-center mt-2 xl:mt-12 md:mt-20 relative overflow-visible">
@@ -36,45 +33,9 @@ export default function AdminPanel() {
             </div>
 
             {section === "products" && (
-                <>
-                    <div className="flex gap-2 justify-center mb-4">
-                        <button
-                            onClick={() => setProductView("create")}
-                            className={`p-2 rounded-lg text-sm font-medium transition-colors duration-200 ${productView === "create"
-                                ? "bg-green-500 text-white shadow"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                }`}
-                        >
-                            ➕ Създай продукт
-                        </button>
-
-                        <button
-                            onClick={() => setProductView("list")}
-                            className={`p-2 rounded-lg text-sm font-medium transition-colors duration-200 ${productView === "list"
-                                ? "bg-green-500 text-white shadow"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                }`}
-                        >
-                            📃 Списък с продукти
-                        </button>
-
-                    </div>
-                    {productView === "create" ? (
-                        <CreateProduct
-                            editingProduct={editingProduct}
-                            setEditingProduct={setEditingProduct}
-                            setProductView={setProductView}
-                        />
-                    ) : (
-                        <ProductsTable
-                            setProductView={setProductView}
-                            setEditingProduct={setEditingProduct}
-                        />
-                    )}
-                </>
+                <ProductManager />
             )}
 
-            {/* Подменю за поръчки */}
             {section === "orders" && (
                 <>
                     <div className="flex gap-2 justify-center mb-4">
