@@ -1,5 +1,6 @@
 import { getAccessToken, setAccessToken, clearAuth, onUnauthorized } from "../utils/authUtil";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const baseUrl = import.meta.env.VITE_API_URL;
 

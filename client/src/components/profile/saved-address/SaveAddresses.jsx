@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import AddressForm from "./AddressForm";
 import SavedAddressList from "./SavedAddressList";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useUserAddresses, useDelivery } from "../../../hooks/useAddress";
 import { isSame } from "../../../utils/compare";
 

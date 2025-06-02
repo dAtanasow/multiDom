@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "./useForm";
 import productApi from "../api/catalog";
 import adminApi from "../api/admin";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { confirmAlert } from 'react-confirm-alert';
 import navLinks from "../utils/navLinks";
 

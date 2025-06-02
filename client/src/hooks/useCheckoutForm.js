@@ -3,7 +3,8 @@ import { useForm } from "./useForm";
 import { deliveryPrices } from "../constants/deliveryPrices";
 import orderApi from "../api/order";
 import { useMemo } from "react";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { getCheckoutValidators, validateEmailField, validateInvoice, validateNameField, validateRequired } from "../utils/validators";
 import { normalizeCartItems } from "../utils/normalize";
 

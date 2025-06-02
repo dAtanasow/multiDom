@@ -1,5 +1,6 @@
 import { Link } from "react-router";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useCartContext } from "../../../context/CartContext";
 import { normalizeProduct } from "../../../utils/normalize";
 import { Rating } from '@smastrom/react-rating';

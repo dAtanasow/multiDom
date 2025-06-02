@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "./useForm";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useAuthContext } from "../context/AuthContext";
 import profileApi from "../api/profile";
 

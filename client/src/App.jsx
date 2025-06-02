@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router";
-import { ToastContainer } from "react-toastify";
+// import { ToastContainer } from "react-toastify";
+import { Toaster } from "sonner";
 
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
@@ -45,7 +46,8 @@ function App() {
         </Routes>
       </ErrorBoundary>
       <Footer />
-      <ToastContainer position="top-center" autoClose={2000} />
+      {/* <ToastContainer position="top-center" autoClose={2000} /> */}
+      <Toaster position="top-right" richColors />
     </div>
   );
 }

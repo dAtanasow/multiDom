@@ -1,6 +1,7 @@
 import { useState } from "react";
 import profileApi from "../api/profile";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useAuthContext } from "../context/AuthContext";
 
 export default function useFavorites() {

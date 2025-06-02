@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { toast } from "sonner";
 import userApi from "../api/auth";
 import { useAuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router";
