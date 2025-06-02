@@ -62,7 +62,8 @@ export default function Checkout() {
         if (firstName && lastName && email && phone) {
             setValues(prev => ({
                 ...prev,
-                name: `${firstName} ${lastName}`,
+                firstName,
+                lastName,
                 email,
                 phone,
             }));
@@ -91,10 +92,25 @@ export default function Checkout() {
         }
     }, [form.deliveryMethod, form.office?.address, form.address, setValues]);
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        try {
+            await submitHandler();
+        } catch (err) {
+            if (err.validationErrors) {
+                console.error("Валидационни грешки:", err.validationErrors);
+            } else {
+                console.error("Грешка при изпращане на поръчка:", err);
+            }
+        }
+    };
+
+
     return (
         <div className="max-w-3xl xl:mt-9 md:mt-15 mx-auto py-10 px-4">
             <h1 className="text-2xl font-medium mb-6 text-center">Финализиране на поръчка</h1>
-            <form onSubmit={submitHandler} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
                 <SavedAddressSelect
                     addresses={addresses}
                     selectedSavedAddress={selectedSavedAddress}

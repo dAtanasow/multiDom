@@ -13,11 +13,11 @@ const getAllProducts = async (req, res, next) => {
             sortBy,
             order = 'asc',
             page = 1,
-            limit = 12,
+            limit,
         } = req.query;
 
-        const limitNum = Number(limit) || 12;
-        const skip = (Number(page) - 1) * limitNum;
+        const limitNum = limit ? Number(limit) : undefined;
+        const skip = limitNum ? (Number(page) - 1) * limitNum : undefined;
 
         const filter = {};
         if (search) {
@@ -65,16 +65,17 @@ const getAllProducts = async (req, res, next) => {
         const total = await Product.countDocuments(filter);
         const totalPages = Math.ceil(total / limitNum);
 
-        const products = await Product.find(filter)
-            .sort(sortOptions)
-            .skip(skip)
-            .limit(Number(limitNum) || 12);
+        let query = Product.find(filter).sort(sortOptions);
+        if (skip !== undefined) query = query.skip(skip);
+        if (limitNum !== undefined) query = query.limit(limitNum);
+
+        const products = await query;
 
         res.status(200).json({
             products,
             total,
             totalPages,
-            currentPage: parseInt(page),
+            currentPage: limitNum ? parseInt(page) : 1,
         });
     } catch (err) {
         next(err);

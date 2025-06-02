@@ -4,6 +4,8 @@ const Product = require("../models/Product")
 const { sendOrderConfirmationEmail } = require("../utils/email");
 const getNextNumber = require("../utils/getNextNumber");
 
+const MAX_RETRIES = 5;
+
 const createOrder = async (req, res) => {
     try {
         const orderData = req.body;
@@ -12,12 +14,10 @@ const createOrder = async (req, res) => {
             (sum, item) => sum + (item.originalPrice || item.price) * item.quantity,
             0
         );
-
         const total = orderData.items.reduce(
             (sum, item) => sum + item.price * item.quantity,
             0
         );
-
         const totalDiscount = totalStandard - total;
 
         let rawDelivery = orderData.deliveryTotal;
@@ -26,36 +26,49 @@ const createOrder = async (req, res) => {
             if (isNaN(rawDelivery)) rawDelivery = 0;
         }
         orderData.deliveryTotal = rawDelivery;
-        const grandTotal = total + orderData.deliveryTotal;
+        const grandTotal = total + rawDelivery;
 
         if (orderData.invoice?.useInvoice) {
-            orderData.invoiceNumber = await getNextNumber("invoiceNumber");
-
             orderData.invoice = {
                 useInvoice: true,
                 companyName: orderData.invoice.companyName,
-                bulstat: orderData.invoice.bulstat,
+                vatId: orderData.invoice.vatId,
                 vatNumber: orderData.invoice.vatNumber,
                 address: orderData.invoice.address,
                 mol: orderData.invoice.mol,
-            }
+            };
 
+            for (let i = 0; i < MAX_RETRIES; i++) {
+                try {
+                    orderData.invoiceNumber = await getNextNumber("invoiceNumber");
+                    break;
+                } catch (error) {
+                    if (error.code !== 11000 || i === MAX_RETRIES - 1) throw error;
+                }
+            }
         } else {
             orderData.invoice = { useInvoice: false };
         }
 
-        orderData.orderNumber = await getNextNumber("orderNumber");
+        let order;
+        for (let i = 0; i < MAX_RETRIES; i++) {
+            try {
+                orderData.orderNumber = await getNextNumber("orderNumber");
+                order = await Order.create(orderData);
+                break;
+            } catch (error) {
+                if (error.code !== 11000 || i === MAX_RETRIES - 1) throw error;
+            }
+        }
 
-        const order = await Order.create(orderData);
-
-        let officeDetails = order.office || undefined;
+        const officeDetails = order.office || undefined;
         await sendOrderConfirmationEmail(order.email, {
             ...orderData,
             total: grandTotal,
             totalStandard,
             totalDiscount,
             orderId: order._id,
-            officeDetails
+            officeDetails,
         });
 
         res.status(201).json({
@@ -67,7 +80,7 @@ const createOrder = async (req, res) => {
         console.error("❌ Грешка при създаване на поръчка:", error);
         res.status(500).json({ message: "Грешка при обработка на поръчката." });
     }
-}
+};
 
 const getOrderById = async (req, res) => {
     try {

@@ -1,13 +1,13 @@
 const Counter = require("../models/Counter");
 
-async function getNextProductNumber() {
+async function getNextNumber(name) {
     const counter = await Counter.findOneAndUpdate(
-        { name: "productNumber" },
+        { name },
         { $inc: { value: 1 } },
         { new: true, upsert: true }
     );
 
-    return counter.value.toString();
+    return counter.value;
 }
 
-module.exports = getNextProductNumber;
+module.exports = getNextNumber;

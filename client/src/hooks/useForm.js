@@ -47,7 +47,7 @@ export function useForm(initialValues, submitCallback, validators = {}) {
     };
 
     const submitHandler = async (e) => {
-        e.preventDefault();
+        e?.preventDefault?.();
         if (pending) return;
 
         setSubmitted(true);

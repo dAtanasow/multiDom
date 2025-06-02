@@ -4,9 +4,8 @@ import { deliveryPrices } from "../constants/deliveryPrices";
 import orderApi from "../api/order";
 import { useMemo } from "react";
 import { toast } from "react-toastify";
-import { validateEmailField, validateInvoice, validateNameField, validateRequired } from "../utils/validators";
+import { getCheckoutValidators, validateEmailField, validateInvoice, validateNameField, validateRequired } from "../utils/validators";
 import { normalizeCartItems } from "../utils/normalize";
-import { getCheckoutValidators } from "../utils/getCheckoutValidators";
 
 export function useCheckoutForm(cart, clearCart) {
     const navigate = useNavigate();
@@ -69,11 +68,17 @@ export function useCheckoutForm(cart, clearCart) {
         const methodPrice = deliveryPrices[deliveryCompany]?.[deliveryMethod];
         const deliveryTotal = typeof methodPrice === 'number' ? methodPrice : 0;
 
-        if (Object.keys(errors).length > 0) {
+        const filteredErrors = Object.fromEntries(
+            Object.entries(errors).filter(([, value]) => value !== null && value !== undefined)
+        );
+
+
+        if (Object.keys(filteredErrors).length > 0) {
+            console.log("🔍 Валидиращи грешки:", filteredErrors);
             toast.error("Моля, коригирайте грешките във формата.");
             throw {
                 validationErrors: {
-                    ...errors,
+                    ...filteredErrors,
                     invoice: errors.invoice || {},
                 }
             };
@@ -81,6 +86,7 @@ export function useCheckoutForm(cart, clearCart) {
 
         const payload = {
             ...form,
+            name: `${form.firstName} ${form.lastName}`,
             deliveryTotal,
             address: deliveryMethod === "office"
                 ? form.office?.address
@@ -96,7 +102,9 @@ export function useCheckoutForm(cart, clearCart) {
             clearCart();
             navigate("/thank-you");
         } catch (err) {
-            console.error("❌ Грешка при изпращане на поръчка:", err);
+            if (err.response) {
+                console.error("📩 Отговор от API:", err.response.data);
+            }
             throw err;
         }
     }, validators);

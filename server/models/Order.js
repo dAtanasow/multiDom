@@ -18,7 +18,7 @@ const orderSchema = new mongoose.Schema({
         useInvoice: { type: Boolean, default: false },
         invoiceNumber: { type: Number, unique: true, sparse: true },
         companyName: { type: String },
-        bulstat: { type: String },
+        vatId: { type: String },
         vatNumber: { type: String },
         address: { type: String },
         mol: { type: String }
@@ -43,5 +43,6 @@ const orderSchema = new mongoose.Schema({
 });
 
 
+orderSchema.index({ orderNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model("Order", orderSchema, "orders");

@@ -3,7 +3,7 @@ import { useRegister } from "../../hooks/useAuth";
 import CustomPhoneInput from "../CustomPhoneInput";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { getRegisterValidators } from "../../utils/getRegisterValidators";
+import { getRegisterValidators } from "../../utils/validators";
 
 export default function Register({ onClose, onLoginClick, visible }) {
   const { register, loading: registerLoading } = useRegister();
