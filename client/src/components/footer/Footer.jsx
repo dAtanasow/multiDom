@@ -1,7 +1,15 @@
 export default function Footer() {
   return (
-    <footer className="bg-blue-900/100 text-gray-100 py-10">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="relative bg-gradient-to-t from-blue-900 via-blue-600 to-blue-300 text-white py-10 overflow-hidden">
+      {/* Мехурчета */}
+      <div className="bubbles">
+        <div className="bubble" />
+        <div className="bubble" />
+        <div className="bubble" />
+        <div className="bubble" />
+        <div className="bubble" />
+      </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
         {/* Logo and description */}
         <div>
           <img
@@ -49,7 +57,7 @@ export default function Footer() {
           </p>
           <p>Адрес: кв. Овча купел, ул. "Войводина Могила" 42, 1618 София</p>
         </div>
-        
+
         <div className="flex flex-col space-y-3">
           <h3 className="text-lg font-semibold mb-2">Последвайте ни</h3>
           <div className="flex space-x-4">

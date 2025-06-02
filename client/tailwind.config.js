@@ -15,13 +15,21 @@ export default {
     ],
     theme: {
         extend: {
+            backgroundImage: {
+                'animated-gradient': 'linear-gradient(-45deg, #4facfe, #00f2fe, #43e97b, #38f9d7)',
+            },
             animation: {
                 'slide-in-right': 'slide-in-right 0.3s ease-out forwards',
+                'gradient-bg': 'gradient 15s ease infinite',
             },
             keyframes: {
                 'slide-in-right': {
                     '0%': { transform: 'translateX(100%)' },
                     '100%': { transform: 'translateX(0)' },
+                },
+                gradient: {
+                    '0%, 100%': { backgroundPosition: '0% 50%' },
+                    '50%': { backgroundPosition: '100% 50%' },
                 },
             },
             fontFamily: {

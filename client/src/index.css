@@ -7,25 +7,6 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
-.scroll-container::-webkit-scrollbar {
-    height: 0px;
-    transition: height 0.3s ease;
-}
-
-.scroll-container:hover::-webkit-scrollbar {
-    height: 6px;
-}
-
-.scroll-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.scroll-container::-webkit-scrollbar-thumb {
-    background-color: #2076d7;
-    /* bg-blue-300 */
-    border-radius: 9999px;
-}
-
 @layer utilities {
     @media (min-width: 1420px) and (max-width: 1535px) {
         .mt-xl-between {
