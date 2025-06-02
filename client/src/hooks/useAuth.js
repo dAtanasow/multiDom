@@ -6,55 +6,71 @@ import { useNavigate } from "react-router";
 import { setAccessToken } from "../utils/authUtil";
 import { useCartContext } from "../context/CartContext";
 import { syncLocalCartToServer } from "../utils/cartSync";
+import { isValidEmail } from "../utils/validators";
 
 export function useRegister() {
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({});
+    const { changeAuthState } = useAuthContext();
 
-    const register = async (registerData) => {
+    const register = async (formData, onClose) => {
+        setErrors({});
         setLoading(true);
+
         try {
-            const result = await userApi.register(registerData);
+            const result = await userApi.register(formData);
             toast.success("Успешна регистрация!");
-            return result;
+            changeAuthState({
+                user: result.user,
+                accessToken: result.accessToken,
+            });
+            onClose?.();
         } catch (error) {
-            console.error("Registration error:", error);
-            toast.error(error.message || "Грешка при регистрация.");
-            throw error;
+            const msg = error.response?.data?.message || error.message || "Грешка при регистрация.";
+            toast.error(msg);
+            setErrors({ global: msg });
         } finally {
             setLoading(false);
         }
     };
 
-    return { register, loading };
+    return { register, loading, errors };
 }
 
 export function useLogin() {
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({});
     const { changeAuthState } = useAuthContext();
     const { setCart, syncedRef } = useCartContext();
 
-    const login = async (loginData) => {
+    const login = async (data) => {
+        const validation = {};
+        if (!data.email) {
+            validation.email = "Имейлът е задължителен.";
+        } else if (!isValidEmail(data.email)) {
+            validation.email = "Невалиден имейл адрес.";
+        }
+
+        if (!data.password) {
+            validation.password = "Паролата е задължителна.";
+        }
+
+        if (Object.keys(validation).length > 0) {
+            setErrors(validation);
+            return;
+        }
+
+        setErrors({});
         setLoading(true);
         try {
-            const result = await userApi.login(loginData);
+            const result = await userApi.login(data);
             const { user, accessToken } = result;
             setAccessToken(accessToken);
-            changeAuthState({
-                user: {
-                    _id: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    phone: user.phone,
-                    role: user.role,
-                },
-                accessToken: accessToken,
-            });
+            changeAuthState({ user, accessToken });
             await syncLocalCartToServer(setCart, syncedRef);
             toast.success("Успешен вход!");
             return result;
         } catch (error) {
-            console.error("Login error:", error);
             toast.error(error.message || "Грешка при вход.");
             throw error;
         } finally {
@@ -62,7 +78,7 @@ export function useLogin() {
         }
     };
 
-    return { login, loading };
+    return { login, loading, errors };
 }
 
 export function useLogout() {

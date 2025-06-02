@@ -1,15 +1,17 @@
 import { useForm } from "../../hooks/useForm";
 import { useRegister } from "../../hooks/useAuth";
-import { useAuthContext } from "../../context/AuthContext";
 import CustomPhoneInput from "../CustomPhoneInput";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { getRegisterValidators } from "../../utils/getRegisterValidators";
 
 export default function Register({ onClose, onLoginClick, visible }) {
-  const { changeAuthState } = useAuthContext();
   const { register, loading: registerLoading } = useRegister();
   const [phoneError, setPhoneError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRePassword, setShowRePassword] = useState(false);
 
-  const { values, changeHandler, submitHandler, pending, setValues } = useForm(
+  const { values, changeHandler, submitHandler, pending, setValues, errors } = useForm(
     {
       firstName: "",
       lastName: "",
@@ -19,15 +21,9 @@ export default function Register({ onClose, onLoginClick, visible }) {
       rePassword: "",
     },
     async (formData) => {
-      const result = await register(formData);
-
-      changeAuthState({
-        user: result.user,
-        accessToken: result.accessToken,
-      });
-
-      onClose();
-    })
+      await register(formData, onClose);
+    }, getRegisterValidators()
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -51,18 +47,19 @@ export default function Register({ onClose, onLoginClick, visible }) {
             value={values.firstName}
             onChange={changeHandler}
             placeholder="Име"
-            className="border p-2 rounded-lg"
-            required
+            className={`border p-2 rounded-lg ${errors.firstName ? "border-red-500" : "border-gray-300"}`}
           />
+          {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
           <input
             type="text"
             name="lastName"
             value={values.lastName}
             onChange={changeHandler}
             placeholder="Фамилия"
-            className="border p-2 rounded-lg"
-            required
+            className={`border p-2 rounded-lg ${errors.lastName ? "border-red-500" : "border-gray-300"}`}
           />
+          {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+
           <CustomPhoneInput
             value={values.phone}
             onChange={(phone) => setValues(prev => ({ ...prev, phone }))}
@@ -75,27 +72,50 @@ export default function Register({ onClose, onLoginClick, visible }) {
             value={values.email}
             onChange={changeHandler}
             placeholder="Имейл"
-            className="border p-2 rounded-lg"
-            required
+            className={`border p-2 rounded-lg ${errors.email ? "border-red-500" : "border-gray-300"}`}
           />
-          <input
-            type="password"
-            name="password"
-            value={values.password}
-            onChange={changeHandler}
-            placeholder="Парола"
-            className="border p-2 rounded-lg"
-            required
-          />
-          <input
-            type="password"
-            name="rePassword"
-            value={values.rePassword}
-            onChange={changeHandler}
-            placeholder="Повторете паролата"
-            className="border p-2 rounded-lg"
-            required
-          />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={values.password}
+              onChange={changeHandler}
+              placeholder="Парола"
+              className={`border p-2 rounded-lg w-full pr-10 ${errors.password ? "border-red-500" : "border-gray-300"}`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(prev => !prev)}
+              className="absolute right-2 top-2 text-gray-600"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+
+          <div className="relative">
+            <input
+              type={showRePassword ? "text" : "password"}
+              name="rePassword"
+              value={values.rePassword}
+              onChange={changeHandler}
+              placeholder="Повторете паролата"
+              className={`border p-2 rounded-lg w-full pr-10 ${errors.rePassword ? "border-red-500" : "border-gray-300"}`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowRePassword(prev => !prev)}
+              className="absolute right-2 top-2 text-gray-600"
+              tabIndex={-1}
+            >
+              {showRePassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+          {errors.rePassword && <p className="text-red-500 text-sm">{errors.rePassword}</p>}
+
           <button
             type="submit"
             disabled={pending || registerLoading}

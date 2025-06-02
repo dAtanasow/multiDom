@@ -1,21 +1,25 @@
 import { useForm } from "../../hooks/useForm";
 import { useLogin } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { getLoginValidators } from "../../utils/validators";
 
 export default function Login({ onClose, onRegisterClick, visible }) {
   const { login, loading } = useLogin();
   const navigate = useNavigate();
 
-  const { values, changeHandler, submitHandler, pending } = useForm(
+  const { values, changeHandler, submitHandler, pending, errors } = useForm(
     {
       email: "",
       password: "",
     },
     async (formData) => {
-      await login(formData);
-      onClose()
-      navigate('/')
-    }
+      const result = await login(formData);
+      if (result) {
+        onClose();
+        navigate("/");
+      }
+    },
+    getLoginValidators()
   );
 
   return (
@@ -34,25 +38,29 @@ export default function Login({ onClose, onRegisterClick, visible }) {
           </button>
         </div>
 
-        <form className="flex flex-col space-y-4" onSubmit={submitHandler}>
+        <form className="flex flex-col space-y-4" onSubmit={submitHandler} noValidate>
           <input
-            type="email"
+            type="text"
             name="email"
             value={values.email}
             onChange={changeHandler}
             placeholder="Имейл"
-            className="border p-2 rounded-lg"
+            className={`border p-2 rounded-lg ${errors.email ? "border-red-500" : "border-gray-300"}`}
             required
           />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+
           <input
             type="password"
             name="password"
             value={values.password}
             onChange={changeHandler}
             placeholder="Парола"
-            className="border p-2 rounded-lg"
+            className={`border p-2 rounded-lg ${errors.password ? "border-red-500" : "border-gray-300"}`}
             required
           />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+
           <button
             type="submit"
             disabled={pending || loading}
