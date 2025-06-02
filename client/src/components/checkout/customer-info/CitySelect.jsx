@@ -8,7 +8,7 @@ import {
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { useState, useEffect } from "react";
 
-export default function CitySelect({ cities, selectedCity, setSelectedCity }) {
+export default function CitySelect({ cities, selectedCity, setSelectedCity, error, onChange, setError, validators }) {
     const [query, setQuery] = useState("");
     const [internalSelected, setInternalSelected] = useState(selectedCity || "");
 
@@ -27,17 +27,36 @@ export default function CitySelect({ cities, selectedCity, setSelectedCity }) {
         setInternalSelected(city);
         setSelectedCity(city);
         setQuery("");
+        onChange({ target: { name: "city", value: city, type: "text" } });
+
+        if (typeof validators?.city === "function") {
+            const err = validators.city(city, { city });
+            setError(prev => {
+                const { city: _, ...rest } = prev;
+                return err ? { ...rest, city: err } : rest;
+            });
+        }
+
     };
 
     return (
         <div className="relative">
             <Combobox value={internalSelected} onChange={handleSelect}>
                 <div className="relative">
-                    <div className="relative w-full cursor-default overflow-hidden rounded-sm border bg-white text-left shadow-md focus:outline-none">
+                    <div className={`relative w-full cursor-default overflow-hidden rounded-sm text-left shadow-md focus:outline-none 
+    ${error ? "border border-red-500" : "border"}`}>
                         <ComboboxInput
                             className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
                             displayValue={() => internalSelected}
-                            onChange={(e) => setQuery(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setQuery(val);
+
+                                const match = cities.find(city => city.toLowerCase() === val.toLowerCase());
+                                if (match) {
+                                    handleSelect(match); // извиква валидация и премахва грешката
+                                }
+                            }}
                             placeholder="Населено място..."
                         />
                         <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -62,6 +81,9 @@ export default function CitySelect({ cities, selectedCity, setSelectedCity }) {
                     )}
                 </div>
             </Combobox>
+            {error && (
+                <p className="text-sm text-red-500 mt-1">{error}</p>
+            )}
         </div>
     );
 }

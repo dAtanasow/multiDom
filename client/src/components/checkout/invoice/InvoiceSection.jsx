@@ -1,9 +1,9 @@
 import { useIsMobile } from "../../../hooks/useResponsive";
 import InvoiceFields from "./InvoiceFields";
 
+export default function InvoiceSection({ invoice, setInvoiceValue, errors, submitted }) {
+    const isMobile = useIsMobile();
 
-export default function InvoiceSection({ invoice, setInvoiceValue }) {
-    const isMobile = useIsMobile()
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -27,13 +27,31 @@ export default function InvoiceSection({ invoice, setInvoiceValue }) {
                 <InvoiceFields
                     form={invoice}
                     isMobile={isMobile}
-                    changeHandler={(e) =>
-                        setInvoiceValue((prev) => ({
-                            ...prev,
-                            [e.target.name]: e.target.value,
-                        }))
-                    }
+                    errors={errors?.invoice || {}}
+                    submitted={submitted}
+                    changeHandler={(e) => {
+                        const { name, value, checked } = e.target;
+
+                        if (name === "isVatRegistered") {
+                            setInvoiceValue((prev) => {
+                                const shouldAddBG = checked && prev.vatId && !prev.vatId.startsWith("BG");
+                                const updatedVatId = shouldAddBG ? `BG${prev.vatId}` : prev.vatId.replace(/^BG/, "");
+
+                                return {
+                                    ...prev,
+                                    isVatRegistered: checked,
+                                    vatId: updatedVatId,
+                                };
+                            });
+                        } else {
+                            setInvoiceValue((prev) => ({
+                                ...prev,
+                                [name]: value,
+                            }));
+                        }
+                    }}
                 />
+
             )}
         </div>
     );

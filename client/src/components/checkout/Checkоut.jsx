@@ -24,6 +24,10 @@ export default function Checkout() {
         changeHandler,
         submitHandler,
         setValues,
+        errors,
+        setError,
+        submitted,
+        validators,
     } = useCheckoutForm(cart, clearCart);
 
     const {
@@ -87,8 +91,6 @@ export default function Checkout() {
         }
     }, [form.deliveryMethod, form.office?.address, form.address, setValues]);
 
-
-
     return (
         <div className="max-w-3xl xl:mt-9 md:mt-15 mx-auto py-10 px-4">
             <h1 className="text-2xl font-medium mb-6 text-center">Финализиране на поръчка</h1>
@@ -107,6 +109,9 @@ export default function Checkout() {
                     cities={cities}
                     isMobile={isMobile}
                     setValues={setValues}
+                    errors={errors}
+                    setError={setError}
+                    validators={validators}
                 />
                 <DeliveryOptions
                     form={form}
@@ -123,18 +128,26 @@ export default function Checkout() {
                     setSelectedOfficeId={setSelectedOfficeId}
                     changeHandler={changeHandler}
                     deliveryPrices={deliveryPrices}
+                    errors={errors}
+                    setError={setError}
+                    submitted={submitted}
+                    validators={validators}
                 />
 
                 <textarea name="comment" placeholder="Коментар към поръчката" value={form.comment} onChange={changeHandler} className="w-full border p-2 rounded" rows={2} />
 
                 <InvoiceSection
                     invoice={form.invoice}
-                    setInvoiceValue={(fnOrObj) =>
+                    setInvoiceValue={(fnOrObj) => {
                         setValues((prev) => ({
                             ...prev,
-                            invoice: typeof fnOrObj === 'function' ? fnOrObj(prev.invoice) : fnOrObj
-                        }))
-                    }
+                            invoice: typeof fnOrObj === 'function'
+                                ? fnOrObj(prev.invoice)
+                                : fnOrObj,
+                        }));
+                    }}
+                    errors={errors}
+                    submitted={submitted}
                 />
 
                 <div className="border-t pt-4 text-sm text-right space-y-1">

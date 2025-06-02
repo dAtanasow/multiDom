@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import profileApi from "../api/profile";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../context/AuthContext";
@@ -24,6 +24,8 @@ export default function useFavorites() {
                 : "Премахнато от любими");
         } catch (err) {
             toast.error("Грешка при обработка на любими");
+            console.log(err);
+
         } finally {
             setLoading(false);
         }

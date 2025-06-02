@@ -7,7 +7,7 @@ import {
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { useMemo, useEffect, useState } from "react";
 
-export default function OfficeListbox({ offices, selectedOfficeId, setSelectedOfficeId }) {
+export default function OfficeListbox({ offices, selectedOfficeId, setSelectedOfficeId, onChange, validators, setError }) {
     const [localSelectedId, setLocalSelectedId] = useState(selectedOfficeId ?? null);
 
     useEffect(() => {
@@ -31,9 +31,23 @@ export default function OfficeListbox({ offices, selectedOfficeId, setSelectedOf
     }, [offices]);
 
     const handleChange = (val) => {
+        const officeObj = offices.find((o) => String(o._id) === String(val));
         setLocalSelectedId(String(val));
         setSelectedOfficeId(String(val));
+        onChange({ target: { name: "office", value: officeObj, type: "text" } });
+
+        if (typeof validators?.office === "function") {
+            const err = validators.office(officeObj, {
+                office: officeObj,
+            });
+
+            setError(prev => {
+                const { office, ...rest } = prev;
+                return err ? { ...rest, office } : rest;
+            });
+        }
     };
+
 
     return (
         <div className="relative">

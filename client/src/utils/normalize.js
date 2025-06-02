@@ -51,3 +51,16 @@ export const normalizeProduct = (product) => {
         quantity: product.quantity ?? 1
     };
 };
+
+export const normalizeCartItems = (cart) =>
+  cart.map(item => ({
+    productId: item._id,
+    name: item.name,
+    price: item.discountPrice && item.discountPrice < item.price
+      ? item.discountPrice
+      : item.price,
+    originalPrice: item.price,
+    discountPrice: item.discountPrice,
+    quantity: item.quantity,
+    images: item.images
+  }));

@@ -2,12 +2,13 @@ import { useCallback } from "react";
 import { useRef, useState } from "react";
 import { isSame } from "../utils/compare";
 
-export function useForm(initialValues, submitCallback) {
+export function useForm(initialValues, submitCallback, validators = {}) {
     const [errors, setError] = useState({});
     const [pending, setPending] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [valuesState, setValuesState] = useState(initialValues);
 
     const valuesRef = useRef(initialValues);
-    const [valuesState, setValuesState] = useState(initialValues);
 
     const setValues = useCallback((newValues, merge = true) => {
         const result = typeof newValues === "function"
@@ -25,15 +26,23 @@ export function useForm(initialValues, submitCallback) {
     }, []);
 
     const changeHandler = (e) => {
-        const { name, type, value, checked } = e.target;
+        const { name, value, type, checked } = e.target;
         const newValue = type === "checkbox" ? checked : value;
 
-        const updated = updateNestedValue(valuesRef.current, name, newValue);
-        valuesRef.current = updated;
-        setValuesState(updated);
+        const updatedValues = {
+            ...valuesRef.current,
+            [name]: newValue,
+        };
 
-        if (errors[name]) {
-            setError((prev) => ({ ...prev, [name]: undefined }));
+        setValues(() => updatedValues);
+
+        if (validators[name]) {
+            const error = validators[name](newValue, updatedValues);
+
+            setError((prev) => {
+                const { [name]: _, ...rest } = prev;
+                return error ? { ...rest, [name]: error } : rest;
+            });
         }
     };
 
@@ -41,16 +50,43 @@ export function useForm(initialValues, submitCallback) {
         e.preventDefault();
         if (pending) return;
 
+        setSubmitted(true);
+
+        if (validators && typeof validators === "object") {
+            const allErrors = {};
+
+            for (const key of Object.keys(validators)) {
+                const validator = validators[key];
+                if (typeof validator === "function") {
+                    const error = validator(valuesRef.current[key], valuesRef.current);
+                    if (error) {
+                        allErrors[key] = error;
+                    }
+                }
+            }
+
+            if (Object.keys(allErrors).length > 0) {
+                setError(allErrors);
+                setPending(false);
+                return;
+            }
+        }
+
         setPending(true);
         try {
             await submitCallback(valuesRef.current);
             setError({});
         } catch (error) {
-            setError(error);
+            if (error.validationErrors) {
+                setError(error.validationErrors);
+            } else {
+                setError({});
+            }
         } finally {
             setPending(false);
         }
     };
+
 
     const appendImage = (base64) => {
         const updatedImages = Array.isArray(valuesRef.current.images)
@@ -68,6 +104,8 @@ export function useForm(initialValues, submitCallback) {
         values: valuesState,
         errors,
         pending,
+        submitted,
+        validators,
         setValues,
         setPending,
         setError,
@@ -75,19 +113,4 @@ export function useForm(initialValues, submitCallback) {
         submitHandler,
         appendImage,
     };
-}
-
-function updateNestedValue(obj, path, value) {
-    const keys = path.split(".");
-    const newObj = { ...obj };
-    let current = newObj;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-        const key = keys[i];
-        current[key] = current[key] || {};
-        current = current[key];
-    }
-
-    current[keys[keys.length - 1]] = value;
-    return newObj;
 }
