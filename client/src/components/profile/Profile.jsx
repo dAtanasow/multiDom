@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useProfile } from "../../hooks/useProfile";
 import { ProfileFields } from "./ProfileFields";
 import { useIsMobile } from "../../hooks/useResponsive";
-import { useLogout } from "../../hooks/useAuth";
 import {
     FiUser,
     FiPackage,
@@ -14,6 +13,8 @@ import SaveButton from "../buttons/SaveButton";
 import EditButton from "../buttons/EditButton";
 import SavedAddresses from "./saved-address/SaveAddresses";
 import FavoritesList from "./favorites/FavoritesList";
+import UserOrders from "./orders/UserOrders.jsx";
+import { useLogout } from "../../hooks/useAuth.jsx";
 
 const sections = [
     { key: "details", label: "Детайли", icon: <FiUser /> },
@@ -40,7 +41,7 @@ export default function Profile() {
     return (
         <div className="flex min-h-screen bg-gray-100">
             {!isMobile && (
-                <aside className="hidden lg:flex flex-col w-64 bg-white border-r pt-10 px-4 shadow-sm space-y-4">
+                <aside className="hidden md:flex flex-col w-64 bg-white border-r pt-10 lg:mt-15 xl:mt-10  px-4 shadow-sm space-y-4">
                     <h2 className="text-xl font-semibold text-gray-800 text-center mt-10 mb-4">Профил</h2>
                     {sections.map((s) => (
                         <button
@@ -65,7 +66,7 @@ export default function Profile() {
                 </aside>
             )}
 
-            <main className="flex-1 pt-12 px-4 max-w-full overflow-x-hidden">
+            <main className="flex-1 xl:mt-18 md:mt-20 pt-12 px-4 max-w-full overflow-x-hidden">
 
                 {activeTab === "details" && (
                     <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 md:p-8 max-w-md w-full mx-auto">
@@ -88,6 +89,7 @@ export default function Profile() {
                     </div>
                 )}
 
+                {activeTab === "orders" && <UserOrders />}
                 {activeTab === "addresses" && <SavedAddresses />}
                 {activeTab === "favorites" && <FavoritesList />}
             </main>
@@ -110,7 +112,7 @@ export default function Profile() {
                     })}
                     <button
                         onClick={logout}
-                        className="flex flex-col items-center text-xs text-red-600"
+                        className="flex flex-col px-3 py-1 items-center text-xs text-red-600"
                     >
                         <FiLogOut className="text-lg" />
                         <span className="text-[10px]">Изход</span>
