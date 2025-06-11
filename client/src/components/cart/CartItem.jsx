@@ -5,7 +5,9 @@ export default function CartItem({ item, updateQuantity, removeFromCart }) {
     const isUpdating = updatingId === item._id;
 
     const hasDiscount = typeof item.discountPrice === "number" && item.discountPrice < item.price;
-    const price = hasDiscount ? item.discountPrice : item.price;
+    const priceRaw = hasDiscount ? item.discountPrice : item.price;
+    const price = typeof priceRaw === "number" ? priceRaw : 0;
+    const quantity = typeof item.quantity === "number" ? item.quantity : 0;
 
     return (
         <div className="flex items-start gap-4 border-b pb-4">
@@ -21,14 +23,14 @@ export default function CartItem({ item, updateQuantity, removeFromCart }) {
                     {hasDiscount ? (
                         <>
                             <span className="line-through mr-2">
-                                {item.price.toFixed(2)} лв.
+                                {typeof item.price === "number" ? item.price.toFixed(2) : "–"} лв.
                             </span>
                             <span className="text-green-600 font-semibold">
-                                {item.discountPrice.toFixed(2)} лв.
+                                {typeof item.discountPrice === "number" ? item.discountPrice.toFixed(2) : "–"} лв.
                             </span>
                         </>
                     ) : (
-                        `${item.price.toFixed(2)} лв.`
+                        `${typeof item.price === "number" ? `${item.price.toFixed(2)} лв.` : "–"} лв.`
                     )}
                 </p>
 
@@ -60,7 +62,7 @@ export default function CartItem({ item, updateQuantity, removeFromCart }) {
                         Премахни
                     </button>
                     <span className="font-semibold text-sm">
-                        {(price * item.quantity).toFixed(2)} лв.
+                        {(price * quantity).toFixed(2)} лв.
                     </span>
                 </div>
             </div>
