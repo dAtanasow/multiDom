@@ -24,18 +24,22 @@ export const validateEmailField = (value) => {
     return null;
 };
 
-export const validateVatId = (vatId, isVatRegistered) => {
-    if (!vatId.trim()) return "Моля, въведете Булстат.";
-    if (!/^\d{9,13}$/.test(vatId)) return "Булстат трябва да съдържа между 9 и 13 цифри.";
-    if (isVatRegistered && !vatId.startsWith("BG")) return "ДДС номерът трябва да започва с 'BG'.";
+export function validateVatId(vatId) {
+    if (!vatId || vatId.trim() === "") {
+        return "Моля, въведете ЕИК / Булстат.";
+    }
+    const digits = vatId.replace(/^BG/i, "").replace(/\s+/g, "").replace(/\D/g, "");
+    if (digits.length < 9 || digits.length > 13) {
+        return "Булстат трябва да съдържа между 9 и 13 цифри.";
+    }
     return null;
-};
+}
 
-export const validateInvoice = ({ companyName, companyType, vatId, mol, companyAddress, isVatRegistered }) => {
+export const validateInvoice = ({ companyName, companyType, vatId, mol, companyAddress}) => {
     const errors = {
         companyName: validateRequired("Име на фирмата", companyName, 2),
         companyType: companyType ? null : "Моля, изберете тип на дружеството.",
-        vatId: validateVatId(vatId, isVatRegistered),
+        vatId: validateVatId(vatId),
         mol: validateRequired("МОЛ", mol, 5),
         companyAddress: validateRequired("Адрес", companyAddress, 5),
     };
