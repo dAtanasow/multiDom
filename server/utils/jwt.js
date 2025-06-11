@@ -16,9 +16,14 @@ function verifyRefreshToken(token) {
     return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 }
 
+function createEmailConfirmationToken(user) {
+    return jwt.sign({ _id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '1d' });
+}
+
 module.exports = {
     createAccessToken,
     createRefreshToken,
     verifyAccessToken,
     verifyRefreshToken,
+    createEmailConfirmationToken
 };

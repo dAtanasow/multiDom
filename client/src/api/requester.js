@@ -1,10 +1,9 @@
 import { getAccessToken, setAccessToken, clearAuth, onUnauthorized } from "../utils/authUtil";
-// import { toast } from "react-toastify";
 import { toast } from "sonner";
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
-export async function requester(method, url, data) {
+export async function requester(method, url, data, opts = {}) {
     const options = {
         method,
         headers: {},
@@ -12,7 +11,7 @@ export async function requester(method, url, data) {
     };
 
     const token = getAccessToken();
-    if (token) {
+    if (token && !opts.skipAuth) {
         options.headers["Authorization"] = `Bearer ${token}`;
     }
 
@@ -57,12 +56,14 @@ export async function requester(method, url, data) {
     }
 
     if (!response.ok) {
-        if (response.status === 409) {
-            console.warn("Конфликт: ", result.message || "Грешка 409");
-            return { status: 409, data: result };
-        }
-        throw new Error(result.message || "Възникна грешка");
+        const error = new Error(result.message || "Възникна грешка");
+        error.response = {
+            status: response.status,
+            data: result,
+        };
+        throw error;
     }
+
 
     if (response.status === 204) return {};
 

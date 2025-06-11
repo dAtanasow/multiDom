@@ -1,16 +1,18 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const TokenBlacklist = require('../models/tokenBlacklist');
 const CustomError = require("../utils/CustomError");
-const { createAccessToken, createRefreshToken, verifyRefreshToken } = require('../utils/jwt');
+const { createAccessToken, createRefreshToken, verifyRefreshToken, createEmailConfirmationToken, verifyAccessToken } = require('../utils/jwt');
 const Cart = require('../models/Cart');
+const { sendRegistrationConfirmationEmail } = require('../utils/email-confirm');
 
 const logout = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     const token = req.cookies.token || (authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null);
 
     if (!token) {
-        if (!token) return res.status(200).json({ message: "Вече сте излезли." });
+        return res.status(200).json({ message: "Вече сте излезли." });
     }
     try {
         const exists = await TokenBlacklist.findOne({ token });
@@ -56,31 +58,19 @@ const register = async (req, res, next) => {
             phone,
             email,
             password: hashedPassword,
+            emailConfirmed: false,
         });
 
-        await newUser.save();
+        await newUser.save(); // ⬅️ Първо записваме потребителя
         await Cart.create({ user: newUser._id, items: [] });
 
-        const accessToken = createAccessToken(newUser);
-        const refreshToken = createRefreshToken(newUser);
+        const confirmToken = createEmailConfirmationToken(newUser);
+        const confirmUrl = `https://multidom-460607.web.app/email-confirmed?token=${confirmToken}&email=${encodeURIComponent(email)}`;
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        await sendRegistrationConfirmationEmail(email, firstName, confirmUrl);
 
         res.status(201).json({
-            accessToken,
-            user: {
-                id: newUser._id,
-                firstName: newUser.firstName,
-                lastName: newUser.lastName,
-                phone: newUser.phone,
-                email: newUser.email,
-                role: newUser.role || "user",
-            },
+            message: "Имейл за потвърждение е изпратен.",
         });
     } catch (err) {
         next(err);
@@ -92,34 +82,34 @@ const login = async (req, res, next) => {
 
     try {
         const user = await User.findOne({ email });
-        if (!user) {
-            return next(new CustomError('Имейлът не е регистриран.', 404));
-        }
+        if (!user) return next(new CustomError('Грешен имейл или парола', 400));
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return next(new CustomError('Грешна парола.', 401));
+        if (!isMatch) return next(new CustomError('Грешен имейл или парола', 400));
+
+        if (!user.emailConfirmed) {
+            return next(new CustomError('Имейлът не е потвърден. Провери входящата поща.', 403, 'EMAIL_NOT_CONFIRMED'));
         }
 
         const accessToken = createAccessToken(user);
         const refreshToken = createRefreshToken(user);
 
-        res.cookie('refreshToken', refreshToken, {
+        res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: true,
             sameSite: "None",
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дни
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
         res.status(200).json({
             accessToken,
             user: {
-                _id: user._id,
+                id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                phone: user.phone || "",
-                role: user.role || "user",
+                phone: user.phone,
+                role: user.role,
             },
         });
     } catch (err) {
@@ -129,7 +119,6 @@ const login = async (req, res, next) => {
 
 const refreshAccessToken = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
-    console.log("cookies получени от клиента:", req.cookies);
 
     if (!refreshToken) {
         return next(new CustomError('Refresh токен липсва.', 401));
@@ -137,7 +126,7 @@ const refreshAccessToken = async (req, res, next) => {
 
     try {
         const data = verifyRefreshToken(refreshToken);
-        const accessToken = createAccessToken({ _id: data._id });
+        const accessToken = createAccessToken(data);
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
@@ -149,6 +138,98 @@ const refreshAccessToken = async (req, res, next) => {
         res.status(200).json({ accessToken });
     } catch (err) {
         return next(new CustomError('Невалиден или изтекъл refresh токен.', 401));
+    }
+};
+
+const confirmEmail = async (req, res) => {
+    const token = req.query.token;
+    if (!token) {
+        return res.status(400).json({ message: "Липсващ токен." });
+    }
+    try {
+        const decoded = verifyAccessToken(req.query.token, process.env.JWT_ACCESS_SECRET);
+        const user = await User.findById(decoded._id);
+
+        if (!user) {
+            return res.status(404).json({ message: "Потребителят не е намерен." });
+        }
+
+        if (user.emailConfirmed) {
+            const accessToken = createAccessToken(user);
+            const refreshToken = createRefreshToken(user);
+
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            });
+
+            return res.status(200).json({
+                message: "Имейлът вече беше потвърден.",
+                accessToken,
+                email: user.email,
+            });
+        }
+
+        user.emailConfirmed = true;
+        await user.save();
+
+        const accessToken = createAccessToken(user);
+        const refreshToken = createRefreshToken(user);
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        return res.status(200).json({
+            message: "Имейлът е потвърден успешно.",
+            accessToken,
+            email: user.email,
+        });
+    } catch (err) {
+        console.error("❌ Email confirmation error:", err);
+        return res.status(400).json({ message: "Невалиден или изтекъл токен." });
+    }
+};
+
+const resendConfirmation = async (req, res, next) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "Няма потребител с този имейл." });
+        }
+
+        if (user.emailConfirmed) {
+            return res.status(400).json({ message: "Имейлът вече е потвърден." });
+        }
+
+        const now = Date.now();
+        const lastSent = user.resendTokenSentAt?.getTime() || 0;
+        const diffInSeconds = Math.floor((now - lastSent) / 1000);
+
+        if (diffInSeconds < 60) {
+            const waitSeconds = 60 - diffInSeconds;
+            return res.status(429).json({
+                message: `Можеш да изпратиш отново след ${waitSeconds} сек.`,
+            });
+        }
+
+        const token = createEmailConfirmationToken(user);
+        const confirmUrl = `https://multidom-460607.web.app/email-confirmed?token=${token}&email=${user.email}`;
+        await sendRegistrationConfirmationEmail(user.email, user.firstName, confirmUrl);
+
+        user.resendTokenSentAt = new Date();
+        await user.save();
+
+        res.json({ message: "Изпратихме нов имейл за потвърждение." });
+    } catch (err) {
+        next(err);
     }
 };
 
@@ -177,5 +258,7 @@ module.exports = {
     login,
     logout,
     refreshAccessToken,
-    getCurrentUser
+    getCurrentUser,
+    confirmEmail,
+    resendConfirmation
 }
