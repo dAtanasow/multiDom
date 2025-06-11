@@ -8,6 +8,7 @@ export default function Orders({ status }) {
     const [openOrderId, setOpenOrderId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [searchTerm, setSearchTerm] = useState("");
     const topRef = useRef(null);
 
     const {
@@ -38,7 +39,7 @@ export default function Orders({ status }) {
 
     return (
         <div className="w-full max-w-5xl mx-auto px-2" ref={topRef}>
-            <GenericSearch data={allOrders} keys={["name", "orderNumber"]}>
+            <GenericSearch data={allOrders} keys={["name", "orderNumber"]} term={searchTerm}>
                 {(filteredOrders) => {
                     const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
                     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -46,22 +47,32 @@ export default function Orders({ status }) {
 
                     return (
                         <>
-                            <div className="flex justify-end items-center mb-2 gap-2">
-                                <label className="text-sm text-gray-600">На страница:</label>
-                                <select
-                                    value={itemsPerPage}
-                                    onChange={(e) => {
-                                        setItemsPerPage(Number(e.target.value));
-                                        setCurrentPage(1);
-                                    }}
-                                    className="border text-sm rounded px-2 py-1"
-                                >
-                                    <option value={10}>10</option>
-                                    <option value={20}>20</option>
-                                    <option value={50}>50</option>
-                                </select>
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+                                <div className="w-full sm:w-auto">
+                                    <input
+                                        type="text"
+                                        placeholder="Търси по име или номер..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="px-4 py-2 border rounded-xl border-gray-300 focus:outline-none w-full sm:w-[300px] text-sm"
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <label className="text-sm text-gray-600">На страница:</label>
+                                    <select
+                                        value={itemsPerPage}
+                                        onChange={(e) => {
+                                            setItemsPerPage(Number(e.target.value));
+                                            setCurrentPage(1);
+                                        }}
+                                        className="border text-sm rounded px-2 py-1"
+                                    >
+                                        <option value={10}>10</option>
+                                        <option value={20}>20</option>
+                                        <option value={50}>50</option>
+                                    </select>
+                                </div>
                             </div>
-
                             <div>
                                 {paginatedOrders.map(order => (
                                     <OrderCard
