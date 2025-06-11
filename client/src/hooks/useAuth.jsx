@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import { toast } from "react-toastify";
 import { toast } from "sonner";
 import userApi from "../api/auth";
 import { useAuthContext } from "../context/AuthContext";
@@ -14,7 +13,6 @@ export function useRegister() {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    // const { changeAuthState } = useAuthContext(); // можеш да го оставиш за после
 
     const register = async (formData, onClose) => {
         setErrors({});
@@ -142,7 +140,7 @@ export function useLogin() {
 
         window.addEventListener("message", handleMessage);
         return () => window.removeEventListener("message", handleMessage);
-    }, []);
+    }, [changeAuthState]);
 
     return { login, loading, errors };
 }
