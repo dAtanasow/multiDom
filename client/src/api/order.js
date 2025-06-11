@@ -18,11 +18,14 @@ const updateOrderStatus = (id, status) => {
     return requester.put(`${baseUrl}/${id}/status`, { status });
 };
 
+const getUserOrders = () => requester.get(`${baseUrl}/user`);
+
 const orderApi = {
     createOrder,
     getOrderById,
     getAllOrders,
     updateOrderStatus,
+    getUserOrders,
 };
 
 export default orderApi;
