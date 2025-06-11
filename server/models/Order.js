@@ -31,6 +31,10 @@ const orderSchema = new mongoose.Schema({
             quantity: { type: Number },
         },
     ],
+    deliveryTotal: {
+        type: Number,
+        default: 0,
+    },
     status: {
         type: String,
         enum: ['new', 'pending', 'completed', "canceled"],
@@ -42,7 +46,5 @@ const orderSchema = new mongoose.Schema({
     },
 });
 
-
-orderSchema.index({ orderNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model("Order", orderSchema, "orders");
