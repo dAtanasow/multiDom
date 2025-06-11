@@ -5,7 +5,6 @@ import CartButton from "../../buttons/CartButton";
 import ProfileButton from "../../buttons/ProfileButton";
 import AdminButton from "../../buttons/AdminButton";
 import TagSearch from "../../search/TagSearch";
-import { FiSearch } from "react-icons/fi";
 
 export default function DesktopHeaderContent() {
   const [hideNav, setHideNav] = useState(false);
@@ -31,13 +30,12 @@ export default function DesktopHeaderContent() {
       <div className="hidden md:block bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 grid grid-cols-12 items-center gap-6">
 
-          {/* Logo */}
           <div className="col-span-2">
             <Link to="/">
               <img
                 src="/icons/мултиДом-logo.jpeg"
                 alt="МултиДом"
-                className="w-[140px] h-auto"
+                className="w-[140px] min-w-[140px]"
               />
             </Link>
           </div>
@@ -54,7 +52,6 @@ export default function DesktopHeaderContent() {
             </p>
           </div>
 
-          {/* Actions */}
           <div className="col-span-2 flex items-center justify-end gap-4">
             <AdminButton />
             <ProfileButton />
@@ -63,7 +60,6 @@ export default function DesktopHeaderContent() {
         </div>
       </div>
 
-      {/* Scroll Hide/Show Navigation */}
       <div className={`transition-all duration-200 fixed top-26 w-full z-40 bg-white shadow ${hideNav ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"}`}>
         <div className="max-w-full mx-auto px-4">
           <DesktopNav />
