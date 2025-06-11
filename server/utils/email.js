@@ -108,7 +108,7 @@ async function sendOrderConfirmationEmail(toEmail, orderData) {
       <div style="background-color: #f9fafb; padding: 12px; border-radius: 8px; margin: 16px 0;">
         <p style="margin: 0; font-weight: bold;">🧾 Данни за фактура:</p>
         <p><strong>Фирма:</strong> ${orderData.invoice.companyName}</p>
-        <p><strong>Булстат:</strong> ${orderData.invoice.bulstat}</p>
+        <p><strong>Булстат:</strong> ${orderData.invoice.vatNumber}</p>
         ${orderData.invoice.vatNumber ? `<p><strong>ДДС №:</strong> ${orderData.invoice.vatNumber}</p>` : ""}
         <p><strong>МОЛ:</strong> ${orderData.invoice.mol}</p>
       </div>
