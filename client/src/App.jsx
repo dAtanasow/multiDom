@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router";
 // import { ToastContainer } from "react-toastify";
-import { Toaster } from "sonner";
 
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
@@ -21,11 +20,15 @@ import Cart from "./components/cart/Cart";
 import Checkout from "./components/checkout/Checkоut";
 import ThankYouPage from "./components/thank-you/ThankYouPage";
 import ScrollToTop from "./components/ScrollToTop";
+import EmailConfirmed from "./components/email-confirm/EmailConfirmed";
+import EmailAlreadyConfirmed from "./components/email-confirm/EmailAlreadyConfirmed";
+import EmailConfirmationError from "./components/email-confirm/EmailConfirmationError";
+import CheckEmail from "./components/email-confirm/CheckEmail";
 
 
 function App() {
   return (
-    <div>
+    <div className="relative pt-[64px] min-h-screen">
       <Header />
       <ErrorBoundary>
         <ScrollToTop />
@@ -41,13 +44,17 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
+          <Route path="/confirm-email" element={<EmailConfirmed />} />
+          <Route path="/email-confirmed" element={<EmailConfirmed />} />
+          <Route path="/email-already-confirmed" element={<EmailAlreadyConfirmed />} />
+          <Route path="/email-error" element={<EmailConfirmationError />} />
+          <Route path="/check-email" element={<CheckEmail />} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
         </Routes>
       </ErrorBoundary>
       <Footer />
       {/* <ToastContainer position="top-center" autoClose={2000} /> */}
-      <Toaster position="top-right" richColors />
     </div>
   );
 }
