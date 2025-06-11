@@ -7,8 +7,7 @@ export default function AdminPanel() {
     const [orderStatus, setOrderStatus] = useState("new");
 
     return (
-        <div className="flex flex-col text-center mt-2 xl:mt-12 md:mt-20 relative overflow-visible">
-            <h2 className="text-2xl font-medium mb-4">Админ панел</h2>
+        <div className="flex flex-col text-center my-2 mt-7 md:mt-32 relative overflow-visible">
             <div className="flex gap-4 justify-center mb-4">
                 <button
                     onClick={() => setSection("products")}

@@ -51,7 +51,7 @@ export default function Catalog() {
   const totalPages = Math.max(1, Math.ceil(sortedProducts.length / itemsPerPage));
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8 md:mt-15 xl:mt-12 overflow-x-hidden">
+    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-8 md:mt-22 overflow-x-hidden">
       <aside className="hidden lg:block w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Филтри</h2>
         <div className="space-y-4">

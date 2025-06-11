@@ -55,7 +55,7 @@ export default function Cart() {
     }
 
     return (
-        <div className="max-w-3xl md:mt-10 mx-auto py-10 px-4">
+        <div className="max-w-3xl md:mt-20 mx-auto py-10 px-4">
             <h1 className="text-2xl font-medium text-center mb-6">Моята количка</h1>
             <div className="space-y-6">
                 {cart.map((item) => (

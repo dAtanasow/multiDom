@@ -24,7 +24,7 @@ export default function Slider() {
   }, []);
 
   return (
-    <div className="relative md:mt-10 w-full mx-auto h-[550px] overflow-hidden shadow-lg">
+    <div className="relative md:mt-20 w-full mx-auto h-[600px] overflow-hidden shadow-lg">
       {images.map((src, index) => (
         <img
           key={index}

@@ -108,7 +108,7 @@ export default function Checkout() {
 
 
     return (
-        <div className="max-w-3xl xl:mt-9 md:mt-15 mx-auto py-10 px-4">
+        <div className="max-w-3xl md:mt-20 mx-auto py-10 px-4">
             <h1 className="text-2xl font-medium mb-6 text-center">Финализиране на поръчка</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <SavedAddressSelect
