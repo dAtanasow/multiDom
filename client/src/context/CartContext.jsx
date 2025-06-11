@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useAuthContext } from "./AuthContext";
 import cartApi from "../api/cart";
 import { syncLocalCartToServer } from "../utils/cartSync";
@@ -7,14 +7,11 @@ const CartContext = createContext();
 export const useCartContext = () => useContext(CartContext);
 
 function CartProvider({ children }) {
+    const [cart, setCart] = useState([]);
     const [updatingId, setUpdatingId] = useState(null);
-    const [cart, setCart] = useState(() => {
-        const saved = localStorage.getItem("cart");
-        return saved ? JSON.parse(saved) : [];
-    });
     const { isAuthenticate, userId, isUserLoaded } = useAuthContext();
-    const syncedRef = useRef({ userId: null, synced: false });
-    const syncedUserRef = useRef(null);
+    const hasSyncedRef = useRef(false);
+    const syncedUserRef = useRef(false)
 
     const uniqueById = (items) => {
         const map = new Map();
@@ -24,54 +21,99 @@ function CartProvider({ children }) {
         return Array.from(map.values());
     };
 
-    useEffect(() => {
-        const syncAndLoadCart = async () => {
-            if (!isAuthenticate || !userId || !isUserLoaded) return;
-            if (syncedUserRef.current === userId) return;
+    const loadCart = useCallback(async () => {
+        try {
+            if (isAuthenticate && userId && isUserLoaded) {
+                if (!hasSyncedRef.current) {
+                    await syncLocalCartToServer();
+                    localStorage.removeItem("cart");
+                    hasSyncedRef.current = true;
+                }
 
-            try {
-                await syncLocalCartToServer(setCart);
-                syncedUserRef.current = userId;
-            } catch (err) {
-                console.error("Грешка при sync/load:", err);
+                const serverCart = await cartApi.getCart();
+                setCart(uniqueById(serverCart.items || []));
+            } else {
+                const local = localStorage.getItem("cart");
+                if (local) {
+                    const parsed = JSON.parse(local);
+                    setCart(parsed);
+                }
             }
-        };
-
-        syncAndLoadCart();
+        } catch (err) {
+            console.error("[CartProvider] Грешка при зареждане на количката:", err);
+        }
     }, [isAuthenticate, userId, isUserLoaded]);
+
+    useEffect(() => {
+        loadCart();
+    }, [loadCart]);
+
+    useEffect(() => {
+        if (!isAuthenticate) {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
+    }, [cart, isAuthenticate]);
+
+    useEffect(() => {
+        if (isAuthenticate && isUserLoaded && userId && syncedUserRef.current !== userId) {
+            syncedUserRef.current = userId;
+
+            (async () => {
+                try {
+                    await syncLocalCartToServer();
+                    localStorage.removeItem("cart");
+                } catch (err) {
+                    console.error("[CartProvider] Sync error:", err);
+                }
+
+                const serverCart = await cartApi.getCart();
+                setCart(uniqueById(serverCart.items || []));
+            })();
+        }
+    }, [isAuthenticate, isUserLoaded, userId]);
+
 
     const addToCartContext = async (product) => {
         if (!product || !product._id || typeof product.price !== "number") return;
+
         if (isAuthenticate) {
             try {
-                await cartApi.addToCart(product._id, 1);
-                setCart(prev => {
-                    const found = prev.find(i => i._id === product._id);
-                    const updated = found
-                        ? prev.map(i => i._id === product._id ? { ...i, quantity: i.quantity + 1 } : i)
-                        : [...prev, { ...product, quantity: 1 }];
-                    return uniqueById(updated);
-                });
+                const existing = cart.find(i => i._id === product._id);
+                if (existing) {
+                    await updateQuantity(product._id, existing.quantity + 1);
+                } else {
+                    const response = await cartApi.addToCart(product._id, 1);
+                    if (response?.items) {
+                        setCart(uniqueById(response.items));
+                    } else {
+                        await loadCart();
+                    }
+                }
+                return;
             } catch (err) {
                 console.error("[addToCartContext] Server error:", err);
             }
-        } else {
-            setCart(prev => {
-                const found = prev.find(i => i._id === product._id);
-                const updated = found
-                    ? prev.map(i => i._id === product._id ? { ...i, quantity: i.quantity + 1 } : i)
-                    : [...prev, { ...product, quantity: 1 }];
-                const deduped = uniqueById(updated);
-                localStorage.setItem("cart", JSON.stringify(deduped));
-                return deduped;
-            });
         }
+
+        setCart(prev => {
+            const found = prev.find(i => i._id === product._id);
+            const updated = found
+                ? prev.map(i => i._id === product._id ? { ...i, quantity: i.quantity + 1 } : i)
+                : [...prev, { ...product, quantity: 1 }];
+            const deduped = uniqueById(updated);
+            localStorage.setItem("cart", JSON.stringify(deduped));
+            return deduped;
+        });
     };
 
     const removeFromCart = async (productId) => {
-        const updated = cart.filter((item) => item._id !== productId);
-        const deduped = uniqueById(updated);
-        setCart(deduped);
+        setCart(prev => {
+            const updated = prev.filter(i => i._id !== productId);
+            if (!isAuthenticate) {
+                localStorage.setItem("cart", JSON.stringify(updated));
+            }
+            return updated;
+        });
 
         if (isAuthenticate) {
             try {
@@ -79,50 +121,51 @@ function CartProvider({ children }) {
             } catch (err) {
                 console.error("[removeFromCart] Server error:", err);
             }
-        } else {
-            localStorage.setItem("cart", JSON.stringify(deduped));
         }
     };
 
     const updateQuantity = async (productId, quantity) => {
         const newQuantity = Math.max(1, quantity);
-        const updated = cart.map((item) =>
-            item._id === productId ? { ...item, quantity: newQuantity } : item
-        );
-        const deduped = uniqueById(updated);
-        setCart(deduped);
+
+        let newCart = [];
+
+        setCart(prev => {
+            const updated = prev.map(item =>
+                item._id === productId ? { ...item, quantity: newQuantity } : item
+            );
+            const deduped = uniqueById(updated);
+            newCart = deduped;
+            if (!isAuthenticate) {
+                localStorage.setItem("cart", JSON.stringify(deduped));
+            }
+            return deduped;
+        });
 
         if (isAuthenticate) {
-            setUpdatingId(productId);
             try {
+                setUpdatingId(productId);
                 await cartApi.updateCart({
-                    items: deduped.map(({ _id, quantity }) => ({
-                        product: _id,
-                        quantity,
-                    })),
+                    items: newCart.map(({ _id, quantity }) => ({ product: _id, quantity }))
                 });
             } catch (err) {
                 console.error("[updateQuantity] Server update failed:", err);
             } finally {
                 setUpdatingId(null);
             }
-        } else {
-            localStorage.setItem("cart", JSON.stringify(deduped));
         }
     };
 
     const clearCart = (options = { localOnly: false }) => {
         setCart([]);
         localStorage.removeItem("cart");
+
         if (!options.localOnly && isAuthenticate) {
             cartApi.clearCart().catch(console.error);
         }
     };
 
     return (
-        <CartContext.Provider
-            value={{ cart, addToCartContext, removeFromCart, updateQuantity, clearCart, syncedRef, updatingId, setCart }}
-        >
+        <CartContext.Provider value={{ cart, setCart, addToCartContext, removeFromCart, updateQuantity, clearCart, updatingId }}>
             {children}
         </CartContext.Provider>
     );
