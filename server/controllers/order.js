@@ -28,6 +28,11 @@ const createOrder = async (req, res) => {
         orderData.deliveryTotal = rawDelivery;
         const grandTotal = total + rawDelivery;
 
+        if (req.user) {
+            orderData.userId = req.user._id;
+            orderData.email = req.user.email;
+        }
+
         if (orderData.invoice?.useInvoice) {
             orderData.invoice = {
                 useInvoice: true,
@@ -151,10 +156,56 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
+const getUserOrders = async (req, res) => {
+    try {
+        const email = req.user?.email;
+
+        if (!email) {
+            return res.status(400).json({ message: "Липсва имейл." });
+        }
+
+        const rawOrders = await Order.find({ email }).sort({ createdAt: -1 });
+
+        const enrichedOrders = await Promise.all(
+            rawOrders.map(async (order) => {
+                const enrichedItems = await Promise.all(
+                    order.items.map(async (item) => {
+                        const product = await Product.findById(item.productId);
+
+                        return {
+                            ...item.toObject(),
+                            name: product?.name || item.name,
+                            image: product?.images?.[0] || item.image || null,
+                            price: product?.discountPrice ?? product?.price ?? item.price,
+                            discountPrice: product?.discountPrice ?? null,
+                            originalPrice: product?.price ?? null,
+                            deliveryTotal: order.deliveryTotal ?? 0,
+                            discountPercent: product?.discountPrice
+                                ? Math.round((1 - product.discountPrice / product.price) * 100)
+                                : 0,
+                        };
+                    })
+                );
+
+                return {
+                    ...order.toObject(),
+                    items: enrichedItems,
+                };
+            })
+        );
+
+        res.json(enrichedOrders);
+    } catch (error) {
+        console.error("❌ Грешка при извличане на потребителските поръчки:", error);
+        res.status(500).json({ message: "Вътрешна грешка при зареждане на поръчките." });
+    }
+};
+
 
 module.exports = {
     createOrder,
     getOrderById,
     getAllOrders,
-    updateOrderStatus
+    updateOrderStatus,
+    getUserOrders,
 };
