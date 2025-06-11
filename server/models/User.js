@@ -49,6 +49,11 @@ const userSchema = new mongoose.Schema({
             default: []
         }
     ],
+    emailConfirmed: {
+        type: Boolean,
+        default: false
+    },
+    resendTokenSentAt: { type: Date },
     createdAt: {
         type: Date,
         default: Date.now,
