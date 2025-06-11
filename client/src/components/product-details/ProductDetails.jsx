@@ -35,8 +35,7 @@ export default function ProductDetails() {
 
     return (
         <motion.section className="max-w-7xl mx-auto px-4 py-12" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div className="grid md:grid-cols-2 mt-xl-between md:mt-10 gap-12">
-                {/* Gallery */}
+            <div className="grid md:grid-cols-2 md:mt-20 gap-12">
                 <div className="space-y-5">
                     <div className="bg-white border rounded-3xl shadow-lg p-6">
                         <img
@@ -45,7 +44,7 @@ export default function ProductDetails() {
                             className="w-full h-[420px] object-contain transition-transform duration-300 hover:scale-105 rounded-2xl"
                         />
                     </div>
-                    <div className="flex gap-4 overflow-x-auto">
+                    <div className="flex gap-4 p-2 overflow-x-auto">
                         {product.images?.map((img, index) => (
                             <img
                                 key={index}
@@ -58,7 +57,6 @@ export default function ProductDetails() {
                     </div>
                 </div>
 
-                {/* Info */}
                 <motion.div className="space-y-6" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
                     <h1 className="text-4xl font-bold text-gray-900 leading-snug">{product.name}</h1>
 
@@ -126,7 +124,7 @@ export default function ProductDetails() {
                         onClick={() => toggleFavorite(product._id)}
                         className={"border m-1 text-base py-3 px-4 rounded-xl shadow-md transition bg-white border-gray-300 text-gray-700"}
                     >
-                        {isFavorite(product._id) ? "🤍" : "❤️"}
+                        {!isFavorite(product._id) ? "🤍" : "❤️"}
                     </motion.button>
 
                     <div className="flex items-center gap-6 mt-6 text-sm text-gray-600">
