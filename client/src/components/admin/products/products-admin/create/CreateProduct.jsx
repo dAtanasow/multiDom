@@ -18,7 +18,10 @@ export default function CreateProduct({ editingProduct, setEditingProduct, setPr
             </h2>
             <form onSubmit={submitHandler} className="space-y-4 mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="border p-2 w-full md:col-span-2" />
+                    <div className="md:col-span-2">
+                        <label className="block mb-1 font-medium text-gray-700">Снимки</label>
+                        <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="border p-2 w-full" />
+                    </div>
 
                     {Array.isArray(values.images) && values.images.length > 0 && (
                         <div className="md:col-span-2 flex flex-wrap gap-4 mt-2">
@@ -30,34 +33,57 @@ export default function CreateProduct({ editingProduct, setEditingProduct, setPr
                             ))}
                         </div>
                     )}
-                    <select name="category" value={values.category || ""} onChange={changeHandler} className="border p-2 w-full">
-                        <option value="">Избери категория</option>
-                        {navLinks.map((cat) => (
-                            <option key={cat.label} value={cat.label}>{cat.label}</option>
-                        ))}
-                    </select>
 
-                    <select name="subCategory" value={values.subCategory || ""} onChange={changeHandler} className="border p-2 w-full">
-                        <option value="">Избери подкатегория</option>
-                        {navLinks.find((cat) => cat.label === values.category)?.subLinks?.map((sub) => (
-                            <option key={sub.label} value={sub.label}>{sub.label}</option>
-                        ))}
-                    </select>
-                    <input name="name" placeholder="Име" value={values.name || ""} onChange={changeHandler} className="border p-2 w-full" />
-                    <input name="manufacturer" placeholder="Производител" value={values.manufacturer || ""} onChange={changeHandler} className="border p-2 w-full" />
-                    <input name="price" type="number" placeholder="Цена" value={values.price || ""} onChange={changeHandler} className="border p-2 w-full" />
-                    <input name="discountPrice" type="number" placeholder="Промо цена" value={values.discountPrice || ""} onChange={changeHandler} className="border p-2 w-full" />
-                    <input name="quantity" type="number" placeholder="Налично количество" value={values.quantity || ""} onChange={changeHandler} className="border p-2 w-full" />
-                    <input name="originCountry" placeholder="Страна на произход" value={values.originCountry || ""} onChange={changeHandler} className="border p-2 w-full" />
-                    <input name="unitCount" type="number" placeholder="Брой в опаковка" value={values.unitCount || ""} onChange={changeHandler} className="border p-2 w-full" />
-                    <input name="unitType" placeholder="Тип единица" value={values.unitType || ""} onChange={changeHandler} className="border p-2 w-full" />
+                    <div>
+                        <label className="block mb-1 font-medium text-gray-700">Категория</label>
+                        <select name="category" value={values.category || ""} onChange={changeHandler} className="border p-2 w-full">
+                            <option value="">Избери категория</option>
+                            {navLinks.map((cat) => (
+                                <option key={cat.label} value={cat.label}>{cat.label}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block mb-1 font-medium text-gray-700">Подкатегория</label>
+                        <select name="subCategory" value={values.subCategory || ""} onChange={changeHandler} className="border p-2 w-full">
+                            <option value="">Избери подкатегория</option>
+                            {navLinks.find((cat) => cat.label === values.category)?.subLinks?.map((sub) => (
+                                <option key={sub.label} value={sub.label}>{sub.label}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {[
+                        { name: "name", label: "Име" },
+                        { name: "manufacturer", label: "Производител" },
+                        { name: "price", label: "Цена", type: "number" },
+                        { name: "discountPrice", label: "Промо цена", type: "number" },
+                        { name: "quantity", label: "Налично количество", type: "number" },
+                        { name: "originCountry", label: "Страна на произход" },
+                        { name: "unitCount", label: "Брой в опаковка", type: "number" },
+                        { name: "unitType", label: "Тип единица" }
+                    ].map(({ name, label, type = "text" }) => (
+                        <div key={name}>
+                            <label htmlFor={name} className="block mb-1 font-medium text-gray-700">{label}</label>
+                            <input name={name} id={name} type={type} value={values[name] || ""} onChange={changeHandler} className="border p-2 w-full" />
+                        </div>
+                    ))}
+
                     <label className="flex items-center space-x-2 md:col-span-2">
                         <input type="checkbox" name="isFeatured" checked={values.isFeatured || false} onChange={changeHandler} />
                         <span>Показвай като препоръчан</span>
                     </label>
 
-                    <textarea name="description" placeholder="Описание" value={values.description || ""} onChange={changeHandler} className="border p-2 w-full md:col-span-2" rows={3} />
-                    <input name="tags" placeholder="Тагове (разделени със запетая)" value={values.tags || ""} onChange={changeHandler} className="border p-2 w-full md:col-span-2" />
+                    <div className="md:col-span-2">
+                        <label htmlFor="description" className="block mb-1 font-medium text-gray-700">Описание</label>
+                        <textarea name="description" id="description" value={values.description || ""} onChange={changeHandler} className="border p-2 w-full" rows={3} />
+                    </div>
+
+                    <div className="md:col-span-2">
+                        <label htmlFor="tags" className="block mb-1 font-medium text-gray-700">Тагове (разделени със запетая)</label>
+                        <input name="tags" id="tags" value={values.tags || ""} onChange={changeHandler} className="border p-2 w-full" />
+                    </div>
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-4">
@@ -78,7 +104,6 @@ export default function CreateProduct({ editingProduct, setEditingProduct, setPr
                     )}
                 </div>
             </form>
-
         </div>
     )
 }
