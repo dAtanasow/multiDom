@@ -20,7 +20,7 @@ export default function TagSearch({ onClose }) {
     }, [location.search]);
 
     useEffect(() => {
-        
+
         const fetchProducts = async () => {
             try {
                 const result = await catalogApi.getAll();
@@ -41,7 +41,7 @@ export default function TagSearch({ onClose }) {
         } else {
             const normalizeText = (text) =>
                 text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-          
+
             const filtered = products.filter(product => {
                 const search = normalizeText(searchTerm);
                 return (
@@ -78,7 +78,7 @@ export default function TagSearch({ onClose }) {
     return (
         <div className="relative w-full">
             <form onSubmit={onSearch} className="relative w-full">
-                <div className="flex items-center w-full border border-gray-300 rounded-full overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex items-center max-w-full sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl w-full mx-auto border border-gray-300 rounded-full">
                     <input
                         type="text"
                         placeholder="Търси..."
