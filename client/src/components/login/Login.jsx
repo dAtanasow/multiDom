@@ -1,10 +1,10 @@
 import { useForm } from "../../hooks/useForm";
-import { useLogin } from "../../hooks/useAuth";
+import { useLogin } from "../../hooks/useAuth.jsx";
 import { useNavigate } from "react-router-dom";
 import { getLoginValidators } from "../../utils/validators";
 
 export default function Login({ onClose, onRegisterClick, visible }) {
-  const { login, loading } = useLogin();
+  const { login, loading, errors: loginErrors } = useLogin();
   const navigate = useNavigate();
 
   const { values, changeHandler, submitHandler, pending, errors } = useForm(
@@ -22,6 +22,7 @@ export default function Login({ onClose, onRegisterClick, visible }) {
     getLoginValidators()
   );
 
+
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div
@@ -31,9 +32,11 @@ export default function Login({ onClose, onRegisterClick, visible }) {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-700">Вход</h2>
           <button
-            onClick={() => onClose()}
+            onClick={onClose}
+
             className="text-gray-500 hover:text-red-500 text-2xl"
           >
+
             &times;
           </button>
         </div>
@@ -68,6 +71,13 @@ export default function Login({ onClose, onRegisterClick, visible }) {
           >
             {pending || loading ? "Моля изчакайте..." : "Вход"}
           </button>
+
+          {loginErrors.global && (
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg text-sm">
+              <p>{loginErrors.global}</p>
+            </div>
+          )}
+
         </form>
 
         <p className="mt-6 text-sm text-gray-600">
@@ -80,6 +90,6 @@ export default function Login({ onClose, onRegisterClick, visible }) {
           </button>
         </p>
       </div>
-    </div >
+    </div>
   );
 }
