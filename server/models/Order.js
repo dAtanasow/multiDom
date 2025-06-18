@@ -18,9 +18,10 @@ const orderSchema = new mongoose.Schema({
         useInvoice: { type: Boolean, default: false },
         invoiceNumber: { type: Number, unique: true, sparse: true },
         companyName: { type: String },
+        companyType: { type: String },
         vatId: { type: String },
         vatNumber: { type: String },
-        address: { type: String },
+        companyAddress: { type: String },
         mol: { type: String }
     },
     items: [

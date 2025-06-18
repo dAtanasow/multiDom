@@ -1,5 +1,4 @@
 const Order = require("../models/Order");
-const Counter = require("../models/Counter");
 const Product = require("../models/Product")
 const { sendOrderConfirmationEmail } = require("../utils/email");
 const getNextNumber = require("../utils/getNextNumber");
@@ -37,9 +36,9 @@ const createOrder = async (req, res) => {
             orderData.invoice = {
                 useInvoice: true,
                 companyName: orderData.invoice.companyName,
+                companyType: orderData.invoice.companyType,
                 vatId: orderData.invoice.vatId,
-                vatNumber: orderData.invoice.vatNumber,
-                address: orderData.invoice.address,
+                companyAddress: orderData.invoice.companyAddress,
                 mol: orderData.invoice.mol,
             };
 
@@ -190,6 +189,7 @@ const getUserOrders = async (req, res) => {
                 return {
                     ...order.toObject(),
                     items: enrichedItems,
+                    invoice: order.invoice || null
                 };
             })
         );
@@ -200,7 +200,6 @@ const getUserOrders = async (req, res) => {
         res.status(500).json({ message: "Вътрешна грешка при зареждане на поръчките." });
     }
 };
-
 
 module.exports = {
     createOrder,
