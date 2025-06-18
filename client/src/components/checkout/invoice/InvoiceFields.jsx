@@ -25,17 +25,17 @@ export default function InvoiceFields({ form, changeHandler, isMobile, errors, s
                     className={inputClass("companyType")}
                 >
                     <option value="">Тип на дружеството</option>
-                    <option value="ET">ЕТ</option>
-                    <option value="EOOD">ЕООД</option>
-                    <option value="OOD">ООД</option>
-                    <option value="AD">АД</option>
-                    <option value="EAD">ЕАД</option>
-                    <option value="SD">СД</option>
-                    <option value="KD">КД</option>
-                    <option value="KDA">КДА</option>
-                    <option value="DZZD">ДЗЗД</option>
-                    <option value="KOO">КООП</option>
-                    <option value="NPO">НПО</option>
+                    <option value="ЕТ">ЕТ</option>
+                    <option value="ЕООД">ЕООД</option>
+                    <option value="ООД">ООД</option>
+                    <option value="АД">АД</option>
+                    <option value="ЕАД">ЕАД</option>
+                    <option value="СД">СД</option>
+                    <option value="КД">КД</option>
+                    <option value="КДА">КДА</option>
+                    <option value="ДЗЗД">ДЗЗД</option>
+                    <option value="КООП">КООП</option>
+                    <option value="НПО">НПО</option>
                 </select>
                 {errors?.companyType && <p className="text-red-500 text-sm">{errors.companyType}</p>}
             </div>
