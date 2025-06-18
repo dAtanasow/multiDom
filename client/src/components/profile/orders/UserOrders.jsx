@@ -94,6 +94,19 @@ export default function UserOrders() {
                                         <strong>Обща стойност:</strong> {grandTotal.toFixed(2)} лв.
                                     </p>
                                 </div>
+
+                                {order.invoice?.useInvoice && (
+                                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm text-yellow-900 shadow-sm space-y-1">
+                                        <p className="font-bold mb-2">🧾 Данни за фактура:</p>
+                                        <p><strong>Фирма:</strong> {order.invoice.companyName} {order.invoice.companyType}</p>
+                                        <p><strong>Булстат:</strong> {order.invoice.vatId}</p>
+                                        <p><strong>МОЛ:</strong> {order.invoice.mol}</p>
+                                        {order.invoice.companyAddress && (
+                                            <p><strong>Адрес:</strong> {order.invoice.companyAddress}</p>
+                                        )}
+                                    </div>
+                                )}
+
                             </div>
                         )}
                     </div>
