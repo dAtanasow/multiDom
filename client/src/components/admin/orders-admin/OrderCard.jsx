@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import { toast } from "react-toastify";
 import { toast } from "sonner";
 import orderApi from "../../../api/order";
 import ConfirmModal from "../../ConfirmModal";
@@ -34,7 +33,7 @@ export default function OrderCard({ order, isOpen, onToggle, onStatusChange }) {
 
             <div className="flex flex-col items-center justify-center text-center mt-4">
                 <p className="font-semibold text-gray-800">{order.name}</p>
-                <span className="text-blue-700 text-sm">{order.phone}</span>
+                <span className="text-blue-700 text-sm">+{order.phone}</span>
             </div>
 
             <div className="flex justify-between items-end text-xs text-gray-500">
@@ -87,9 +86,10 @@ export default function OrderCard({ order, isOpen, onToggle, onStatusChange }) {
                     {order.invoice?.useInvoice && (
                         <div>
                             <p>Фактура №: <span className="font-semibold text-gray-800">{order.invoice.orderNumber}</span></p>
-                            <p>Фирма: <span className="font-semibold text-gray-800">{order.invoice.companyName}</span></p>
-                            <p>ДДС №: <span className="font-semibold text-gray-800">{order.invoice.vatNumber}</span></p>
-                            <p>Адрес: <span className="font-semibold text-gray-800">{order.invoice.address}</span></p>
+                            <p>Фирма: <span className="font-semibold text-gray-800">{order.invoice.companyName} {order.invoice.companyType}</span></p>
+                            <p>ЕИК: <span className="font-semibold text-gray-800">{order.invoice.vatId}</span></p>
+                            <p>МОЛ: <span className="font-semibold text-gray-800">{order.invoice.mol}</span></p>
+                            <p>Адрес: <span className="font-semibold text-gray-800">{order.invoice.companyAddress}</span></p>
                         </div>
                     )}
 
