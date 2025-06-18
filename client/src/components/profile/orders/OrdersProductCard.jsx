@@ -47,7 +47,7 @@ export default function OrderProductCard({ product }) {
                 <div className="min-h-[2rem] text-base">
                     {hasDiscount ? (
                         <>
-                            <span className="line-through text-red-500 mr-1">{price.toFixed(2)} лв.</span>
+                            <span className="line-through text-red-500 mr-1">{originalPrice?.toFixed(2)} лв.</span>
                             <span className="text-green-600 font-semibold mr-1">{discountPrice.toFixed(2)} лв.</span>
                             <span className="text-blue-600 text-sm">(-{discountAmount} лв.)</span>
                         </>
