@@ -49,7 +49,7 @@ async function sendOrderConfirmationEmail(toEmail, orderData) {
       item.discountPrice < originalPrice;
 
     const priceHtml = hasDiscount
-      ? `<span style="text-decoration: line-through; color: #999;">${item.originalPrice.toFixed(2)} лв.</span>
+      ? `<span style="color: #999;"><s>${item.originalPrice.toFixed(2)} лв.</s></span>
      <span style="margin-left: 6px; color: #e53e3e;">${item.price.toFixed(2)} лв.</span>`
       : `<span>${item.price.toFixed(2)} лв.</span>`;
 
@@ -98,7 +98,7 @@ async function sendOrderConfirmationEmail(toEmail, orderData) {
     <div style="background-color: #f9fafb; padding: 12px; border-radius: 8px; margin: 16px 0;">
       <p style="margin: 0; font-weight: bold;">👤 Данни за получател:</p>
       <p><strong>Име:</strong> ${orderData.name}</p>
-      <p><strong>Телефон:</strong> ${orderData.phone}</p>
+      <p><strong>Телефон:</strong> +${orderData.phone}</p>
       <p><strong>Имейл:</strong> ${orderData.email}</p>
       ${orderData.comment ? `<p><strong>Коментар:</strong> ${orderData.comment}</p>` : ""}
     </div>
@@ -107,10 +107,10 @@ async function sendOrderConfirmationEmail(toEmail, orderData) {
       <hr style="margin: 16px 0;" />
       <div style="background-color: #f9fafb; padding: 12px; border-radius: 8px; margin: 16px 0;">
         <p style="margin: 0; font-weight: bold;">🧾 Данни за фактура:</p>
-        <p><strong>Фирма:</strong> ${orderData.invoice.companyName}</p>
-        <p><strong>Булстат:</strong> ${orderData.invoice.vatNumber}</p>
-        ${orderData.invoice.vatNumber ? `<p><strong>ДДС №:</strong> ${orderData.invoice.vatNumber}</p>` : ""}
+        <p><strong>Фирма:</strong> ${orderData.invoice.companyName} ${orderData.invoice.companyType}</p>
+        <p><strong>ЕИК:</strong> ${orderData.invoice.vatId}</p>
         <p><strong>МОЛ:</strong> ${orderData.invoice.mol}</p>
+        <p><strong>Адрес:</strong> ${orderData.invoice.companyAddress || ""}</p>
       </div>
     ` : ""}
 
