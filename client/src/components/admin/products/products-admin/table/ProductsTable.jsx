@@ -17,14 +17,18 @@ export default function ProductsTable({ setProductView, setEditingProduct }) {
 
   useEffect(() => {
     if (tableRef.current) {
-      tableRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.scrollTo({ top: tableRef.current.offsetTop - 80, behavior: "smooth" });
     }
   }, [currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   if (loading) return <SpinnerLoader />;
 
   return (
-    <div className="w-full overflow-x-auto mt-2 border rounded-lg">
+    <div className="w-full overflow-x-auto mt-2 border rounded-lg" ref={tableRef}>
       <GenericSearch
         data={products}
         keys={["productNumber", "name"]}

@@ -34,6 +34,10 @@ export default function Orders({ status }) {
         }
     }, [currentPage]);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
+
     if (isLoading) return <SpinnerLoader />;
     if (error) return <p>{error}</p>;
 
