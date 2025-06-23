@@ -12,6 +12,7 @@ export default function CustomPhoneInput({ value, onChange, error, setError, dis
     }, [value]);
 
     const handleRawChange = (raw, data) => {
+        if (disabled) return;
         const rawStr = String(raw ?? '');
         const digitsOnly = rawStr.replace(/\D/g, '');
         const upperCountryCode = data?.countryCode?.toUpperCase() || countryCode;
@@ -33,25 +34,30 @@ export default function CustomPhoneInput({ value, onChange, error, setError, dis
 
     return (
         <div className="relative w-full">
-            <div className="relative w-full cursor-default overflow-visible rounded-sm border bg-white text-left shadow-md focus:outline-none">
+            <div className="relative w-full overflow-visible rounded-sm border bg-white text-left shadow-md focus:outline-none">
                 <PhoneInput
                     country={countryCode.toLowerCase()}
                     value={inputValue}
                     onChange={disabled ? () => { } : handleRawChange}
-                    onCountryChange={disabled ? () => { } : (code) => setCountryCode(code.toUpperCase())}
+                    onCountryChange={disabled ? () => { } : (code) => !disabled && setCountryCode(code.toUpperCase())}
                     enableSearch={!disabled}
                     searchPlaceholder="Търси държава..."
                     containerClass="w-full"
-                    inputClass={`w-full pl-12 pr-3 py-2 rounded-md text-sm bg-white ${disabled
-                        ? 'bg-gray-100 text-gray-600 cursor-not-allowed pointer-events-none'
-                        : 'border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                        }`}
-                    buttonClass={`absolute left-0 top-0 h-full px-2 flex items-center bg-white rounded-l-md mr-2${disabled ? 'pointer-events-none opacity-50' : ''
-                        }`}
+                    inputClass={`w-full pl-12 pr-3 py-2 rounded-md text-sm bg-white ${
+                        disabled
+                            ? 'bg-gray-100 text-gray-600 pointer-events-none'
+                            : 'border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                    }`}
+                    buttonClass={`absolute left-0 top-0 h-full px-2 flex items-center bg-white rounded-l-md mr-2${
+                        disabled ? 'pointer-events-none opacity-50' : ''
+                    }`}
                     inputProps={{
+                        disabled: disabled,
                         readOnly: disabled,
+                        style: disabled ? { backgroundColor: '#f3f4f6' } : {}
                     }}
-
+                    disableSearchIcon={disabled}
+                    disableDropdown={disabled}
                 />
             </div>
 

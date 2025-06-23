@@ -2,13 +2,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 
 export default function ProfileButton() {
-    const { accessToken } = useAuthContext();
+    const { isAuthenticate } = useAuthContext();
     const navigate = useNavigate();
     const [_, setSearchParams] = useSearchParams();
 
     const handleClick = () => {
-        if (accessToken) {
-            navigate("/profile");
+        if (isAuthenticate) {
+            navigate("/profile/details");
         } else {
             setSearchParams({ panel: "login" });
         }
