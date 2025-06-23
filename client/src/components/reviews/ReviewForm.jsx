@@ -24,12 +24,16 @@ export default function ReviewForm({ productId, onReviewSubmit, userReview }) {
             } else {
                 await reviewApi.create({ productId, rating, comment });
             }
-            toast.success("Благодарим за ревюто!");
+            toast.success("Благодарим за отзива!");
             setRating(0);
             setComment("");
             onReviewSubmit?.();
         } catch (err) {
-            toast.error("Грешка при изпращане на ревю.", err);
+            if (err?.response?.status === 401) {
+                toast.error("Трябва да сте логнати за да публикувате отзив");
+            } else {
+                toast.error("Грешка при изпращане на отзив.", err);
+            }
         } finally {
             setSubmitting(false);
         }
