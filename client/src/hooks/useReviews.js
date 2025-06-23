@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import reviewApi from "../api/review";
+import { toast } from "sonner";
 
 export default function useReviews(productId, currentUserId) {
     const [reviews, setReviews] = useState([]);
@@ -13,7 +14,7 @@ export default function useReviews(productId, currentUserId) {
             const data = await reviewApi.getByProduct(productId);
             setReviews(data);
         } catch (err) {
-            console.error("Грешка при зареждане на ревюта:", err);
+            console.error("Грешка при зареждане на отзиви:", err);
         } finally {
             setLoading(false);
         }
@@ -54,7 +55,14 @@ export default function useReviews(productId, currentUserId) {
             await reviewApi.addComment(reviewId, { text: commentText });
             fetchReviews();
         } catch (err) {
-            console.error("Грешка при добавяне на коментар:", err);
+            if (err?.response?.status === 401) {
+                toast.error("Трябва да сте логнати за да публикувате отзив");
+            } else if (err?.response?.status === 409) {
+                toast.error("Вече сте публикували отзив");
+            } else {
+                toast.error("Грешка при публикуване на отзив");
+                console.error("Грешка при публикуване на отзив:", err);
+            }
         }
     };
 
@@ -63,7 +71,7 @@ export default function useReviews(productId, currentUserId) {
             await reviewApi.remove(reviewId);
             setReviews((prev) => prev.filter((r) => r._id !== reviewId));
         } catch (err) {
-            console.error("Грешка при изтриване на ревю:", err);
+            console.error("Грешка при изтриване на отзив:", err);
         }
     };
 
