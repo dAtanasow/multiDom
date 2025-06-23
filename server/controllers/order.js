@@ -125,23 +125,18 @@ const updateOrderStatus = async (req, res) => {
         if (status === "pending" && previousStatus === "new") {
             for (const item of order.items) {
                 const product = await Product.findById(item.productId);
-                if (product) {
-                    product.quantity = Math.max(0, product.quantity - item.quantity);
-                    await product.save();
-                }
+                product.quantity = Math.max(0, product.quantity - item.quantity);
+                await product.save();
             }
         }
-
         if (
             status === "canceled" &&
             (previousStatus === "pending" || previousStatus === "completed")
         ) {
             for (const item of order.items) {
                 const product = await Product.findById(item.productId);
-                if (product) {
-                    product.quantity += item.quantity;
-                    await product.save();
-                }
+                product.quantity += item.quantity;
+                await product.save();
             }
         }
 
@@ -154,6 +149,7 @@ const updateOrderStatus = async (req, res) => {
         res.status(500).json({ message: "Вътрешна грешка при обновяване" });
     }
 };
+
 
 const getUserOrders = async (req, res) => {
     try {
