@@ -27,97 +27,99 @@ import NotFound from "./components/NotFound";
 
 function App() {
   return (
-    <div className="relative pt-[64px] min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <ErrorBoundary>
-        <ScrollToTop />
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/catalog" element={<Catalog />} />
-          <Route path="/catalog/:id" element={<ProductDetails />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/thank-you" element={<ThankYouPage />} />
+      <main className="relative flex-1 pt-[64px]">
+        <ErrorBoundary>
+          <ScrollToTop />
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/catalog/:id" element={<ProductDetails />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
 
-          {/* Guest only routes */}
+            {/* Guest only routes */}
 
-          <Route
-            path="/register"
-            element={
-              <GuestRoute>
-                <Register />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/confirm-email"
-            element={
-              <GuestRoute>
-                <EmailConfirmed />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/email-confirmed"
-            element={
-              <GuestRoute>
-                <EmailConfirmed />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/email-already-confirmed"
-            element={
-              <GuestRoute>
-                <EmailAlreadyConfirmed />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/email-error"
-            element={
-              <GuestRoute>
-                <EmailConfirmationError />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/check-email"
-            element={
-              <GuestRoute>
-                <CheckEmail />
-              </GuestRoute>
-            }
-          />
+            <Route
+              path="/register"
+              element={
+                <GuestRoute>
+                  <Register />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/confirm-email"
+              element={
+                <GuestRoute>
+                  <EmailConfirmed />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/email-confirmed"
+              element={
+                <GuestRoute>
+                  <EmailConfirmed />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/email-already-confirmed"
+              element={
+                <GuestRoute>
+                  <EmailAlreadyConfirmed />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/email-error"
+              element={
+                <GuestRoute>
+                  <EmailConfirmationError />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/check-email"
+              element={
+                <GuestRoute>
+                  <CheckEmail />
+                </GuestRoute>
+              }
+            />
 
-          {/* Protected routes */}
+            {/* Protected routes */}
 
-          <Route
-            path="/profile/*"
-            element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/*"
-            element={
-              <PrivateRoute requireAdmin>
-                <AdminPanel />
-              </PrivateRoute>
-            }
-          />
+            <Route
+              path="/profile/*"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/*"
+              element={
+                <PrivateRoute requireAdmin>
+                  <AdminPanel />
+                </PrivateRoute>
+              }
+            />
 
-          {/* 404 route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </ErrorBoundary>
+            {/* 404 route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ErrorBoundary>
+      </main>
       <Footer />
     </div>
   );

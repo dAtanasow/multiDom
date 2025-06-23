@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="relative bg-gradient-to-t from-blue-900 via-blue-600 to-blue-300 text-white py-10 overflow-hidden">
+    <footer className="bg-gradient-to-t from-blue-900 via-blue-600 to-blue-300 text-white py-10 overflow-hidden">
       {/* Мехурчета */}
       <div className="bubbles">
         <div className="bubble" />
