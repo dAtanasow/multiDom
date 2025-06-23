@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useProductsTable } from "../../../../../hooks/useAdmin";
 import GenericSearch from "../../../../search/GenericSearch";
 import SpinnerLoader from "../../../../SpinnerLoader";
+import { Link } from "react-router-dom";
 
 export default function ProductsTable({ setProductView, setEditingProduct }) {
   const { products, handleDelete, loading } = useProductsTable();
@@ -28,7 +29,7 @@ export default function ProductsTable({ setProductView, setEditingProduct }) {
   if (loading) return <SpinnerLoader />;
 
   return (
-    <div className="w-full overflow-x-auto mt-2 border rounded-lg" ref={tableRef}>
+    <div className="w-full overflow-x-auto my-3 border rounded-lg" ref={tableRef}>
       <GenericSearch
         data={products}
         keys={["productNumber", "name"]}
@@ -93,7 +94,14 @@ export default function ProductsTable({ setProductView, setEditingProduct }) {
                             className="w-12 h-12 object-contain mx-auto"
                           />
                         </td>
-                        <td className="border px-2 py-2 break-words">{product.name}</td>
+                        <td className="border px-2 py-2 break-words">
+                          <Link
+                            to={`/catalog/${product._id}`}
+                            className="text-blue-600 hover:underline"
+                          >
+                            {product.name}
+                          </Link>
+                        </td>
                         <td className="border px-2 py-2">{product.price?.toFixed(2)}</td>
                         <td className="border px-2 py-2">
                           {product.discountPrice ? (

@@ -8,7 +8,8 @@ export default function OrderCard({ order, isOpen, onToggle, onStatusChange }) {
 
     const handleStatusChange = async (newStatus) => {
         try {
-            await orderApi.updateOrderStatus(order._id, newStatus);
+            const response = await orderApi.updateOrderStatus(order._id, newStatus);
+            console.log("orderApi.updateOrderStatus response", response);
             toast.success("Статусът е обновен!");
             if (onStatusChange) onStatusChange(order._id, newStatus);
         } catch (err) {
@@ -16,6 +17,7 @@ export default function OrderCard({ order, isOpen, onToggle, onStatusChange }) {
             console.error(err);
         }
     };
+
 
     const totalPrice = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const statusBadge = {

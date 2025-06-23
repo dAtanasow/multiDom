@@ -42,7 +42,7 @@ export default function Orders({ status }) {
     if (error) return <p>{error}</p>;
 
     return (
-        <div className="w-full max-w-5xl mx-auto px-2" ref={topRef}>
+        <div className="w-full max-w-5xl my-3 mx-auto px-2" ref={topRef}>
             <GenericSearch data={allOrders} keys={["name", "orderNumber"]} term={searchTerm}>
                 {(filteredOrders) => {
                     const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);

@@ -33,7 +33,7 @@ export default function Cart() {
     const totalDiscount = totalStandard - totalWithDiscount;
     if (!cart || cart.length === 0) {
         return (
-            <div className="max-w-xl mx-auto py-40 px-6 text-center">
+            <div className="max-w-xl mx-auto py-40 px-6 text-center min-h-screen flex items-center justify-center">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
