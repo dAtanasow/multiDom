@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CustomPhoneInput from "../CustomPhoneInput";
+import CustomPhoneInput from "../../CustomPhoneInput";
 
 export function ProfileFields({ values, changeHandler, editMode }) {
     const [phoneError, setPhoneError] = useState(false);
