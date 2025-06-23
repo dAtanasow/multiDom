@@ -1,6 +1,7 @@
 import CitySelect from "../../checkout/customer-info/CitySelect";
 import OfficeListbox from "../../checkout/delivery-options/OfficeListbox";
 import { cities } from "../../mock-data/office-places";
+import { useState } from "react";
 
 export default function AddressForm({
     newAddress,
@@ -16,6 +17,18 @@ export default function AddressForm({
     onCompanyChange,
     onSubmit
 }) {
+    const [isCityOpen, setIsCityOpen] = useState(false);
+    const [isOfficeOpen, setIsOfficeOpen] = useState(false);
+
+    const handleCitySelect = (city) => {
+        onCitySelect(city);
+        setIsCityOpen(false);
+    };
+
+    const handleOfficeSelect = (officeId) => {
+        onOfficeSelect(officeId);
+        setIsOfficeOpen(false);
+    };
     return (
         <form onSubmit={onSubmit}
             className="bg-white space-y-4">
@@ -37,8 +50,8 @@ export default function AddressForm({
 
                 >
                     <option value="">Избери куриер</option>
-                    <option value="Еконт">Еконт</option>
-                    <option value="Спиди">Спиди</option>
+                    <option value="econt">Еконт</option>
+                    <option value="speedy">Спиди</option>
                 </select>
 
                 <select
@@ -57,7 +70,9 @@ export default function AddressForm({
                         <CitySelect
                             cities={cities}
                             selectedCity={selectedCity}
-                            setSelectedCity={onCitySelect}
+                            setSelectedCity={handleCitySelect}
+                            isOpen={isCityOpen}
+                            setIsOpen={setIsCityOpen}
                         />
                         <div className="md:col-span-2">
                             {loadingOffices ? (
@@ -66,13 +81,15 @@ export default function AddressForm({
                                 <OfficeListbox
                                     offices={offices}
                                     selectedOfficeId={selectedOfficeId}
-                                    setSelectedOfficeId={onOfficeSelect}
+                                    setSelectedOfficeId={handleOfficeSelect}
+                                    isOpen={isOfficeOpen}
+                                    setIsOpen={setIsOfficeOpen}
                                 />
                             )}
                         </div>
                     </>
                 )}
-    
+
 
                 {newAddress.deliveryMethod === "address" && (
                     <>
