@@ -1,6 +1,6 @@
 export default function Terms() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col md:flex-row gap-8">
+    <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col md:flex-row gap-8 md:mt-20">
       {/* Sidebar Navigation */}
       <aside className="hidden md:block md:w-1/4 sticky top-20 self-start">
         <nav className="space-y-4">
